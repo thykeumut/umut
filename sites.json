@@ -7,8 +7,8 @@
       "icon": "gamepad",
       "gradient": "wine",
       "public": true,
-      "x": 1086,
-      "y": 3,
+      "x": 24,
+      "y": 24,
       "url": "https://thykeumut.github.io/bordo-ejderha/"
     },
     {
@@ -18,8 +18,8 @@
       "icon": "book",
       "gradient": "auto",
       "public": true,
-      "x": 740,
-      "y": 9,
+      "x": 324,
+      "y": 24,
       "url": "https://thykeumut.github.io/rastgele-site/"
     },
     {
@@ -29,8 +29,8 @@
       "icon": "rocket",
       "gradient": "slate",
       "public": false,
-      "x": 478,
-      "y": 388,
+      "x": 624,
+      "y": 24,
       "u": "aHR0cHM6Ly90aHlrZXVtdXQuZ2l0aHViLmlvL2V2cmltLw=="
     },
     {
@@ -40,8 +40,8 @@
       "icon": "pen",
       "gradient": "plum",
       "public": false,
-      "x": 218,
-      "y": 4,
+      "x": 924,
+      "y": 24,
       "u": "aHR0cHM6Ly90aHlrZXVtdXQuZ2l0aHViLmlvL3Byb210aXN0YW4v"
     },
     {
@@ -51,8 +51,8 @@
       "icon": "sparkles",
       "gradient": "forest",
       "public": false,
-      "x": 203,
-      "y": 271,
+      "x": 1224,
+      "y": 24,
       "u": "aHR0cHM6Ly90aHlrZXVtdXQuZ2l0aHViLmlvL3Rha3ZpbS8="
     },
     {
@@ -62,8 +62,8 @@
       "icon": "code",
       "gradient": "rose",
       "public": true,
-      "x": 1323,
-      "y": 46,
+      "x": 1524,
+      "y": 24,
       "url": "https://thykeumut.github.io/-r-n-site-tan-t-c-/"
     },
     {
@@ -73,8 +73,8 @@
       "icon": "camera",
       "gradient": "wine",
       "public": true,
-      "x": 948,
-      "y": 287,
+      "x": 24,
+      "y": 246,
       "url": "https://game-clips-roan.vercel.app/"
     },
     {
@@ -84,8 +84,8 @@
       "icon": "music",
       "gradient": "slate",
       "public": true,
-      "x": 479,
-      "y": 74,
+      "x": 324,
+      "y": 246,
       "url": "https://thykeumut.github.io/umut/"
     },
     {
@@ -95,8 +95,8 @@
       "icon": "palette",
       "gradient": "plum",
       "public": false,
-      "x": 402,
-      "y": 224,
+      "x": 624,
+      "y": 246,
       "u": "c3Nzc3Nzc3Nzc3Nz"
     },
     {
@@ -106,8 +106,8 @@
       "icon": "palette",
       "gradient": "slate",
       "public": false,
-      "x": 768,
-      "y": 184,
+      "x": 924,
+      "y": 246,
       "u": "YWFhYWFhYWE="
     },
     {
@@ -117,8 +117,8 @@
       "icon": "star",
       "gradient": "forest",
       "public": true,
-      "x": 659,
-      "y": 0,
+      "x": 1224,
+      "y": 246,
       "url": "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj"
     }
   ]
