@@ -2,10 +2,13 @@
 
 React + Vite ile yapılmış, **kartları sürükleyebildiğin** kişisel portfolyo sitesi.
 
+**🌐 Yayında: https://thykeumut.github.io/umut/**
+
 ## Özellikler
 
 - 🔐 **Şifreli yönetici modu** — ziyaretçiler sadece görüntüler, düzenleyemez
 - 👀 **Ziyaretçi modu** — kartları görürler, senin izin verdiğin sitelere gidebilirler
+- 📤 **Yayına Al** — kartlarını tek tıkla GitHub'a yayınla, herkes görsün
 - 🎨 **7 seçilebilir tema** — varsayılan: **Vişne Çürüğü & Altın** (düz siyah-beyaz dahil)
 - 🖱️ Yönetici olarak kartları fareyle **serbestçe sürükle** — konumlar saklanır
 - 🔗 Karta **tıkla** → site yeni sekmede açılır
@@ -91,30 +94,65 @@ Tarayıcıda `http://localhost:5173` açılır.
 ```bash
 npm run build     # dist/ klasörünü üretir
 npm run preview   # üretilen sürümü yerel olarak dener
+npm run deploy    # GitHub Pages'e yayınlar
 ```
 
-`dist/` klasörünü Netlify, Vercel veya GitHub Pages'e yükleyebilirsin.
+## 🌐 Yayın (GitHub Pages)
+
+Site yayında: **https://thykeumut.github.io/umut/**
+
+- Kaynak kod: https://github.com/thykeumut/umut (`main` dalı)
+- Yayınlanan site: `gh-pages` dalı
+- `npm run deploy` → derler ve `gh-pages` dalına gönderir.
+  Yayındaki `sites.json` dosyasını **otomatik korur**, kartların kaybolmaz.
+
+## 📤 Kartları herkesin görmesi (Yayına Al)
+
+Kartlar normalde sadece senin tarayıcında (`localStorage`) durur. Yani sen kart
+eklediğinde **ziyaretçiler bunu görmez**. Herkesin görmesi için kartlar `sites.json`
+dosyasına yazılmalıdır. Bunun için:
+
+1. Sitede yönetici girişi yap (şifre ile).
+2. Kartlarını ekle, sürükleyerek yerleştir.
+3. Üstteki **Yayına Al** düğmesine bas.
+
+İki yol var:
+
+| Yol | Nasıl |
+|---|---|
+| **Tek tık** (önerilen) | GitHub'dan ince erişim anahtarı (fine-grained token) oluştur, panele bir kez yapıştır ve kaydet. Sonra her seferinde tek tıkla yayınlanır. |
+| **Elle** | Paneleki **JSON'u Kopyala** → **GitHub'da Aç** → içeriği yapıştır → **Commit changes**. Yarım dakika sonra sitede görünür. |
+
+Anahtar oluştururken:
+
+- **Repository access:** Only select repositories → `umut`
+- **Permissions → Contents:** `Read and write`
+
+> Anahtar sadece senin tarayıcında saklanır ve sadece bu depoya yazabilir.
+> Yayınlandıktan ~30 saniye sonra sitede görünür.
 
 ## Kendi sitelerini ekleme
 
-Sol üstteki **+ Site ekle** düğmesine bas, formu doldur. Kart tahtaya eklenir;
-yerini fareyle sürükleyerek ayarla. Veriler tarayıcının `localStorage`'ında
-saklanır, sayfayı kapatsan bile kaybolmaz.
+Üstteki **+ Site Ekle** düğmesine bas, formu doldur. Kart tahtaya eklenir;
+yerini fareyle sürükleyerek ayarla. Kendi tarayıcında çalışırken veriler
+`localStorage`'da saklanır, sayfayı kapatsan bile kaybolmaz.
 
-> İpucu: İlk açılışta gelen GitHub / CodePen / Behance kartları örnektir,
-> çöp kutusu simgesiyle silip kendi sitelerini ekleyebilirsin.
+Herkesin görmesi için **Yayına Al** düğmesini kullan (yukarıya bak).
+
+> İlk sürümde tahtada hiç kart yoktur; örnek kart yoktur. İstediğini ekle,
+> istediğini sil.
 
 ## Dosya yapısı
 
 ```
 src/
-  App.jsx                     # ana mantık: kartlar, tema, yönetici modu
+  App.jsx                     # ana mantık: kartlar, tema, yönetici modu, yayın
   index.css                   # tüm tasarım ve tema renkleri
   lib/config.js               # ⚠️ yönetici şifresinin özeti (burayı düzenle)
+  lib/github.js               # Yayına Al: GitHub'a sites.json yazma
   lib/themes.js               # seçilebilir temaların listesi
   lib/gradients.js            # kart kapağı renk seçenekleri
   lib/icons.js                # kart simgesi seçenekleri (Lucide ikonları)
-  lib/defaultSites.js         # başlangıçtaki örnek kartlar
   components/
     Background.jsx            # animasyonlu arka plan
     Hero.jsx                  # üst tanıtım + butonlar
@@ -122,6 +160,11 @@ src/
     SiteCard.jsx              # sürüklenebilir proje kartı
     AddSiteModal.jsx          # site ekleme paneli
     AdminModal.jsx            # şifreli yönetici girişi
+    PublishModal.jsx          # Yayına Al paneli
+public/
+  sites.json                  # herkesin gördüğü kart listesi
+scripts/
+  deploy.mjs                  # npm run deploy (sites.json'u koruyarak yayınlar)
 ```
 
 ## Sonraki adımlar (fikirler)
