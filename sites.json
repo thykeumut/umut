@@ -138,10 +138,10 @@
       "description": "ğğğğğğğğğğğğğğğğğğğğğğğğğğğ",
       "icon": "music",
       "gradient": "gold",
-      "public": false,
+      "public": true,
       "x": 1100,
       "y": 0,
-      "u": "xJ/En8SfxJ/En8SfxJ/En8SfxJ/En8SfxJ/En8SfxJ/En8Sf"
+      "url": "ğğğğğğğğğğğğğğğğğğ"
     }
   ]
 }
