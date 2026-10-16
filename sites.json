@@ -127,10 +127,10 @@
       "description": "ssssddddddddddddddddddddddddddddddd",
       "icon": "globe",
       "gradient": "slate",
-      "public": false,
+      "public": true,
       "x": 706,
       "y": 163,
-      "u": "c3Nzc3Nzc3Nzc3Nzc3Nzc3M="
+      "url": "sssssssssssssssss"
     }
   ]
 }
