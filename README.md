@@ -8,7 +8,6 @@ React + Vite ile yapılmış, **kartları sürükleyebildiğin** kişisel portfo
 
 - 🔐 **Şifreli yönetici modu** — ziyaretçiler sadece görüntüler, düzenleyemez
 - 👀 **Ziyaretçi modu** — kartları görürler, senin izin verdiğin sitelere gidebilirler
-- 📤 **Yayına Al** — kartlarını tek tıkla GitHub'a yayınla, herkes görsün
 - 🎨 **7 seçilebilir tema** — varsayılan: **Vişne Çürüğü & Altın** (düz siyah-beyaz dahil)
 - 🖱️ Yönetici olarak kartları fareyle **serbestçe sürükle** — konumlar saklanır
 - 🔗 Karta **tıkla** → site yeni sekmede açılır
@@ -24,19 +23,26 @@ React + Vite ile yapılmış, **kartları sürükleyebildiğin** kişisel portfo
 Sağ üstteki **Yönetici Girişi** düğmesine basıp şifreyi girince; kart ekleme,
 silme, sürükleme ve "ziyaretçilere aç/kapat" yetkileri açılır.
 
-> **Varsayılan şifre: `umut2026`**
+> **Şifre: `umutyumus0640`**
 
-Şifreyi değiştirmek için yeni şifrenin SHA-256 özetini üret:
+Şifre **kodun içinde saklanmaz.** Saklanan şey:
+
+- Rastgele bir **tuz (salt)**
+- Şifreden **PBKDF2-SHA256** ile **600.000 tur** türetilmiş 256 bitlik özet
+- Bu özet ayrıca **maskelenmiş** (base64 + XOR) hâlde durur
+
+Yani koda bakan biri doğrudan kopyalayıp sözlük saldırısı başlatamaz; tuz
+sayesinde hazır tablolar işe yaramaz. (Yine de tarayıcıda çalışan bir kilit
+olduğu için "basit kilit" sayılır — banka seviyesi koruma değildir.)
+
+Şifreyi değiştirmek için:
 
 ```bash
-node -e "console.log(require('crypto').createHash('sha256').update('YENI_SIFREN').digest('hex'))"
+npm run sifre -- "yeni-sifren"
 ```
 
-Çıkan uzun yazıyı `src/lib/config.js` içindeki `ADMIN_PASSWORD_HASH` değerine yapıştır.
-
-> Not: Bu, tarayıcıda çalışan bir sitede olduğu için **basit bir kilit**tir —
-> kaynak koda bakan biri atlayabilir. Siteyi net bir şekilde korumak istersen
-> gerçek bir giriş sunucusu (ör. Supabase Auth) gerekir; istersen onu da kurabiliriz.
+Bu komut yeni tuz ve özeti üretip `src/lib/config.js` dosyasını günceller.
+Sitede geçerli olması için `npm run deploy` çalıştır.
 
 ## 👀 Ziyaretçi modu ve site görünürlüğü
 
@@ -106,30 +112,24 @@ Site yayında: **https://thykeumut.github.io/umut/**
 - `npm run deploy` → derler ve `gh-pages` dalına gönderir.
   Yayındaki `sites.json` dosyasını **otomatik korur**, kartların kaybolmaz.
 
-## 📤 Kartları herkesin görmesi (Yayına Al)
+## 🗂️ Kartların herkese görünmesi
 
-Kartlar normalde sadece senin tarayıcında (`localStorage`) durur. Yani sen kart
-eklediğinde **ziyaretçiler bunu görmez**. Herkesin görmesi için kartlar `sites.json`
-dosyasına yazılmalıdır. Bunun için:
+Kartlar normalde sadece senin tarayıcında (`localStorage`) durur — yani sen kart
+eklediğinde **ziyaretçiler bunu görmez**. Herkesin gördüğü liste repo içindeki
+`sites.json` dosyasıdır:
 
-1. Sitede yönetici girişi yap (şifre ile).
-2. Kartlarını ekle, sürükleyerek yerleştir.
-3. Üstteki **Yayına Al** düğmesine bas.
+- Yerel dosya: `public/sites.json` (yayına giderken `dist/` içine kopyalanır)
+- Yayındaki dosya: `gh-pages` dalındaki `sites.json`
 
-İki yol var:
+Güncellemenin iki yolu var:
 
-| Yol | Nasıl |
-|---|---|
-| **Tek tık** (önerilen) | GitHub'dan ince erişim anahtarı (fine-grained token) oluştur, panele bir kez yapıştır ve kaydet. Sonra her seferinde tek tıkla yayınlanır. |
-| **Elle** | Paneleki **JSON'u Kopyala** → **GitHub'da Aç** → içeriği yapıştır → **Commit changes**. Yarım dakika sonra sitede görünür. |
+1. **Bana söyle:** Kartlarını sitede ekle/düzenle, sonra bana "yayınla" de —
+   listeyi `sites.json`'a yazıp yayınlayayım.
+2. **Kendin:** GitHub'da `gh-pages` dalındaki `sites.json` dosyasını düzenle
+   (kalem simgesi → yapıştır → *Commit changes*). ~30 saniye sonra sitede görünür.
 
-Anahtar oluştururken:
-
-- **Repository access:** Only select repositories → `umut`
-- **Permissions → Contents:** `Read and write`
-
-> Anahtar sadece senin tarayıcında saklanır ve sadece bu depoya yazabilir.
-> Yayınlandıktan ~30 saniye sonra sitede görünür.
+> ⚠️ Bu yüzden `npm run deploy` çalıştırırken `sites.json` dosyan
+> **otomatik korunur** (betik önce yayındaki listeyi indirir).
 
 ## Kendi sitelerini ekleme
 
@@ -137,7 +137,8 @@ Anahtar oluştururken:
 yerini fareyle sürükleyerek ayarla. Kendi tarayıcında çalışırken veriler
 `localStorage`'da saklanır, sayfayı kapatsan bile kaybolmaz.
 
-Herkesin görmesi için **Yayına Al** düğmesini kullan (yukarıya bak).
+Herkesin görmesi için yukarıdaki **Kartların herkese görünmesi** bölümüne bak.
+
 
 > İlk sürümde tahtada hiç kart yoktur; örnek kart yoktur. İstediğini ekle,
 > istediğini sil.
@@ -146,10 +147,9 @@ Herkesin görmesi için **Yayına Al** düğmesini kullan (yukarıya bak).
 
 ```
 src/
-  App.jsx                     # ana mantık: kartlar, tema, yönetici modu, yayın
+  App.jsx                     # ana mantık: kartlar, tema, yönetici modu
   index.css                   # tüm tasarım ve tema renkleri
-  lib/config.js               # ⚠️ yönetici şifresinin özeti (burayı düzenle)
-  lib/github.js               # Yayına Al: GitHub'a sites.json yazma
+  lib/config.js               # yönetici kilidi (tuz + PBKDF2 özeti, maskeli)
   lib/themes.js               # seçilebilir temaların listesi
   lib/gradients.js            # kart kapağı renk seçenekleri
   lib/icons.js                # kart simgesi seçenekleri (Lucide ikonları)
@@ -160,11 +160,11 @@ src/
     SiteCard.jsx              # sürüklenebilir proje kartı
     AddSiteModal.jsx          # site ekleme paneli
     AdminModal.jsx            # şifreli yönetici girişi
-    PublishModal.jsx          # Yayına Al paneli
 public/
   sites.json                  # herkesin gördüğü kart listesi
 scripts/
   deploy.mjs                  # npm run deploy (sites.json'u koruyarak yayınlar)
+  sifre.mjs                   # npm run sifre -- "yeni-sifre"
 ```
 
 ## Sonraki adımlar (fikirler)

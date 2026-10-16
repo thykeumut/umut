@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "deploy": "node scripts/deploy.mjs"
+    "deploy": "node scripts/deploy.mjs",
+    "sifre": "node scripts/sifre.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.58.0",

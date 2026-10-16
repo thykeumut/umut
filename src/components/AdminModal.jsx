@@ -1,15 +1,37 @@
 import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
-import { ADMIN_PASSWORD_HASH } from '../lib/config'
+import { ADMIN_KEY, openExpected } from '../lib/config'
 
-// Şifreyi SHA-256 özetine çevirir (şifrenin kendisi kodda durmaz)
-async function sha256(text) {
+// Şifreden PBKDF2-SHA256 özeti üretir (210.000 tur).
+// Şifrenin kendisi kodda saklanmaz; özet maskeli durur.
+function hexToBytes(hex) {
+  const out = new Uint8Array(hex.length / 2)
+  for (let i = 0; i < out.length; i++) {
+    out[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16)
+  }
+  return out
+}
+
+async function derive(password) {
   if (!globalThis.crypto?.subtle) throw new Error('unsupported')
-  const buf = await crypto.subtle.digest(
-    'SHA-256',
-    new TextEncoder().encode(text)
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(password),
+    'PBKDF2',
+    false,
+    ['deriveBits']
   )
-  return [...new Uint8Array(buf)]
+  const bits = await crypto.subtle.deriveBits(
+    {
+      name: 'PBKDF2',
+      salt: hexToBytes(ADMIN_KEY.salt),
+      iterations: ADMIN_KEY.rounds,
+      hash: 'SHA-256',
+    },
+    keyMaterial,
+    256
+  )
+  return [...new Uint8Array(bits)]
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('')
 }
@@ -40,8 +62,8 @@ export default function AdminModal({ open, onClose, onUnlock }) {
     setBusy(true)
     setError('')
     try {
-      const hash = await sha256(password)
-      if (hash === ADMIN_PASSWORD_HASH) {
+      const derived = await derive(password)
+      if (derived && derived === openExpected()) {
         onUnlock()
       } else {
         setError('Şifre yanlış, tekrar dene.')

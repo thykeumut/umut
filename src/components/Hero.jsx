@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Lock, UploadCloud } from 'lucide-react'
+import { Lock } from 'lucide-react'
 import ThemeSwitcher from './ThemeSwitcher.jsx'
 
 const WORDS = ['Front-end', 'React', 'Tasarım', 'Projeler', 'Denemeler']
@@ -8,7 +8,6 @@ const WORDS = ['Front-end', 'React', 'Tasarım', 'Projeler', 'Denemeler']
 export default function Hero({
   onAdd,
   onReset,
-  onPublish,
   count,
   theme,
   onThemeChange,
@@ -81,14 +80,6 @@ export default function Hero({
               <>
                 <button className="btn btn-primary" onClick={onAdd}>
                   <span className="btn-plus">+</span> Site Ekle
-                </button>
-                <button
-                  className="btn btn-ghost"
-                  onClick={onPublish}
-                  title="Kartlarını herkesin göreceği şekilde yayınla"
-                >
-                  <UploadCloud size={15} strokeWidth={2.1} />
-                  Yayına Al
                 </button>
                 <button className="btn btn-ghost" onClick={onReset}>
                   Yerleşimi Sıfırla

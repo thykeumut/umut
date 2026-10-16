@@ -4,12 +4,10 @@ import Hero from './components/Hero.jsx'
 import SiteCard from './components/SiteCard.jsx'
 import AddSiteModal from './components/AddSiteModal.jsx'
 import AdminModal from './components/AdminModal.jsx'
-import PublishModal from './components/PublishModal.jsx'
 import { GRADIENTS } from './lib/gradients.js'
 import { DEFAULT_THEME, themeById } from './lib/themes.js'
 import { DEFAULT_ICON, iconFromLegacyEmoji } from './lib/icons.js'
 import { ADMIN_STORAGE_KEY } from './lib/config.js'
-import { siteUrl } from './lib/github.js'
 
 // Yöneticinin kendi tarayıcısındaki çalışma kopyası
 const DRAFT_KEY = 'umut-portfolyo:sites:v1'
@@ -91,7 +89,6 @@ export default function App() {
   const [isAdmin, setIsAdmin] = useState(loadAdmin)
   const [activeId, setActiveId] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
-  const [publishOpen, setPublishOpen] = useState(false)
   const [adminOpen, setAdminOpen] = useState(false)
   const [toast, setToast] = useState('')
   const [isMobile, setIsMobile] = useState(
@@ -319,7 +316,6 @@ export default function App() {
         isAdmin={isAdmin}
         onAdd={() => setModalOpen(true)}
         onReset={resetLayout}
-        onPublish={() => setPublishOpen(true)}
         onAdminClick={() => (isAdmin ? lockAdmin() : setAdminOpen(true))}
       />
 
@@ -352,18 +348,9 @@ export default function App() {
           <div className="empty">
             <p>Henüz kart yok.</p>
             {isAdmin ? (
-              <>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => setModalOpen(true)}
-                >
-                  + İlk Siteni Ekle
-                </button>
-                <p className="empty-note">
-                  Kart ekledikten sonra <strong>Yayına Al</strong> düğmesine bas ki
-                  herkes görebilsin.
-                </p>
-              </>
+              <button className="btn btn-primary" onClick={() => setModalOpen(true)}>
+                + İlk Siteni Ekle
+              </button>
             ) : (
               <p className="empty-note">Yakında burada projeler olacak.</p>
             )}
@@ -389,14 +376,6 @@ export default function App() {
         open={adminOpen}
         onClose={() => setAdminOpen(false)}
         onUnlock={unlockAdmin}
-      />
-
-      <PublishModal
-        open={publishOpen}
-        onClose={() => setPublishOpen(false)}
-        sites={sites}
-        published={published}
-        onPublished={() => setPublished(sites)}
       />
 
       {toast && <div className="toast">{toast}</div>}
