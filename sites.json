@@ -98,6 +98,17 @@
       "x": 402,
       "y": 224,
       "u": "c3Nzc3Nzc3Nzc3Nz"
+    },
+    {
+      "id": "d6882cad-95fe-4368-b7c7-df4967c5ec9f",
+      "title": "aaaanan",
+      "description": "aaaaaaaaaa",
+      "icon": "palette",
+      "gradient": "slate",
+      "public": false,
+      "x": 768,
+      "y": 184,
+      "u": "YWFhYWFhYWE="
     }
   ]
 }
