@@ -4,16 +4,23 @@ import Hero from './components/Hero.jsx'
 import SiteCard from './components/SiteCard.jsx'
 import AddSiteModal from './components/AddSiteModal.jsx'
 import AdminModal from './components/AdminModal.jsx'
+import PublishSetup from './components/PublishSetup.jsx'
 import { GRADIENTS } from './lib/gradients.js'
 import { DEFAULT_THEME, themeById } from './lib/themes.js'
 import { DEFAULT_ICON, iconFromLegacyEmoji } from './lib/icons.js'
 import { ADMIN_STORAGE_KEY } from './lib/config.js'
+import {
+  fromBase64,
+  hasToken,
+  publishShape,
+  publishSites,
+} from './lib/github.js'
 
 // Yöneticinin kendi tarayıcısındaki çalışma kopyası
 const DRAFT_KEY = 'umut-portfolyo:sites:v1'
 const THEME_KEY = 'umut-portfolyo:theme:v1'
 // Yayındaki (herkesin gördüğü) kart listesi
-const PUBLISHED_URL = `${import.meta.env.BASE_URL}sites.json`
+const PUBLISHED_PATH = `${import.meta.env.BASE_URL}sites.json`
 const CARD_W = 280
 const CARD_H = 210
 
@@ -26,15 +33,20 @@ const uid = () =>
 // Ayrıca konum/yetki alanları eksikse güvenli varsayılan verir; böylece
 // eski kayıtlarda kartlar üst üste binmez.
 function normalizeSite(site, index = 0) {
-  const { emoji, ...rest } = site
+  const { emoji, u, ...rest } = site
   return {
     ...rest,
+    // Gizli kartların adresi yayın dosyasında düz yazılmaz; burada çözülür.
+    url: site.url || (u ? fromBase64(u) : ''),
     icon: site.icon || iconFromLegacyEmoji(emoji) || DEFAULT_ICON,
     x: Number.isFinite(site.x) ? site.x : 28 + (index % 3) * 300,
     y: Number.isFinite(site.y) ? site.y : 28 + Math.floor(index / 3) * 232,
     public: !!site.public,
   }
 }
+
+// Yayına yazılacak biçim: gizli kartların adresi düz yazılmaz
+// (bkz. src/lib/github.js → publishShape)
 
 // Yöneticinin kendi tarayıcısındaki çalışma kopyasını oku
 function loadDraft() {
@@ -49,10 +61,13 @@ function loadDraft() {
   return null
 }
 
-// Yayındaki sites.json dosyasını oku (herkesin gördüğü liste)
+// Yayındaki sites.json dosyasını oku (herkesin gördüğü liste).
+// Zaman damgası eklenir ki ziyaretçiler eski (önbellekteki) listeyi görmesin.
 async function fetchPublished() {
   try {
-    const res = await fetch(PUBLISHED_URL, { cache: 'no-store' })
+    const res = await fetch(`${PUBLISHED_PATH}?v=${Date.now()}`, {
+      cache: 'no-store',
+    })
     if (!res.ok) return null
     const data = await res.json()
     const list = Array.isArray(data) ? data : data?.sites
@@ -90,6 +105,8 @@ export default function App() {
   const [activeId, setActiveId] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [adminOpen, setAdminOpen] = useState(false)
+  const [publishSetupOpen, setPublishSetupOpen] = useState(false)
+  const [publishWarn, setPublishWarn] = useState('')
   const [toast, setToast] = useState('')
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== 'undefined' && window.innerWidth < 760
@@ -98,6 +115,10 @@ export default function App() {
 
   const boardRef = useRef(null)
   const toastTimer = useRef(null)
+  const dirtyRef = useRef(false)
+  const publishTimer = useRef(null)
+  const publishSeq = useRef(0)
+  const promptedRef = useRef(false)
 
   // Seçilen temayı <html> etiketine uygula ve hatırla
   useEffect(() => {
@@ -147,6 +168,41 @@ export default function App() {
     toastTimer.current = setTimeout(() => setToast(''), 2600)
   }, [])
 
+  // Yönetici bir kart eklediğinde / taşıdığında / sildiğinde, listeyi
+  // arka planda GitHub'a yaz. Böylece ayrı bir "yayınla" adımı gerekmez.
+  useEffect(() => {
+    if (!isAdmin || !dirtyRef.current) return
+
+    clearTimeout(publishTimer.current)
+    publishTimer.current = setTimeout(async () => {
+      dirtyRef.current = false
+      const mySeq = ++publishSeq.current
+
+      if (!hasToken()) {
+        setPublishWarn('Kartlar şu an sadece sende görünüyor')
+        showToast('Kart kaydedildi — herkesin görmesi için yayın bağlantısını kur')
+        if (!promptedRef.current) {
+          promptedRef.current = true
+          setPublishSetupOpen(true)
+        }
+        return
+      }
+
+      try {
+        await publishSites(sites.map(publishShape))
+        if (mySeq !== publishSeq.current) return
+        setPublishWarn('')
+        showToast('Yayınlandı — artık herkes görebilir')
+      } catch (err) {
+        if (mySeq !== publishSeq.current) return
+        setPublishWarn(err.message || 'Yayınlanamadı')
+        showToast(`Yayınlanamadı: ${err.message || 'bilinmeyen hata'}`)
+      }
+    }, 1400)
+
+    return () => clearTimeout(publishTimer.current)
+  }, [sites, isAdmin, showToast])
+
   // Kartları tahta sınırları içine çek
   const clampAll = useCallback(() => {
     const board = boardRef.current
@@ -180,8 +236,14 @@ export default function App() {
     return () => window.removeEventListener('resize', onResize)
   }, [clampAll])
 
-  const moveSite = (id, x, y) =>
+  const markDirty = () => {
+    dirtyRef.current = true
+  }
+
+  const moveSite = (id, x, y) => {
+    markDirty()
     setSites((prev) => prev.map((s) => (s.id === id ? { ...s, x, y } : s)))
+  }
 
   // Karta tıklanınca: yönetici her siteye, ziyaretçi ise sadece
   // "ziyaretçilere açık" işaretlenen sitelere gidebilir.
@@ -196,12 +258,14 @@ export default function App() {
   }
 
   const deleteSite = (id) => {
+    markDirty()
     setSites((prev) => prev.filter((s) => s.id !== id))
     setActiveId((cur) => (cur === id ? null : cur))
   }
 
   // Ziyaretçilere aç / kapat
   const togglePublic = (id) => {
+    markDirty()
     setSites((prev) =>
       prev.map((s) => (s.id === id ? { ...s, public: !s.public } : s))
     )
@@ -216,6 +280,7 @@ export default function App() {
   }
 
   const addSite = (data) => {
+    markDirty()
     const board = boardRef.current
     const maxX = Math.max(0, (board?.clientWidth || 900) - CARD_W)
     const maxY = Math.max(0, (board?.clientHeight || 480) - CARD_H)
@@ -252,6 +317,7 @@ export default function App() {
   const resetLayout = () => {
     const board = boardRef.current
     if (!board || isMobile) return
+    markDirty()
 
     const gap = 24
     const width = board.clientWidth
@@ -305,6 +371,14 @@ export default function App() {
     showToast('Yönetici modu kapatıldı — artık ziyaretçi görünümündesin')
   }
 
+  // Yayın anahtarı bağlandığında/çıkarıldığında bekleyen kartları hemen yayınla
+  const handlePublishSetupSaved = () => {
+    setPublishSetupOpen(false)
+    setPublishWarn(hasToken() ? '' : 'Kartlar şu an sadece sende görünüyor')
+    dirtyRef.current = true
+    setSites((prev) => [...prev])
+  }
+
   return (
     <div className="app">
       <Background />
@@ -317,6 +391,10 @@ export default function App() {
         onAdd={() => setModalOpen(true)}
         onReset={resetLayout}
         onAdminClick={() => (isAdmin ? lockAdmin() : setAdminOpen(true))}
+        publishNote={
+          isAdmin ? publishWarn || (!hasToken() ? 'Yayın bağlantısı kurulmadı' : '') : ''
+        }
+        onPublishSetup={() => setPublishSetupOpen(true)}
       />
 
       <main
@@ -376,6 +454,12 @@ export default function App() {
         open={adminOpen}
         onClose={() => setAdminOpen(false)}
         onUnlock={unlockAdmin}
+      />
+
+      <PublishSetup
+        open={publishSetupOpen}
+        onClose={() => setPublishSetupOpen(false)}
+        onSaved={handlePublishSetupSaved}
       />
 
       {toast && <div className="toast">{toast}</div>}

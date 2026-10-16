@@ -8,6 +8,8 @@ React + Vite ile yapılmış, **kartları sürükleyebildiğin** kişisel portfo
 
 - 🔐 **Şifreli yönetici modu** — ziyaretçiler sadece görüntüler, düzenleyemez
 - 👀 **Ziyaretçi modu** — kartları görürler, senin izin verdiğin sitelere gidebilirler
+- ⚡ **Otomatik yayın** — "+ Site Ekle" ile eklediğin kart anında herkese görünür (düğme yok)
+- 🔒 **Gizli kartlar** — adresleri yayına yazılmaz, ziyaretçi tıklasa da gidemez
 - 🎨 **7 seçilebilir tema** — varsayılan: **Vişne Çürüğü & Altın** (düz siyah-beyaz dahil)
 - 🖱️ Yönetici olarak kartları fareyle **serbestçe sürükle** — konumlar saklanır
 - 🔗 Karta **tıkla** → site yeni sekmede açılır
@@ -112,32 +114,47 @@ Site yayında: **https://thykeumut.github.io/umut/**
 - `npm run deploy` → derler ve `gh-pages` dalına gönderir.
   Yayındaki `sites.json` dosyasını **otomatik korur**, kartların kaybolmaz.
 
-## 🗂️ Kartların herkese görünmesi
+## 🗂️ Kartların herkese görünmesi (otomatik yayın)
 
-Kartlar normalde sadece senin tarayıcında (`localStorage`) durur — yani sen kart
-eklediğinde **ziyaretçiler bunu görmez**. Herkesin gördüğü liste repo içindeki
-`sites.json` dosyasıdır:
+**"+ Site Ekle" ile kart eklediğin an** site kendi kendine yayınlar: kart,
+tarayıcıda değil **repo içindeki `sites.json`** dosyasına yazılır ve ~1 dakika
+içinde **herkes** görür. Ayrı bir "yayınla" düğmesi yoktur.
 
-- Yerel dosya: `public/sites.json` (yayına giderken `dist/` içine kopyalanır)
-- Yayındaki dosya: `gh-pages` dalındaki `sites.json`
+Bunun için **tek seferlik** bir ayar gerekir: yönetici modunda bir kez
+**Yayın Bağlantısı**'nı kurarsın (bir GitHub yazma anahtarı yapıştırırsın).
+Anahtar sadece senin tarayıcında saklanır ve **kodda bulunmaz** — çünkü depo
+herkese açıktır, koda konsaydı herkes görebilirdi.
 
-Güncellemenin iki yolu var:
+Kurulum adımları (panelde de yazılıdır):
 
-1. **Bana söyle:** Kartlarını sitede ekle/düzenle, sonra bana "yayınla" de —
-   listeyi `sites.json`'a yazıp yayınlayayım.
-2. **Kendin:** GitHub'da `gh-pages` dalındaki `sites.json` dosyasını düzenle
-   (kalem simgesi → yapıştır → *Commit changes*). ~30 saniye sonra sitede görünür.
+1. GitHub → *Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token*
+   (kısayol: `https://github.com/settings/personal-access-tokens/new`)
+2. **Token name:** `umut-portfolyo` — **Expiration:** `1 yıl`
+3. **Repository access:** *Only select repositories* → `umut`
+4. **Permissions → Repository permissions →** *Contents*: **Read and write**
+5. *Generate token* → çıkan `github_pat_…` anahtarını panele yapıştır → **Bağla**
 
-> ⚠️ Bu yüzden `npm run deploy` çalıştırırken `sites.json` dosyan
-> **otomatik korunur** (betik önce yayındaki listeyi indirir).
+Bağlandıktan sonra kart eklediğinde / taşıdığında / sildiğinde liste sessizce
+GitHub'a yazılır ve bildirim olarak "Yayınlandı" görürsün.
+
+> ⚠️ `npm run deploy` çalıştırırken yayındaki `sites.json` dosyan
+> **otomatik korunur** (betik önce yayındaki listeyi indirir), yani kartların
+> kaybolmaz.
+
+### 🔒 Gizli kartlar
+
+"Ziyaretçiler bu siteye gidebilsin" anahtarı **kapalı** olan kartlar:
+
+- Herkese **görünür** (başlık, açıklama, kilit simgesi)
+- Ama adresi yayına **düz metin olarak yazılmaz** (kodlanmış hâlde durur);
+  ziyaretçi tıklasa da site açılmaz. Adresi görmek için `sites.json`'u açman
+  yeterli değildir — sadece yönetici görünümünde çözülür.
 
 ## Kendi sitelerini ekleme
 
 Üstteki **+ Site Ekle** düğmesine bas, formu doldur. Kart tahtaya eklenir;
-yerini fareyle sürükleyerek ayarla. Kendi tarayıcında çalışırken veriler
-`localStorage`'da saklanır, sayfayı kapatsan bile kaybolmaz.
-
-Herkesin görmesi için yukarıdaki **Kartların herkese görünmesi** bölümüne bak.
+yerini fareyle sürükleyerek ayarla. Veriler tarayıcında (`localStorage`) saklanır
+ve **otomatik olarak yayına** yazılır (yukarıya bak).
 
 
 > İlk sürümde tahtada hiç kart yoktur; örnek kart yoktur. İstediğini ekle,
@@ -150,6 +167,7 @@ src/
   App.jsx                     # ana mantık: kartlar, tema, yönetici modu
   index.css                   # tüm tasarım ve tema renkleri
   lib/config.js               # yönetici kilidi (tuz + PBKDF2 özeti, maskeli)
+  lib/github.js               # otomatik yayın: sites.json'u GitHub'a yazar
   lib/themes.js               # seçilebilir temaların listesi
   lib/gradients.js            # kart kapağı renk seçenekleri
   lib/icons.js                # kart simgesi seçenekleri (Lucide ikonları)
@@ -160,6 +178,7 @@ src/
     SiteCard.jsx              # sürüklenebilir proje kartı
     AddSiteModal.jsx          # site ekleme paneli
     AdminModal.jsx            # şifreli yönetici girişi
+    PublishSetup.jsx          # tek seferlik yayın bağlantısı (anahtar) paneli
 public/
   sites.json                  # herkesin gördüğü kart listesi
 scripts/

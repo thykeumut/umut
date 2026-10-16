@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Lock } from 'lucide-react'
+import { CloudOff, Lock } from 'lucide-react'
 import ThemeSwitcher from './ThemeSwitcher.jsx'
 
 const WORDS = ['Front-end', 'React', 'Tasarım', 'Projeler', 'Denemeler']
@@ -13,6 +13,8 @@ export default function Hero({
   onThemeChange,
   isAdmin,
   onAdminClick,
+  publishNote,
+  onPublishSetup,
 }) {
   const [wordIndex, setWordIndex] = useState(0)
   const [text, setText] = useState('')
@@ -65,6 +67,14 @@ export default function Hero({
               </>
             )}
           </p>
+
+          {isAdmin && publishNote && (
+            <button className="publish-note" onClick={onPublishSetup}>
+              <CloudOff size={13} strokeWidth={2.2} />
+              <span>{publishNote}</span>
+              <span className="publish-note-cta">Bağla</span>
+            </button>
+          )}
         </div>
 
         <div className="hero-actions">

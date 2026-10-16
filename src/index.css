@@ -432,6 +432,40 @@ button {
   font-weight: 600;
 }
 
+/* Yöneticiye özel: yayın bağlantısı kurulmadığında görünen küçük uyarı */
+.publish-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  padding: 7px 11px;
+  font: inherit;
+  font-size: 12.5px;
+  line-height: 1;
+  color: var(--text);
+  background: var(--input-bg);
+  border: 1px solid var(--warn);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.publish-note:hover {
+  background: var(--surface-hi);
+}
+
+.publish-note svg {
+  color: var(--warn);
+}
+
+.publish-note-cta {
+  padding-left: 8px;
+  margin-left: 2px;
+  font-weight: 600;
+  color: var(--accent);
+  border-left: 1px solid var(--line);
+}
+
 .hero-actions {
   display: flex;
   flex-direction: column;
@@ -951,6 +985,63 @@ button {
   font-size: 13px;
   line-height: 1.55;
   color: var(--muted);
+}
+
+.modal-note code,
+.hint-small code,
+.steps code {
+  padding: 1px 5px;
+  font-size: 12px;
+  border-radius: 6px;
+  background: var(--input-bg);
+  color: var(--text);
+}
+
+/* Yayın bağlantısı kurulumu — numaralı adımlar */
+.steps {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 7px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.steps li::marker {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.steps strong {
+  color: var(--text);
+}
+
+.steps-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.steps-link:hover {
+  text-decoration: underline;
+}
+
+.hint-small {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  opacity: 0.9;
+}
+
+.field-label--icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
 }
 
 /* Simge seçici */
