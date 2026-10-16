@@ -1,3 +1,81 @@
 {
-  "sites": []
+  "sites": [
+    {
+      "id": "63653a7e-5058-42a6-a469-8c0018fae38e",
+      "title": "Ejderha Sürme",
+      "description": "",
+      "icon": "gamepad",
+      "gradient": "wine",
+      "public": true,
+      "x": 1086,
+      "y": 3,
+      "url": "https://thykeumut.github.io/bordo-ejderha/"
+    },
+    {
+      "id": "2eeed7f6-2ad3-4995-b438-283022dae0cc",
+      "title": "Bilgi Hazinesi",
+      "description": "",
+      "icon": "book",
+      "gradient": "auto",
+      "public": true,
+      "x": 740,
+      "y": 9,
+      "url": "https://thykeumut.github.io/rastgele-site/"
+    },
+    {
+      "id": "3f795be2-9283-4fd9-89cc-88c107b6e246",
+      "title": "Evrim Oyunu",
+      "description": "",
+      "icon": "rocket",
+      "gradient": "slate",
+      "public": false,
+      "x": 478,
+      "y": 388,
+      "u": "aHR0cHM6Ly90aHlrZXVtdXQuZ2l0aHViLmlvL2V2cmltLw=="
+    },
+    {
+      "id": "17a18033-407f-4468-a782-3d04027f852f",
+      "title": "Promtistan",
+      "description": "Hazır promtları bul , promtlar oluştur.",
+      "icon": "pen",
+      "gradient": "plum",
+      "public": false,
+      "x": 218,
+      "y": 4,
+      "u": "aHR0cHM6Ly90aHlrZXVtdXQuZ2l0aHViLmlvL3Byb210aXN0YW4v"
+    },
+    {
+      "id": "4ac0f7ab-305a-4981-95ee-e28628bfb783",
+      "title": "Görev Yöneticisi",
+      "description": "",
+      "icon": "sparkles",
+      "gradient": "forest",
+      "public": false,
+      "x": 203,
+      "y": 271,
+      "u": "aHR0cHM6Ly90aHlrZXVtdXQuZ2l0aHViLmlvL3Rha3ZpbS8="
+    },
+    {
+      "id": "6257a55c-b2d5-47b1-a3b4-6de94f738372",
+      "title": "Websitesi Yaptırıcı",
+      "description": "",
+      "icon": "code",
+      "gradient": "rose",
+      "public": true,
+      "x": 1323,
+      "y": 46,
+      "url": "https://thykeumut.github.io/-r-n-site-tan-t-c-/"
+    },
+    {
+      "id": "a6fe1ad3-7105-410e-86e1-6983a015cc10",
+      "title": "Klip sitesi",
+      "description": "",
+      "icon": "camera",
+      "gradient": "wine",
+      "public": true,
+      "x": 948,
+      "y": 287,
+      "url": "https://game-clips-roan.vercel.app/"
+    }
+  ]
 }
