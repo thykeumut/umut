@@ -18,8 +18,8 @@
       "icon": "book",
       "gradient": "auto",
       "public": true,
-      "x": 1032,
-      "y": 301,
+      "x": 333,
+      "y": 24,
       "url": "https://thykeumut.github.io/rastgele-site/"
     },
     {
@@ -73,8 +73,8 @@
       "icon": "camera",
       "gradient": "wine",
       "public": false,
-      "x": 101,
-      "y": 288
+      "x": 934,
+      "y": 289
     }
   ]
 }
