@@ -51,8 +51,8 @@
       "icon": "sparkles",
       "gradient": "forest",
       "public": false,
-      "x": 635,
-      "y": 24,
+      "x": 1103,
+      "y": 178,
       "u": "aHR0cHM6Ly90aHlrZXVtdXQuZ2l0aHViLmlvL3Rha3ZpbS8="
     },
     {
@@ -139,7 +139,7 @@
       "icon": "music",
       "gradient": "gold",
       "public": true,
-      "x": 635,
+      "x": 1238,
       "y": 0,
       "url": "ğğğğğğğğğğğğğğğğğğ"
     }
