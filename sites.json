@@ -6,10 +6,9 @@
       "description": "",
       "icon": "gamepad",
       "gradient": "wine",
-      "public": true,
+      "public": false,
       "x": 24,
-      "y": 24,
-      "url": "https://thykeumut.github.io/bordo-ejderha/"
+      "y": 24
     },
     {
       "id": "2eeed7f6-2ad3-4995-b438-283022dae0cc",
