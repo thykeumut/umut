@@ -18,8 +18,8 @@
       "icon": "book",
       "gradient": "auto",
       "public": true,
-      "x": 324,
-      "y": 24,
+      "x": 1032,
+      "y": 301,
       "url": "https://thykeumut.github.io/rastgele-site/"
     },
     {
@@ -72,10 +72,9 @@
       "description": "",
       "icon": "camera",
       "gradient": "wine",
-      "public": true,
-      "x": 24,
-      "y": 246,
-      "url": "https://game-clips-roan.vercel.app/"
+      "public": false,
+      "x": 101,
+      "y": 288
     }
   ]
 }
