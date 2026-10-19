@@ -82,9 +82,10 @@
       "description": "",
       "icon": "film",
       "gradient": "plum",
-      "public": false,
+      "public": true,
       "x": 335,
-      "y": 280
+      "y": 272,
+      "url": "https://thykeumut.github.io/film-kitapligi/"
     }
   ]
 }
