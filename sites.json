@@ -29,8 +29,8 @@
       "icon": "rocket",
       "gradient": "slate",
       "public": true,
-      "x": 624,
-      "y": 24,
+      "x": 834,
+      "y": 17,
       "url": "https://thykeumut.github.io/evrim/"
     },
     {
@@ -51,8 +51,8 @@
       "icon": "sparkles",
       "gradient": "forest",
       "public": true,
-      "x": 630,
-      "y": 249,
+      "x": 918,
+      "y": 310,
       "url": "https://thykeumut.github.io/takvim/"
     },
     {
@@ -62,8 +62,8 @@
       "icon": "code",
       "gradient": "rose",
       "public": true,
-      "x": 1087,
-      "y": 121,
+      "x": 1252,
+      "y": 97,
       "url": "https://thykeumut.github.io/-r-n-site-tan-t-c-/"
     },
     {
@@ -84,8 +84,8 @@
       "icon": "film",
       "gradient": "plum",
       "public": true,
-      "x": 329,
-      "y": 220,
+      "x": 464,
+      "y": 273,
       "url": "https://thykeumut.github.io/film-kitapligi/"
     }
   ]
