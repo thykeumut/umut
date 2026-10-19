@@ -39,9 +39,10 @@
       "description": "Hazır promtları bul , promtlar oluştur.",
       "icon": "pen",
       "gradient": "plum",
-      "public": false,
+      "public": true,
       "x": 924,
-      "y": 24
+      "y": 24,
+      "url": "https://thykeumut.github.io/promtistan/"
     },
     {
       "id": "4ac0f7ab-305a-4981-95ee-e28628bfb783",
