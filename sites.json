@@ -28,9 +28,10 @@
       "description": "",
       "icon": "rocket",
       "gradient": "slate",
-      "public": false,
+      "public": true,
       "x": 624,
-      "y": 24
+      "y": 24,
+      "url": "https://thykeumut.github.io/evrim/"
     },
     {
       "id": "17a18033-407f-4468-a782-3d04027f852f",
@@ -73,17 +74,6 @@
       "x": 24,
       "y": 246,
       "url": "https://game-clips-roan.vercel.app/"
-    },
-    {
-      "id": "4f700ae0-7621-4def-9dbb-6753f18afd6e",
-      "title": "dsadasd",
-      "description": "sssss",
-      "icon": "music",
-      "gradient": "slate",
-      "public": true,
-      "x": 324,
-      "y": 246,
-      "url": "https://thykeumut.github.io/umut/"
     }
   ]
 }
