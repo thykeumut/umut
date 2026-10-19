@@ -75,6 +75,16 @@
       "public": false,
       "x": 24,
       "y": 268
+    },
+    {
+      "id": "23a59a47-76f8-406b-9647-518e0cba1e4c",
+      "title": "Film kitaplığı",
+      "description": "",
+      "icon": "film",
+      "gradient": "plum",
+      "public": false,
+      "x": 335,
+      "y": 280
     }
   ]
 }
