@@ -40,7 +40,7 @@
       "icon": "pen",
       "gradient": "plum",
       "public": true,
-      "x": 924,
+      "x": 635,
       "y": 24,
       "url": "https://thykeumut.github.io/promtistan/"
     },
@@ -51,7 +51,7 @@
       "icon": "sparkles",
       "gradient": "forest",
       "public": true,
-      "x": 1224,
+      "x": 635,
       "y": 24,
       "url": "https://thykeumut.github.io/takvim/"
     },
@@ -62,7 +62,7 @@
       "icon": "code",
       "gradient": "rose",
       "public": true,
-      "x": 1524,
+      "x": 635,
       "y": 24,
       "url": "https://thykeumut.github.io/-r-n-site-tan-t-c-/"
     },
@@ -72,9 +72,10 @@
       "description": "",
       "icon": "camera",
       "gradient": "wine",
-      "public": false,
+      "public": true,
       "x": 24,
-      "y": 268
+      "y": 220,
+      "url": "https://game-clips-roan.vercel.app/"
     },
     {
       "id": "23a59a47-76f8-406b-9647-518e0cba1e4c",
@@ -84,7 +85,7 @@
       "gradient": "plum",
       "public": true,
       "x": 329,
-      "y": 280,
+      "y": 220,
       "url": "https://thykeumut.github.io/film-kitapligi/"
     }
   ]
