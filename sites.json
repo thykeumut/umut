@@ -29,8 +29,8 @@
       "icon": "rocket",
       "gradient": "slate",
       "public": true,
-      "x": 624,
-      "y": 24,
+      "x": 1133,
+      "y": 30,
       "url": "https://thykeumut.github.io/evrim/"
     },
     {
@@ -40,8 +40,8 @@
       "icon": "pen",
       "gradient": "plum",
       "public": true,
-      "x": 924,
-      "y": 24,
+      "x": 1018,
+      "y": 109,
       "url": "https://thykeumut.github.io/promtistan/"
     },
     {
@@ -51,8 +51,8 @@
       "icon": "sparkles",
       "gradient": "forest",
       "public": true,
-      "x": 1224,
-      "y": 24,
+      "x": 902,
+      "y": 223,
       "url": "https://thykeumut.github.io/takvim/"
     },
     {
@@ -62,8 +62,8 @@
       "icon": "code",
       "gradient": "rose",
       "public": true,
-      "x": 1524,
-      "y": 24,
+      "x": 903,
+      "y": 36,
       "url": "https://thykeumut.github.io/-r-n-site-tan-t-c-/"
     },
     {
@@ -74,7 +74,7 @@
       "gradient": "wine",
       "public": true,
       "x": 24,
-      "y": 268,
+      "y": 220,
       "url": "https://game-clips-roan.vercel.app/"
     },
     {
@@ -85,7 +85,7 @@
       "gradient": "plum",
       "public": true,
       "x": 324,
-      "y": 268,
+      "y": 220,
       "url": "https://thykeumut.github.io/film-kitapligi/"
     },
     {
@@ -96,7 +96,7 @@
       "gradient": "rose",
       "public": true,
       "x": 624,
-      "y": 268,
+      "y": 220,
       "url": "https://thykeumut.github.io/icerik-akisi/"
     }
   ]
