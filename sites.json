@@ -7,8 +7,8 @@
       "icon": "gamepad",
       "gradient": "wine",
       "public": true,
-      "x": 18,
-      "y": 23,
+      "x": 24,
+      "y": 24,
       "url": "https://thykeumut.github.io/bordo-ejderha/"
     },
     {
@@ -19,7 +19,7 @@
       "gradient": "auto",
       "public": true,
       "x": 324,
-      "y": 15,
+      "y": 24,
       "url": "https://thykeumut.github.io/rastgele-site/"
     },
     {
@@ -29,8 +29,8 @@
       "icon": "rocket",
       "gradient": "slate",
       "public": true,
-      "x": 1133,
-      "y": 30,
+      "x": 624,
+      "y": 24,
       "url": "https://thykeumut.github.io/evrim/"
     },
     {
@@ -40,8 +40,8 @@
       "icon": "pen",
       "gradient": "plum",
       "public": true,
-      "x": 1018,
-      "y": 109,
+      "x": 924,
+      "y": 24,
       "url": "https://thykeumut.github.io/promtistan/"
     },
     {
@@ -51,8 +51,8 @@
       "icon": "sparkles",
       "gradient": "forest",
       "public": true,
-      "x": 902,
-      "y": 223,
+      "x": 1224,
+      "y": 24,
       "url": "https://thykeumut.github.io/takvim/"
     },
     {
@@ -62,8 +62,8 @@
       "icon": "code",
       "gradient": "rose",
       "public": true,
-      "x": 903,
-      "y": 36,
+      "x": 1524,
+      "y": 24,
       "url": "https://thykeumut.github.io/-r-n-site-tan-t-c-/"
     },
     {
@@ -74,7 +74,7 @@
       "gradient": "wine",
       "public": true,
       "x": 24,
-      "y": 220,
+      "y": 268,
       "url": "https://game-clips-roan.vercel.app/"
     },
     {
@@ -85,7 +85,7 @@
       "gradient": "plum",
       "public": true,
       "x": 324,
-      "y": 220,
+      "y": 268,
       "url": "https://thykeumut.github.io/film-kitapligi/"
     },
     {
@@ -96,7 +96,7 @@
       "gradient": "rose",
       "public": true,
       "x": 624,
-      "y": 220,
+      "y": 268,
       "url": "https://thykeumut.github.io/icerik-akisi/"
     }
   ]
