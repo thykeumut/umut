@@ -87,6 +87,17 @@
       "x": 424,
       "y": 275,
       "url": "https://thykeumut.github.io/film-kitapligi/"
+    },
+    {
+      "id": "ffddeff5-dec4-46cf-9ea0-ca7f4ddbebff",
+      "title": "New Sosyal medya",
+      "description": "a",
+      "icon": "pen",
+      "gradient": "rose",
+      "public": true,
+      "x": 570,
+      "y": 0,
+      "url": "https://thykeumut.github.io/icerik-akisi/"
     }
   ]
 }
