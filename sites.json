@@ -98,6 +98,17 @@
       "x": 624,
       "y": 268,
       "url": "https://thykeumut.github.io/icerik-akisi/"
+    },
+    {
+      "id": "1eb5310a-af42-422c-9970-cec0e719e653",
+      "title": "Kendini ölç",
+      "description": "",
+      "icon": "flask",
+      "gradient": "forest",
+      "public": true,
+      "x": 939,
+      "y": 294,
+      "url": "https://thykeumut.github.io/testhane/"
     }
   ]
 }
