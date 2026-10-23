@@ -12,6 +12,13 @@
         if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme)
       } catch (e) {}
     </script>
+    <script>
+      // Eski adres (thykeumut.github.io/umut) artık kök dizin yollarını bulamıyor;
+      // o adrese gelenleri yeni alan adına yönlendir.
+      if (location.hostname === 'thykeumut.github.io') {
+        location.replace('https://thyke.me/' + location.search + location.hash)
+      }
+    </script>
     <script type="module" crossorigin src="/assets/index-BHVqQO3d.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-Ccec642M.css">
   </head>
