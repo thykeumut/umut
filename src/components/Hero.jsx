@@ -53,7 +53,7 @@ export default function Hero({
             {isAdmin ? (
               <>Kartları fareyle <strong>sürükle</strong>, istediğin yere bırak. Açmak için karta <strong>tıkla</strong>.</>
             ) : (
-              <>Kartları fareyle <strong>sürükleyip</strong> kendine göre yerleştirebilirsin; açmak için karta <strong>tıkla</strong>.</>
+              <>Bir siteyi açmak için karta <strong>tıkla</strong>. Kart düzenini yalnızca yönetici değiştirebilir.</>
             )}
           </p>
         </div>

@@ -638,7 +638,7 @@ export default function App() {
               site={site}
               boardRef={boardRef}
               isAdmin={isAdmin}
-              draggingEnabled={!isMobile}
+              draggingEnabled={isAdmin && !isMobile}
               isActive={activeId === site.id}
               isNew={newIds.has(site.id)}
               flowMode={isMobile}

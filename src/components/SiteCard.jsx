@@ -2,6 +2,8 @@ import { useRef, useState } from 'react'
 import { ArrowUpRight, Globe, Lock, Trash2, GripVertical } from 'lucide-react'
 import { gradientById } from '../lib/gradients'
 import { iconById, iconNameById } from '../lib/icons'
+import { prettyUrl } from '../lib/projects'
+import Shot from './Shot.jsx'
 
 // Tek bir proje kartı. Sürükleme + tıklayınca siteyi açma.
 // Yönetim düğmeleri (sil / ziyaretçilere aç-kapat) sadece yöneticiye görünür.
@@ -63,15 +65,18 @@ export default function SiteCard({
   const handlePointerMove = (e) => {
     const d = drag.current
     if (!d || d.id !== e.pointerId) return
+    if (!draggingEnabled) return
 
     const dx = e.clientX - d.startX
     const dy = e.clientY - d.startY
 
-    if (!d.moved && Math.hypot(dx, dy) > 4) {
+    // A click often has a few pixels of pointer movement. Keep it a click
+    // until the user clearly intends to drag the card.
+    if (!d.moved && Math.hypot(dx, dy) > 12) {
       d.moved = true
-      if (draggingEnabled) setDragging(true)
+      setDragging(true)
     }
-    if (!d.moved || !draggingEnabled) return
+    if (!d.moved) return
 
     const pos = clamp(d.originX + dx, d.originY + dy)
     onMove(site.id, pos.x, pos.y)
@@ -114,7 +119,18 @@ export default function SiteCard({
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
     >
-      <div className="card-cover" style={{ background: gradient.css }}>
+      <div
+        className={
+          'card-cover' + (isPublic && site.url ? ' card-cover--shot' : '')
+        }
+        style={{ background: gradient.css }}
+      >
+        {/* Sitenin küçük önizlemesi — yalnızca herkese açık kartlarda.
+            Gizli kartlarda gösterilmez: görsel adresi sızdırırdı. */}
+        {isPublic && site.url && (
+          <Shot url={site.url} className="card-shot" alt="" />
+        )}
+
         <span className="card-icon-wrap" title={iconNameById(site.icon)}>
           <SiteIcon className="card-icon" size={23} strokeWidth={1.9} />
         </span>
@@ -174,7 +190,10 @@ export default function SiteCard({
       <div className="card-body">
         <h3 className="card-title">{site.title}</h3>
         {site.description && <p className="card-desc">{site.description}</p>}
-        <span className="card-url">{prettyUrl(site.url)}</span>
+        {/* Gizli kartlarda adres hiç yazılmaz (kopyalanıp gidilmesin). */}
+        {isPublic && site.url && (
+          <span className="card-url">{prettyUrl(site.url)}</span>
+        )}
       </div>
 
       {dragging && (
@@ -184,8 +203,4 @@ export default function SiteCard({
       )}
     </article>
   )
-}
-
-function prettyUrl(url = '') {
-  return url.replace(/^https?:\/\//, '').replace(/\/$/, '')
 }
