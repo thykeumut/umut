@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { ArrowUpRight, Globe, Lock, Trash2, GripVertical } from 'lucide-react'
+import { ArrowUpRight, Globe, Lock, Trash2, GripVertical, Heart } from 'lucide-react'
 import { gradientById } from '../lib/gradients'
 import { iconById, iconNameById } from '../lib/icons'
 import { prettyUrl } from '../lib/projects'
@@ -20,6 +20,8 @@ export default function SiteCard({
   isNew,
   draggingEnabled,
   flowMode,
+  isFavorite,
+  onToggleFavorite,
 }) {
   const cardRef = useRef(null)
   const drag = useRef(null)
@@ -30,7 +32,10 @@ export default function SiteCard({
     const el = cardRef.current
     if (!board || !el) return { x, y }
     const maxX = Math.max(0, board.clientWidth - el.offsetWidth)
-    const maxY = Math.max(0, board.clientHeight - el.offsetHeight)
+    // Yönetici sürüklerken pano alta doğru büyür. Bu pay, kartın mevcut pano
+    // yüksekliğine hapsolmasını engeller; onMove pano boyunu kalıcı büyütür.
+    const growRoom = draggingEnabled ? 360 : 0
+    const maxY = Math.max(0, board.clientHeight - el.offsetHeight + growRoom)
     return {
       x: Math.min(Math.max(0, x), maxX),
       y: Math.min(Math.max(0, y), maxY),
@@ -142,6 +147,22 @@ export default function SiteCard({
           <span className="card-lock" title="Bu site ziyaretçilere kapalı">
             <Lock size={13} strokeWidth={2.3} />
           </span>
+        )}
+
+        {!isAdmin && (
+          <button
+            type="button"
+            className={'card-favorite' + (isFavorite ? ' card-favorite--on' : '')}
+            data-no-drag
+            title={isFavorite ? 'Favorilerden çıkar' : 'Favorilere ekle'}
+            aria-label={isFavorite ? 'Favorilerden çıkar' : 'Favorilere ekle'}
+            onClick={(e) => {
+              e.stopPropagation()
+              onToggleFavorite(site.id)
+            }}
+          >
+            <Heart size={15} strokeWidth={2.1} fill={isFavorite ? 'currentColor' : 'none'} />
+          </button>
         )}
 
         {isAdmin && (

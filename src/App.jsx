@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Heart, Search, X } from 'lucide-react'
 import Background from './components/Background.jsx'
 import Hero from './components/Hero.jsx'
 import SiteCard from './components/SiteCard.jsx'
@@ -26,6 +27,7 @@ import {
 // Yöneticinin kendi tarayıcısındaki çalışma kopyası
 const DRAFT_KEY = 'umut-portfolyo:sites:v1'
 const THEME_KEY = 'umut-portfolyo:theme:v1'
+const FAVORITES_KEY = 'umut-portfolyo:favorites:v1'
 // Yayındaki (herkesin gördüğü) kart listesi
 const PUBLISHED_PATH = `${import.meta.env.BASE_URL}sites.json`
 const CARD_W = 276
@@ -130,6 +132,15 @@ function loadAdmin() {
   }
 }
 
+function loadFavorites() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]')
+    return Array.isArray(saved) ? saved.filter((id) => typeof id === 'string') : []
+  } catch {
+    return []
+  }
+}
+
 export default function App() {
   const draft = null
   const [sites, setSites] = useState([])
@@ -147,6 +158,9 @@ export default function App() {
   const [termOpen, setTermOpen] = useState(false)
   const [detailId, setDetailId] = useState(null)
   const [editSite, setEditSite] = useState(null)
+  const [boardQuery, setBoardQuery] = useState('')
+  const [favoriteIds, setFavoriteIds] = useState(loadFavorites)
+  const [onlyFavorites, setOnlyFavorites] = useState(false)
 
   const boardRef = useRef(null)
   const toastTimer = useRef(null)
@@ -157,6 +171,14 @@ export default function App() {
   useEffect(() => {
     sitesRef.current = sites
   }, [sites])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(FAVORITES_KEY, JSON.stringify(favoriteIds))
+    } catch {
+      /* depolama kapalı olabilir */
+    }
+  }, [favoriteIds])
 
   // Seçilen temayı <html> etiketine uygula ve hatırla
   useEffect(() => {
@@ -418,9 +440,41 @@ export default function App() {
   // taşıdığında yalnızca kendi ekranında değişir (yayındaki düzen bozulmaz
   // ve sayfa yenilenince senin yerleşimin geri gelir).
   const moveSite = (id, x, y) => {
-    if (isAdmin) markDirty()
+    if (isAdmin) {
+      // Pano aşağı doğru genişleyebilsin; böylece kartlar mevcut ekranın
+      // alt sınırında takılmadan istenen noktaya bırakılabilir.
+      const board = boardRef.current
+      if (board) {
+        const neededHeight = y + CARD_H + 32
+        if (neededHeight > board.clientHeight) {
+          board.style.minHeight = `${neededHeight}px`
+        }
+      }
+      markDirty()
+    }
     setSites((prev) => prev.map((s) => (s.id === id ? { ...s, x, y } : s)))
   }
+
+  const toggleFavorite = useCallback((id) => {
+    setFavoriteIds((prev) =>
+      prev.includes(id) ? prev.filter((savedId) => savedId !== id) : [...prev, id]
+    )
+  }, [])
+
+  const shownSites = useMemo(() => {
+    if (isAdmin) return sites
+    const query = boardQuery.trim().toLocaleLowerCase('tr')
+    return sites.filter((site) => {
+      const matchesFavorite = !onlyFavorites || favoriteIds.includes(site.id)
+      if (!matchesFavorite) return false
+      if (!query) return true
+      const haystack = [site.title, site.description, site.category, ...(site.tags || [])]
+        .filter(Boolean)
+        .join(' ')
+        .toLocaleLowerCase('tr')
+      return haystack.includes(query)
+    })
+  }, [sites, isAdmin, boardQuery, onlyFavorites, favoriteIds])
 
   // Karta tıklanınca: yönetici her siteye, ziyaretçi ise sadece
   // "ziyaretçilere açık" işaretlenen sitelere gidebilir.
@@ -625,6 +679,41 @@ export default function App() {
       <ViewTabs view={view} onChange={goView} />
 
       {view === 'board' ? (
+        <>
+          <section className="board-tools" aria-label="Pano araçları">
+            {isAdmin ? (
+              <p className="board-arrange-note">
+                Serbest yerleşim açık — kartı tutup panonun istediğin yerine bırak. Pano aşağı doğru otomatik uzar.
+              </p>
+            ) : (
+              <>
+                <label className="board-search">
+                  <Search size={16} strokeWidth={2} aria-hidden="true" />
+                  <input
+                    value={boardQuery}
+                    onChange={(e) => setBoardQuery(e.target.value)}
+                    placeholder="Projelerde ara..."
+                    aria-label="Projelerde ara"
+                  />
+                  {boardQuery && (
+                    <button type="button" onClick={() => setBoardQuery('')} aria-label="Aramayı temizle">
+                      <X size={15} strokeWidth={2.2} />
+                    </button>
+                  )}
+                </label>
+                <button
+                  type="button"
+                  className={'board-favorites' + (onlyFavorites ? ' board-favorites--on' : '')}
+                  onClick={() => setOnlyFavorites((value) => !value)}
+                  aria-pressed={onlyFavorites}
+                >
+                  <Heart size={15} strokeWidth={2} fill={onlyFavorites ? 'currentColor' : 'none'} />
+                  Favorilerim
+                </button>
+                <span className="board-result">{shownSites.length} proje</span>
+              </>
+            )}
+          </section>
         <main
           ref={boardRef}
           className={'board' + (isMobile ? ' board--flow' : '')}
@@ -632,7 +721,7 @@ export default function App() {
             if (e.target === e.currentTarget) setActiveId(null)
           }}
         >
-          {sites.map((site) => (
+          {shownSites.map((site) => (
             <SiteCard
               key={site.id}
               site={site}
@@ -647,10 +736,12 @@ export default function App() {
               onDelete={deleteSite}
               onTogglePublic={togglePublic}
               onFocus={isAdmin ? setActiveId : () => {}}
+              isFavorite={favoriteIds.includes(site.id)}
+              onToggleFavorite={toggleFavorite}
             />
           ))}
 
-          {sites.length === 0 && (
+          {shownSites.length === 0 && (
             <div className="empty">
               <p>Henüz kart yok.</p>
               {isAdmin ? (
@@ -663,6 +754,7 @@ export default function App() {
             </div>
           )}
         </main>
+        </>
       ) : (
         <main className="view-main">
           {view === 'lab' && <Lab />}
