@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Heart, Search, X } from 'lucide-react'
+import { Heart, LockKeyhole, Search, UnlockKeyhole, X } from 'lucide-react'
 import Background from './components/Background.jsx'
 import Hero from './components/Hero.jsx'
 import SiteCard from './components/SiteCard.jsx'
@@ -161,6 +161,7 @@ export default function App() {
   const [boardQuery, setBoardQuery] = useState('')
   const [favoriteIds, setFavoriteIds] = useState(loadFavorites)
   const [onlyFavorites, setOnlyFavorites] = useState(false)
+  const [layoutLocked, setLayoutLocked] = useState(false)
 
   const boardRef = useRef(null)
   const toastTimer = useRef(null)
@@ -682,9 +683,20 @@ export default function App() {
         <>
           <section className="board-tools" aria-label="Pano araçları">
             {isAdmin ? (
-              <p className="board-arrange-note">
-                Serbest yerleşim açık — kartı tutup panonun istediğin yerine bırak. Pano aşağı doğru otomatik uzar.
-              </p>
+              <>
+                <p className="board-arrange-note">
+                  Serbest yerleşim açık — kartı sağ üstteki tutamaçtan alıp istediğin yere bırak.
+                </p>
+                <button
+                  type="button"
+                  className={'board-layout-lock' + (layoutLocked ? ' board-layout-lock--on' : '')}
+                  onClick={() => setLayoutLocked((locked) => !locked)}
+                  aria-pressed={layoutLocked}
+                >
+                  {layoutLocked ? <LockKeyhole size={14} /> : <UnlockKeyhole size={14} />}
+                  {layoutLocked ? 'Düzen kilitli' : 'Düzeni kilitle'}
+                </button>
+              </>
             ) : (
               <>
                 <label className="board-search">
@@ -727,7 +739,7 @@ export default function App() {
               site={site}
               boardRef={boardRef}
               isAdmin={isAdmin}
-              draggingEnabled={isAdmin && !isMobile}
+              draggingEnabled={isAdmin && !isMobile && !layoutLocked}
               isActive={activeId === site.id}
               isNew={newIds.has(site.id)}
               flowMode={isMobile}
