@@ -646,7 +646,7 @@ export default function App() {
               onOpen={openSite}
               onDelete={deleteSite}
               onTogglePublic={togglePublic}
-              onFocus={setActiveId}
+              onFocus={isAdmin ? setActiveId : () => {}}
             />
           ))}
 

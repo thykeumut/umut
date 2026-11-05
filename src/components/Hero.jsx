@@ -51,7 +51,7 @@ export default function Hero({
           </p>
           <p className="hero-hint">
             {isAdmin ? (
-              <>Kartları fareyle <strong>sürükle</strong>, istediğin yere bırak. Açmak için karta <strong>tıkla</strong>.</>
+              <>Kartı <strong>seç</strong>, araçlardan aç veya düzenle. Yerini değiştirmek için <strong>sürükle</strong>.</>
             ) : (
               <>Bir siteyi açmak için karta <strong>tıkla</strong>. Kart düzenini yalnızca yönetici değiştirebilir.</>
             )}

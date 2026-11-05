@@ -1,16 +1,16 @@
 // Seçilebilir renk temaları (iOS sistem renklerinden esinlenmiş).
 // Gerçek değerler src/index.css içindeki [data-theme="..."] bloklarında.
 export const THEMES = [
-  { id: 'visne-altin', name: 'Vişne & Altın', dots: ['#e0be72', '#b03a55', '#160709'] },
-  { id: 'indigo', name: 'Indigo', dots: ['#8a88ff', '#64d2ff', '#0a0a12'] },
-  { id: 'okyanus', name: 'Okyanus', dots: ['#64d2ff', '#0a84ff', '#06121b'] },
-  { id: 'orman', name: 'Orman', dots: ['#30d158', '#0f9d58', '#07130d'] },
-  { id: 'gul', name: 'Gül', dots: ['#ff6482', '#bf5af2', '#170812'] },
-  { id: 'kagit', name: 'Açık', dots: ['#f2f2f7', '#b03a55', '#d9a441'] },
+  { id: 'visne-altin', name: 'Vişne & Altın', dots: ['#deb564', '#a93048', '#16090c'] },
+  { id: 'indigo', name: 'Indigo', dots: ['#9da7e8', '#6681c4', '#0d0d1a'] },
+  { id: 'okyanus', name: 'Okyanus', dots: ['#66c4dc', '#418caf', '#07151b'] },
+  { id: 'orman', name: 'Orman', dots: ['#55bf7a', '#4f9f8d', '#07140d'] },
+  { id: 'gul', name: 'Gül', dots: ['#da718b', '#aa72c9', '#170911'] },
+  { id: 'kagit', name: 'Açık', dots: ['#fafafa', '#b03050', '#eceef2'] },
   {
     id: 'siyah-beyaz',
     name: 'Siyah & Beyaz',
-    dots: ['#ffffff', '#8a8a8a', '#000000'],
+    dots: ['#ffffff', '#9a9a9e', '#0b0b0c'],
   },
 ]
 

@@ -88,7 +88,10 @@ export default function SiteCard({
     const wasMoved = d.moved
     drag.current = null
     setDragging(false)
-    if (!wasMoved) onOpen(site)
+    // Yönetimde kart tıklaması önce kart araçlarını açar. Böylece imleç
+    // kartın üstüne gelir gelmez butonlar fırlamaz; ziyaretçilerdeyse tıklama
+    // doğrudan siteyi açmaya devam eder.
+    if (!wasMoved && !isAdmin) onOpen(site)
   }
 
   const gradient = gradientById(site.gradient)
