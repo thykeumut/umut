@@ -4,7 +4,6 @@ import Hero from './components/Hero.jsx'
 import SiteCard from './components/SiteCard.jsx'
 import SiteModal from './components/SiteModal.jsx'
 import AdminModal from './components/AdminModal.jsx'
-import PublishSetup from './components/PublishSetup.jsx'
 import ViewTabs from './components/ViewTabs.jsx'
 import SiteDetail from './components/SiteDetail.jsx'
 import Lab from './components/Lab.jsx'
@@ -14,11 +13,14 @@ import { GRADIENTS } from './lib/gradients.js'
 import { DEFAULT_THEME, themeById } from './lib/themes.js'
 import { DEFAULT_ICON, iconFromLegacyEmoji } from './lib/icons.js'
 import { cleanTags, normalizeCategory } from './lib/projects.js'
-import { ADMIN_STORAGE_KEY } from './lib/config.js'
+import { fromBase64 } from './lib/github.js'
 import {
-  fromBase64,
-} from './lib/github.js'
-import { loadRemoteSites } from './lib/appwrite.js'
+  loadRemoteSites,
+  loginAdmin,
+  logoutAdmin,
+  saveRemoteSites,
+  subscribeToSites,
+} from './lib/appwrite.js'
 
 // Yöneticinin kendi tarayıcısındaki çalışma kopyası
 const DRAFT_KEY = 'umut-portfolyo:sites:v1'
@@ -87,7 +89,7 @@ function loadDraft() {
 async function fetchPublished() {
   try {
     const remote = await loadRemoteSites()
-    if (remote.length) return remote.map(normalizeSite)
+    return remote.map(normalizeSite)
   } catch {
     // Yerel geliştirmede veya ilk kurulumda mevcut statik yayın dosyası yedek kalır.
   }
@@ -128,16 +130,13 @@ function loadAdmin() {
 }
 
 export default function App() {
-  const [draft] = useState(loadDraft)
-  const [sites, setSites] = useState(() => draft || [])
-  const [published, setPublished] = useState(null)
+  const draft = null
+  const [sites, setSites] = useState([])
   const [theme, setTheme] = useState(loadTheme)
-  const [isAdmin, setIsAdmin] = useState(loadAdmin)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [activeId, setActiveId] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [adminOpen, setAdminOpen] = useState(false)
-  const [publishSetupOpen, setPublishSetupOpen] = useState(false)
-  const [publishWarn, setPublishWarn] = useState('')
   const [toast, setToast] = useState('')
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== 'undefined' && window.innerWidth < 760
@@ -151,9 +150,6 @@ export default function App() {
   const boardRef = useRef(null)
   const toastTimer = useRef(null)
   const dirtyRef = useRef(false)
-  const publishTimer = useRef(null)
-  const publishSeq = useRef(0)
-  const promptedRef = useRef(false)
   const pendingReset = useRef(false)
   const sitesRef = useRef(sites)
 
@@ -213,26 +209,25 @@ export default function App() {
       ) {
         return
       }
-      if (modalOpen || adminOpen || publishSetupOpen || detailId) return
+      if (modalOpen || adminOpen || detailId) return
       e.preventDefault()
       setTermOpen((open) => !open)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [modalOpen, adminOpen, publishSetupOpen, detailId])
+  }, [modalOpen, adminOpen, detailId])
 
   // Yayındaki kart listesini getir. Yerel çalışma kopyası varsa ona dokunma.
   useEffect(() => {
     let alive = true
     fetchPublished().then((list) => {
       if (!alive || !list) return
-      setPublished(list)
-      if (!draft) setSites(list)
+      setSites(list)
     })
     return () => {
       alive = false
     }
-  }, [draft])
+  }, [])
 
   // Değişiklikleri tarayıcıda sakla (yöneticinin çalışma kopyası).
   // SADECE yönetici gerçekten bir şey değiştirdiğinde yazılır; giriş anında
@@ -254,11 +249,62 @@ export default function App() {
     toastTimer.current = setTimeout(() => setToast(''), 2600)
   }, [])
 
+  // Realtime keeps already-open visitor tabs in sync without a refresh.
+  useEffect(() => {
+    let alive = true
+    let unsubscribe
+
+    const sync = async (announce = false) => {
+      try {
+        const remote = await loadRemoteSites()
+        if (!alive) return
+        const next = remote.map(normalizeSite)
+        if (JSON.stringify(next) === JSON.stringify(sitesRef.current)) return
+        setSites(next)
+        if (announce) showToast('Portfolyo güncellendi')
+      } catch {
+        // The published static list is used while the remote store is unreachable.
+      }
+    }
+
+    Promise.resolve(subscribeToSites(() => sync(true))).then((subscription) => {
+      if (alive) unsubscribe = subscription?.unsubscribe
+      else subscription?.unsubscribe?.()
+    })
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') sync(false)
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+    return () => {
+      alive = false
+      unsubscribe?.()
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
+  }, [showToast])
+
+  // A short debounce turns one edit or drag into a single shared write.
+  useEffect(() => {
+    if (!isAdmin || !dirtyRef.current) return
+
+    const timer = window.setTimeout(async () => {
+      dirtyRef.current = false
+      try {
+        await saveRemoteSites(sites)
+        showToast('Kaydedildi - tüm ziyaretçiler güncellendi')
+      } catch (err) {
+        dirtyRef.current = true
+        showToast(`Kaydedilemedi: ${err.message || 'bağlantı hatası'}`)
+      }
+    }, 900)
+
+    return () => window.clearTimeout(timer)
+  }, [sites, isAdmin, showToast])
+
   // Açık ziyaretçi sekmeleri GitHub API'ye gitmeden, yalnızca sitenin kendi
   // küçük yayın dosyasını kontrol eder. Değişiklik görünür olduğunda hard reset
   // gerekmeksizin kartlar güncellenir; gizli veya arka plandaki sekmeler istek yapmaz.
   useEffect(() => {
-    if (isAdmin || draft) return undefined
+    return undefined
 
     let alive = true
     let checking = false
@@ -290,6 +336,7 @@ export default function App() {
   // arka planda GitHub'a yaz. Böylece ayrı bir "yayınla" adımı gerekmez.
   useEffect(() => {
     if (!isAdmin || !dirtyRef.current) return
+    return undefined
 
     clearTimeout(publishTimer.current)
     publishTimer.current = setTimeout(async () => {
@@ -509,7 +556,18 @@ export default function App() {
     setActiveId(null)
   }
 
-  const unlockAdmin = () => {
+  const unlockAdmin = async ({ email, password }) => {
+    await loginAdmin(email, password)
+    const remote = await loadRemoteSites()
+    if (remote.length) {
+      setSites(remote.map(normalizeSite))
+    } else if (sitesRef.current.length) {
+      await saveRemoteSites(sitesRef.current)
+    }
+    setIsAdmin(true)
+    setAdminOpen(false)
+    showToast('Yönetici modu açıldı')
+    return undefined
     setIsAdmin(true)
     setAdminOpen(false)
     try {
@@ -521,6 +579,7 @@ export default function App() {
   }
 
   const lockAdmin = () => {
+    void logoutAdmin()
     setIsAdmin(false)
     setModalOpen(false)
     try {
@@ -555,10 +614,6 @@ export default function App() {
         onAdd={openAdd}
         onReset={resetLayout}
         onAdminClick={() => (isAdmin ? lockAdmin() : setAdminOpen(true))}
-        publishNote={
-          isAdmin ? publishWarn : ''
-        }
-        onPublishSetup={() => setPublishSetupOpen(true)}
       />
 
       <ViewTabs view={view} onChange={goView} />
@@ -662,12 +717,6 @@ export default function App() {
         open={adminOpen}
         onClose={() => setAdminOpen(false)}
         onUnlock={unlockAdmin}
-      />
-
-      <PublishSetup
-        open={publishSetupOpen}
-        onClose={() => setPublishSetupOpen(false)}
-        onSaved={handlePublishSetupSaved}
       />
 
       {toast && <div className="toast">{toast}</div>}
