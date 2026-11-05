@@ -760,25 +760,6 @@ button {
   background: var(--surface);
 }
 
-.board-layout-lock {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 34px;
-  padding: 0 11px;
-  color: var(--muted);
-  font: inherit;
-  font-size: 11.5px;
-  font-weight: 600;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.board-layout-lock:hover { color: var(--text); border-color: var(--surface-hi); }
-.board-layout-lock--on { color: var(--accent-contrast); background: var(--accent); border-color: var(--accent); }
-
 .board-search {
   display: flex;
   align-items: center;
@@ -868,8 +849,8 @@ button {
   border: 1px solid var(--line);
   backdrop-filter: var(--blur);
   box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.07);
-  cursor: default;
-  touch-action: pan-y;
+  cursor: grab;
+  touch-action: none;
   user-select: none;
   transition: box-shadow 0.16s ease, border-color 0.16s ease,
     background 0.16s ease;
@@ -886,6 +867,7 @@ button {
 }
 
 .card--dragging {
+  cursor: grabbing;
   transform: scale(1.035);
   box-shadow: var(--shadow-hi), 0 0 0 1px var(--accent);
   box-shadow: 0 30px 60px -24px rgba(0, 0, 0, 0.7),
@@ -895,27 +877,6 @@ button {
 .card--static {
   cursor: default;
 }
-
-.card-drag-handle {
-  position: absolute;
-  top: 15px;
-  left: 68px;
-  z-index: 3;
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(10, 12, 14, 0.34);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 10px;
-  cursor: grab;
-  touch-action: none;
-  backdrop-filter: blur(10px);
-}
-
-.card-drag-handle:hover { background: rgba(10, 12, 14, 0.58); }
-.card--dragging .card-drag-handle { cursor: grabbing; background: rgba(10, 12, 14, 0.66); }
 
 .card--new {
   animation: pop 0.5s cubic-bezier(0.22, 1.4, 0.4, 1) both;

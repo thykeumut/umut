@@ -47,11 +47,6 @@ export default function SiteCard({
     if (e.button !== 0) return
     if (e.target.closest('[data-no-drag]')) return
 
-    // Yönetimde kartın tamamı sürükleme alanı değildir. Sadece tutamaçtan
-    // başlayan hareket taşır; böylece seçme, araçlar ve kart içeriği birbirine
-    // karışmaz.
-    if (isAdmin && !e.target.closest('[data-drag-handle]')) return
-
     // Sürükleme kapalıyken de tıklamayı yakalayabilmek için kayıt tut
     drag.current = {
       id: e.pointerId,
@@ -116,7 +111,7 @@ export default function SiteCard({
         dragging ? 'card--dragging' : '',
         isActive ? 'card--active' : '',
         isNew ? 'card--new' : '',
-        draggingEnabled ? 'card--draggable' : 'card--static',
+        draggingEnabled ? '' : 'card--static',
       ]
         .filter(Boolean)
         .join(' ')}
@@ -147,17 +142,6 @@ export default function SiteCard({
         <span className="card-icon-wrap" title={iconNameById(site.icon)}>
           <SiteIcon className="card-icon" size={23} strokeWidth={1.9} />
         </span>
-
-        {isAdmin && draggingEnabled && (
-          <span
-            className="card-drag-handle"
-            data-drag-handle
-            title="Kartı buradan sürükle"
-            aria-label="Kartı buradan sürükle"
-          >
-            <GripVertical size={16} strokeWidth={2.2} />
-          </span>
-        )}
 
         {!isPublic && (
           <span className="card-lock" title="Bu site ziyaretçilere kapalı">
@@ -236,6 +220,11 @@ export default function SiteCard({
         )}
       </div>
 
+      {dragging && (
+        <span className="card-grip">
+          <GripVertical size={15} strokeWidth={2} />
+        </span>
+      )}
     </article>
   )
 }
