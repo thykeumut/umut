@@ -13,6 +13,7 @@ import { GRADIENTS } from './lib/gradients.js'
 import { DEFAULT_THEME, themeById } from './lib/themes.js'
 import { DEFAULT_ICON, iconFromLegacyEmoji } from './lib/icons.js'
 import { cleanTags, normalizeCategory } from './lib/projects.js'
+import { ADMIN_STORAGE_KEY } from './lib/config.js'
 import { fromBase64 } from './lib/github.js'
 import {
   loadRemoteSites,
@@ -133,7 +134,7 @@ export default function App() {
   const draft = null
   const [sites, setSites] = useState([])
   const [theme, setTheme] = useState(loadTheme)
-  const [isAdmin, setIsAdmin] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(loadAdmin)
   const [activeId, setActiveId] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [adminOpen, setAdminOpen] = useState(false)
@@ -566,6 +567,11 @@ export default function App() {
     }
     setIsAdmin(true)
     setAdminOpen(false)
+    try {
+      localStorage.setItem(ADMIN_STORAGE_KEY, '1')
+    } catch {
+      // Storage can be disabled by the visitor.
+    }
     showToast('Yönetici modu açıldı')
     return undefined
     setIsAdmin(true)
