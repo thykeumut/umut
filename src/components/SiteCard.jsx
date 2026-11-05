@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { ArrowUpRight, Globe, Lock, Trash2, GripVertical, Heart } from 'lucide-react'
+import { ArrowUpRight, Copy, Globe, Lock, Trash2, GripVertical, Heart } from 'lucide-react'
 import { gradientById } from '../lib/gradients'
 import { iconById, iconNameById } from '../lib/icons'
 import { prettyUrl } from '../lib/projects'
@@ -22,6 +22,7 @@ export default function SiteCard({
   flowMode,
   isFavorite,
   onToggleFavorite,
+  onCopyLink,
 }) {
   const cardRef = useRef(null)
   const drag = useRef(null)
@@ -147,6 +148,22 @@ export default function SiteCard({
           <span className="card-lock" title="Bu site ziyaretçilere kapalı">
             <Lock size={13} strokeWidth={2.3} />
           </span>
+        )}
+
+        {!isAdmin && isPublic && site.url && (
+          <button
+            type="button"
+            className="card-copy"
+            data-no-drag
+            title="Bağlantıyı kopyala"
+            aria-label="Bağlantıyı kopyala"
+            onClick={(e) => {
+              e.stopPropagation()
+              onCopyLink(site)
+            }}
+          >
+            <Copy size={14} strokeWidth={2.2} />
+          </button>
         )}
 
         {!isAdmin && (

@@ -461,6 +461,17 @@ export default function App() {
     )
   }, [])
 
+  const copySiteLink = useCallback(async (site) => {
+    if (!site?.url) return
+    const url = /^https?:\/\//i.test(site.url) ? site.url : `https://${site.url}`
+    try {
+      await navigator.clipboard.writeText(url)
+      showToast('Site bağlantısı kopyalandı')
+    } catch {
+      showToast('Bağlantı kopyalanamadı')
+    }
+  }, [showToast])
+
   const shownSites = useMemo(() => {
     if (isAdmin) return sites
     const query = boardQuery.trim().toLocaleLowerCase('tr')
@@ -738,6 +749,7 @@ export default function App() {
               onFocus={isAdmin ? setActiveId : () => {}}
               isFavorite={favoriteIds.includes(site.id)}
               onToggleFavorite={toggleFavorite}
+              onCopyLink={copySiteLink}
             />
           ))}
 
