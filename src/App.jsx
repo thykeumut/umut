@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Heart, Move, Search, X } from 'lucide-react'
 import Background from './components/Background.jsx'
+import PageChrome from './components/PageChrome.jsx'
 import Hero from './components/Hero.jsx'
 import Featured from './components/Featured.jsx'
 import SiteCard from './components/SiteCard.jsx'
@@ -603,6 +604,7 @@ export default function App() {
   return (
     <div className="app">
       <Background />
+      <PageChrome />
 
       <Hero
         count={sites.length}
