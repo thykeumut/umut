@@ -562,6 +562,15 @@ button:focus:not(:focus-visible) {
     transition: none;
     animation: none;
   }
+
+  .bg-aurora,
+  .hero-inner,
+  .featured,
+  .card::after,
+  .btn-primary::after {
+    transition: none !important;
+    animation: none !important;
+  }
 }
 
 .app {
@@ -707,7 +716,18 @@ button:focus:not(:focus-visible) {
   gap: 28px;
   max-width: 1520px;
   margin: 0 auto;
-  animation: none;
+  animation: heroEnter 0.7s 0.04s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes heroEnter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hero-badge {
@@ -935,9 +955,27 @@ button:focus:not(:focus-visible) {
 }
 
 .btn-primary {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   color: var(--accent-contrast);
   background: var(--button-grad);
   box-shadow: none;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: -70% auto -70% -45%;
+  z-index: 0;
+  width: 46%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.46), transparent);
+  transform: rotate(18deg) translateX(-170%);
+  transition: transform 0.58s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-primary:hover::after {
+  transform: rotate(18deg) translateX(470%);
 }
 
 .appearance-toggle {
@@ -1198,6 +1236,7 @@ button:focus:not(:focus-visible) {
   margin: 18px auto 0;
   padding: 18px;
   overflow: hidden;
+  animation: featuredEnter 0.68s 0.12s cubic-bezier(0.22, 1, 0.36, 1) both;
   border: 1px solid var(--glass-border);
   border-radius: var(--r-card);
   background:
@@ -1297,6 +1336,17 @@ button:focus:not(:focus-visible) {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 0 28px rgba(255, 255, 255, 0.025);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+}
+
+@keyframes featuredEnter {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .featured-topline {
@@ -1491,6 +1541,26 @@ button:focus:not(:focus-visible) {
   transform: translateY(-1px);
   box-shadow: var(--shadow-hi), inset 0 1px 0 rgba(255, 255, 255, 0.55);
   border-color: color-mix(in srgb, var(--text) 20%, var(--line));
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  z-index: 6;
+  top: -65%;
+  bottom: -65%;
+  left: -44%;
+  width: 28%;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: rotate(18deg) translateX(-220%);
+  transition: opacity 0.22s ease, transform 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card:hover::after {
+  opacity: 1;
+  transform: rotate(18deg) translateX(650%);
 }
 
 .card--fav {
