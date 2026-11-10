@@ -1,17 +1,31 @@
 import { useEffect } from 'react'
-import { X, ArrowUpRight, GitBranch, Lock, Pencil, Share2 } from 'lucide-react'
+import { X, ArrowUpRight, ChevronLeft, ChevronRight, GitBranch, Lock, Pencil, Share2 } from 'lucide-react'
 import { gradientById } from '../lib/gradients'
 import { iconById } from '../lib/icons'
 import { categoryName, prettyUrl } from '../lib/projects'
 import Shot from './Shot.jsx'
 
 // Proje detay paneli: büyük önizleme, teknolojiler, hikâye, bağlantılar.
-export default function SiteDetail({ site, isAdmin, onClose, onOpenSite, onEdit, onShare }) {
+export default function SiteDetail({
+  site,
+  isAdmin,
+  onClose,
+  onOpenSite,
+  onEdit,
+  onShare,
+  canNavigate,
+  onPrevious,
+  onNext,
+}) {
   useEffect(() => {
-    const onKey = (e) => e.key === 'Escape' && onClose()
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose()
+      if (canNavigate && e.key === 'ArrowLeft') onPrevious()
+      if (canNavigate && e.key === 'ArrowRight') onNext()
+    }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+  }, [onClose, canNavigate, onPrevious, onNext])
 
   if (!site) return null
 
@@ -33,9 +47,21 @@ export default function SiteDetail({ site, isAdmin, onClose, onOpenSite, onEdit,
             <span className="detail-cat">{categoryName(site.category)}</span>
             <h2>{site.title}</h2>
           </div>
-          <button className="icon-btn" onClick={onClose} title="Kapat">
-            <X size={15} strokeWidth={2.3} />
-          </button>
+          <div className="detail-head-actions">
+            {canNavigate && (
+              <div className="detail-nav" aria-label="Projeler arasında gez">
+                <button className="icon-btn" onClick={onPrevious} title="Önceki proje">
+                  <ChevronLeft size={16} strokeWidth={2.3} />
+                </button>
+                <button className="icon-btn" onClick={onNext} title="Sonraki proje">
+                  <ChevronRight size={16} strokeWidth={2.3} />
+                </button>
+              </div>
+            )}
+            <button className="icon-btn" onClick={onClose} title="Kapat">
+              <X size={15} strokeWidth={2.3} />
+            </button>
+          </div>
         </div>
 
         <div className="detail">

@@ -2238,6 +2238,33 @@ button:focus:not(:focus-visible) {
   backdrop-filter: blur(10px);
 }
 
+.card-live {
+  position: absolute;
+  right: 13px;
+  bottom: 11px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  color: rgba(255, 255, 255, 0.94);
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: rgba(10, 13, 10, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+
+.card-live i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-2) 24%, transparent);
+}
+
 .card-favorite { right: 12px; }
 .card-copy { right: 49px; }
 .card-detail { right: 86px; }
@@ -3473,6 +3500,19 @@ button:focus:not(:focus-visible) {
   flex-direction: column;
   gap: 14px;
   min-width: 0;
+}
+
+.detail-head-actions,
+.detail-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail-nav {
+  padding-right: 6px;
+  margin-right: 2px;
+  border-right: 1px solid var(--line);
 }
 
 .detail-section {

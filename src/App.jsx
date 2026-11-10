@@ -628,6 +628,19 @@ export default function App() {
     ? sites.find((s) => s.id === detailId) || null
     : null
 
+  const detailPool = useMemo(
+    () => (isAdmin ? sites : sites.filter((site) => site.public)),
+    [sites, isAdmin]
+  )
+
+  const navigateDetail = useCallback((direction) => {
+    setDetailId((currentId) => {
+      const index = detailPool.findIndex((site) => site.id === currentId)
+      if (index < 0 || detailPool.length < 2) return currentId
+      return detailPool[(index + direction + detailPool.length) % detailPool.length].id
+    })
+  }, [detailPool])
+
   const openDetail = useCallback((site) => {
     if (!site) return
     setDetailId(site.id)
@@ -853,6 +866,9 @@ export default function App() {
         onOpenSite={openSite}
         onEdit={openEdit}
         onShare={shareProject}
+        canNavigate={detailPool.length > 1}
+        onPrevious={() => navigateDetail(-1)}
+        onNext={() => navigateDetail(1)}
       />
 
       <Terminal

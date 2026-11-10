@@ -253,6 +253,12 @@ export default function SiteCard({
 
         <span className="card-cat">{categoryName(site.category)}</span>
 
+        {isPublic && (
+          <span className="card-live" title="Canlı demo erişilebilir">
+            <i aria-hidden="true" /> canlı
+          </span>
+        )}
+
         {!isPublic && (
           <span className="card-lock" title="Bu site ziyaretçilere kapalı">
             <Lock size={13} strokeWidth={2.3} />
