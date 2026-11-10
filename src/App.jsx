@@ -389,29 +389,29 @@ export default function App() {
 
   // Vitrin her ziyaretçiye rastgele bir açık proje gösterir.
   const featuredSite = useMemo(() => {
-    const pool = isAdmin ? sites : sites.filter((site) => site.public)
+    const pool = sites.filter((site) => site.public)
     return pool.find((site) => site.id === featuredId) || null
-  }, [sites, isAdmin, featuredId])
+  }, [sites, featuredId])
 
   useEffect(() => {
-    const pool = isAdmin ? sites : sites.filter((site) => site.public)
+    const pool = sites.filter((site) => site.public)
     if (!pool.length) return
     setFeaturedId((current) =>
       pool.some((site) => site.id === current)
         ? current
         : pool[Math.floor(Math.random() * pool.length)].id
     )
-  }, [sites, isAdmin])
+  }, [sites])
 
   const shuffleFeatured = useCallback(() => {
-    const pool = isAdmin ? sites : sites.filter((site) => site.public)
+    const pool = sites.filter((site) => site.public)
     if (!pool.length) return
     const alternatives = pool.filter((site) => site.id !== featuredId)
     const next = (alternatives.length ? alternatives : pool)[
       Math.floor(Math.random() * (alternatives.length ? alternatives : pool).length)
     ]
     setFeaturedId(next.id)
-  }, [sites, isAdmin, featuredId])
+  }, [sites, featuredId])
 
   // Karta tıklanınca: yönetici her siteye, ziyaretçi ise sadece
   // "ziyaretçilere açık" işaretlenen sitelere gidebilir.
