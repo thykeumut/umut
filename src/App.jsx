@@ -627,8 +627,6 @@ export default function App() {
             onShuffle={shuffleFeatured}
           />
 
-          <ActivityRail />
-
           <section className="board-tools" aria-label="Pano araçları">
             {isAdmin ? (
               <p className="board-arrange-note">
@@ -719,6 +717,8 @@ export default function App() {
           )}
         </main>
         </>
+
+      <ActivityRail />
 
       <footer className="footer">
         <span>© {new Date().getFullYear()} Umut</span>

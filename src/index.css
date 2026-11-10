@@ -1461,6 +1461,72 @@ button:focus:not(:focus-visible) {
   .activity-item p { -webkit-line-clamp: 1; }
 }
 
+/* Ana panonun dışında duran kapalı günlük çekmecesi. */
+.activity-rail {
+  display: block;
+  width: min(100% - 40px, 1520px);
+  margin: 22px auto 0;
+}
+
+.activity-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 42px;
+  padding: 0 14px;
+  color: var(--muted);
+  text-align: left;
+  font: inherit;
+  font-size: 12px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: transparent;
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.activity-toggle > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--text);
+  font-weight: 650;
+}
+
+.activity-toggle > span svg { color: var(--accent); }
+.activity-toggle small { margin-left: auto; color: var(--muted); font-size: 10.5px; }
+.activity-toggle > svg { transition: transform 0.2s ease; }
+.activity-rail.is-open .activity-toggle > svg { transform: rotate(180deg); }
+.activity-toggle:hover { color: var(--text); border-color: var(--glass-border); background: rgba(255, 255, 255, 0.035); }
+
+.activity-content {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.82fr) minmax(0, 2.18fr);
+  gap: 12px;
+  margin-top: 10px;
+  animation: activityDrawerIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.activity-content .activity-heading {
+  display: block;
+  margin: 0;
+}
+
+@keyframes activityDrawerIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 980px) {
+  .activity-content { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 620px) {
+  .activity-rail { width: min(100% - 28px, 1520px); }
+  .activity-toggle small { display: none; }
+}
+
 .board-tools {
   position: relative;
   z-index: 2;
