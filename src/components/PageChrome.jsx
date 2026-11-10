@@ -42,7 +42,10 @@ export default function PageChrome() {
   useEffect(() => {
     if (!canUseCursor) return undefined
     const move = (event) => {
-      setPointer({ x: event.clientX, y: event.clientY, visible: true })
+      const interactive = Boolean(
+        event.target.closest('button, a, input, textarea, select, [role="button"], .card')
+      )
+      setPointer({ x: event.clientX, y: event.clientY, visible: true, interactive })
 
       const now = performance.now()
       if (now - lastDustAt.current < 20) return
@@ -64,7 +67,7 @@ export default function PageChrome() {
       }, 590)
       dustTimers.current.add(timer)
     }
-    const leave = () => setPointer((current) => ({ ...current, visible: false }))
+    const leave = () => setPointer((current) => ({ ...current, visible: false, interactive: false }))
     window.addEventListener('pointermove', move, { passive: true })
     document.addEventListener('mouseleave', leave)
     return () => {
@@ -85,8 +88,8 @@ export default function PageChrome() {
 
       {canUseCursor && (
         <>
-          <span className={'cursor-dot' + (pointer.visible ? ' is-visible' : '')} style={cursorStyle} aria-hidden="true" />
-          <span className={'cursor-ring' + (pointer.visible ? ' is-visible' : '')} style={cursorStyle} aria-hidden="true" />
+          <span className={'cursor-dot' + (pointer.visible ? ' is-visible' : '') + (pointer.interactive ? ' is-interactive' : '')} style={cursorStyle} aria-hidden="true" />
+          <span className={'cursor-ring' + (pointer.visible ? ' is-visible' : '') + (pointer.interactive ? ' is-interactive' : '')} style={cursorStyle} aria-hidden="true" />
           <span className="cursor-dust" aria-hidden="true">
             {dust.map((particle) => (
               <i
