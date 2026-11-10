@@ -1,4 +1,4 @@
-import { ArrowUpRight, Info, Lock } from 'lucide-react'
+import { ArrowUpRight, Info, Lock, RefreshCw } from 'lucide-react'
 import { gradientById } from '../lib/gradients'
 import { iconById } from '../lib/icons'
 import { categoryName, prettyUrl } from '../lib/projects'
@@ -7,7 +7,7 @@ import Shot from './Shot.jsx'
 // Panonun üstündeki vitrin: tek bir projeyi büyük ve okunur biçimde gösterir.
 // Yönetici karttaki yıldızla hangi projenin öne çıkacağını seçebilir;
 // seçim yoksa ilk herkese açık proje gösterilir.
-export default function Featured({ site, isAdmin, onOpen, onDetail }) {
+export default function Featured({ site, isAdmin, onOpen, onDetail, onShuffle }) {
   if (!site) return null
 
   const gradient = gradientById(site.gradient)
@@ -32,7 +32,18 @@ export default function Featured({ site, isAdmin, onOpen, onDetail }) {
       </div>
 
       <div className="featured-body">
-        <span className="featured-label">Öne çıkan proje</span>
+        <div className="featured-topline">
+          <span className="featured-label">Öne çıkan proje</span>
+          <button
+            type="button"
+            className="featured-shuffle"
+            onClick={onShuffle}
+            title="Başka proje göster"
+            aria-label="Başka proje göster"
+          >
+            <RefreshCw size={15} strokeWidth={2.1} />
+          </button>
+        </div>
         <h2 className="featured-title">{site.title}</h2>
 
         <p className="featured-meta">

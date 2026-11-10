@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Heart, Move, Search, Sparkles, X } from 'lucide-react'
+import { Heart, Move, Search, X } from 'lucide-react'
 import Background from './components/Background.jsx'
 import Hero from './components/Hero.jsx'
 import Featured from './components/Featured.jsx'
@@ -127,6 +127,7 @@ export default function App() {
   const [boardQuery, setBoardQuery] = useState('')
   const [favoriteIds, setFavoriteIds] = useState(loadFavorites)
   const [onlyFavorites, setOnlyFavorites] = useState(false)
+  const [featuredId, setFeaturedId] = useState(null)
 
   const boardRef = useRef(null)
   const toastTimer = useRef(null)
@@ -386,24 +387,31 @@ export default function App() {
     })
   }, [sites, isAdmin, boardQuery, onlyFavorites, favoriteIds])
 
-  // Vitrin: yöneticinin seçtiği kart; seçim yoksa ilk herkese açık proje.
+  // Vitrin her ziyaretçiye rastgele bir açık proje gösterir.
   const featuredSite = useMemo(() => {
     const pool = isAdmin ? sites : sites.filter((site) => site.public)
-    return pool.find((site) => site.featured) || pool[0] || null
+    return pool.find((site) => site.id === featuredId) || null
+  }, [sites, isAdmin, featuredId])
+
+  useEffect(() => {
+    const pool = isAdmin ? sites : sites.filter((site) => site.public)
+    if (!pool.length) return
+    setFeaturedId((current) =>
+      pool.some((site) => site.id === current)
+        ? current
+        : pool[Math.floor(Math.random() * pool.length)].id
+    )
   }, [sites, isAdmin])
 
-  const discoverProject = useCallback(() => {
-    const choices = sites.filter((site) => isAdmin || site.public)
-    if (!choices.length) {
-      showToast('Keşfedilecek açık proje yok')
-      return
-    }
-    const currentId = detailId || featuredSite?.id
-    const alternatives = choices.filter((site) => site.id !== currentId)
-    const pool = alternatives.length ? alternatives : choices
-    const next = pool[Math.floor(Math.random() * pool.length)]
-    setDetailId(next.id)
-  }, [sites, isAdmin, detailId, featuredSite, showToast])
+  const shuffleFeatured = useCallback(() => {
+    const pool = isAdmin ? sites : sites.filter((site) => site.public)
+    if (!pool.length) return
+    const alternatives = pool.filter((site) => site.id !== featuredId)
+    const next = (alternatives.length ? alternatives : pool)[
+      Math.floor(Math.random() * (alternatives.length ? alternatives : pool).length)
+    ]
+    setFeaturedId(next.id)
+  }, [sites, isAdmin, featuredId])
 
   // Karta tıklanınca: yönetici her siteye, ziyaretçi ise sadece
   // "ziyaretçilere açık" işaretlenen sitelere gidebilir.
@@ -613,6 +621,7 @@ export default function App() {
             isAdmin={isAdmin}
             onOpen={openSite}
             onDetail={(site) => setDetailId(site.id)}
+            onShuffle={shuffleFeatured}
           />
 
           <section className="board-tools" aria-label="Pano araçları">
@@ -647,10 +656,6 @@ export default function App() {
                 >
                   <Heart size={15} strokeWidth={2} fill={onlyFavorites ? 'currentColor' : 'none'} />
                   Favorilerim
-                </button>
-                <button type="button" className="board-discover" onClick={discoverProject}>
-                  <Sparkles size={15} strokeWidth={2} />
-                  Rastgele keşfet
                 </button>
               </>
             )}

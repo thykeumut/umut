@@ -1042,12 +1042,12 @@ button:focus:not(:focus-visible) {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
-  gap: 26px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
   align-items: stretch;
   width: min(100% - 40px, 1520px);
   margin: 18px auto 0;
-  padding: 16px;
+  padding: 18px;
   overflow: hidden;
   border: 1px solid var(--glass-border);
   border-radius: var(--r-card);
@@ -1066,7 +1066,7 @@ button:focus:not(:focus-visible) {
 
 .featured-media {
   position: relative;
-  min-height: 248px;
+  min-height: 268px;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: calc(var(--r-card) - 6px);
@@ -1134,10 +1134,38 @@ button:focus:not(:focus-visible) {
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 9px;
+  gap: 10px;
   min-width: 0;
-  padding: 8px 10px 8px 0;
+  min-height: 268px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--r-card) - 6px);
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
 }
+
+.featured-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.featured-shuffle {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  color: var(--muted);
+  background: var(--input-bg);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  cursor: pointer;
+  transition: color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+}
+
+.featured-shuffle:hover { color: var(--accent); background: var(--surface-hi); }
+.featured-shuffle:active { transform: rotate(-28deg) scale(0.94); }
 
 .featured-label {
   display: inline-flex;
@@ -1221,7 +1249,8 @@ button:focus:not(:focus-visible) {
   }
 
   .featured-body {
-    padding: 0 4px 4px;
+    min-height: 0;
+    padding: 18px;
   }
 
   .featured-desc {
@@ -1251,29 +1280,6 @@ button:focus:not(:focus-visible) {
   user-select: none;
 }
 
-.board-discover {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 40px;
-  padding: 0 14px;
-  color: var(--accent);
-  font: inherit;
-  font-size: 12.5px;
-  font-weight: 600;
-  background: transparent;
-  border: 1px solid color-mix(in srgb, var(--accent) 42%, var(--line));
-  border-radius: 12px;
-  cursor: pointer;
-  transition: color 0.16s ease, background 0.18s ease, transform 0.14s ease;
-}
-
-.board-discover:hover {
-  color: var(--accent-contrast);
-  background: var(--accent);
-}
-
-.board-discover:active { transform: scale(0.97); }
 
 .card {
   position: absolute;
