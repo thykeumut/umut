@@ -132,6 +132,7 @@ export default function App() {
   const [featuredId, setFeaturedId] = useState(null)
 
   const boardRef = useRef(null)
+  const searchInputRef = useRef(null)
   const toastTimer = useRef(null)
   const dirtyRef = useRef(false)
   const remoteMuteUntilRef = useRef(0)
@@ -182,6 +183,26 @@ export default function App() {
 
   // İlk yükleme: proje kartları Appwrite'tan gelir. Depo erişilemezse
   // statik yayın dosyası yedek olur.
+  // Ziyaretçi görünümünde "/" doğrudan pano aramasına götürür. Yazı alanlarında
+  // veya açık pencerelerde devreye girmez; sayfanın doğal kısayollarını bozmaz.
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key !== '/' || isAdmin || modalOpen || adminOpen || detailId || termOpen) return
+      const target = e.target
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' ||
+          target.isContentEditable)
+      ) return
+      e.preventDefault()
+      searchInputRef.current?.focus()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [isAdmin, modalOpen, adminOpen, detailId, termOpen])
+
   useEffect(() => {
     let alive = true
     const boot = async () => {
@@ -593,6 +614,45 @@ export default function App() {
     ? sites.find((s) => s.id === detailId) || null
     : null
 
+  const openDetail = useCallback((site) => {
+    if (!site) return
+    setDetailId(site.id)
+  }, [])
+
+  const shareProject = useCallback(async (site) => {
+    if (!site) return
+    const url = new URL(window.location.href)
+    url.searchParams.set('project', site.id)
+    const shareUrl = url.toString()
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: `${site.title} — Umut`, url: shareUrl })
+      } else {
+        await navigator.clipboard.writeText(shareUrl)
+        showToast('Proje bağlantısı kopyalandı')
+      }
+    } catch (error) {
+      if (error?.name !== 'AbortError') showToast('Bağlantı paylaşılamadı')
+    }
+  }, [showToast])
+
+  // Paylaşılmış bir proje bağlantısı doğrudan detay penceresini açar.
+  useEffect(() => {
+    const projectId = new URLSearchParams(window.location.search).get('project')
+    if (projectId && sites.some((site) => site.id === projectId && site.public)) {
+      setDetailId(projectId)
+    }
+  }, [sites])
+
+  const closeDetail = useCallback(() => {
+    setDetailId(null)
+    const url = new URL(window.location.href)
+    if (url.searchParams.has('project')) {
+      url.searchParams.delete('project')
+      window.history.replaceState({}, '', url)
+    }
+  }, [])
+
   useEffect(() => {
     document.documentElement.dataset.appearance = appearance
     try {
@@ -623,7 +683,7 @@ export default function App() {
             site={featuredSite}
             isAdmin={isAdmin}
             onOpen={openSite}
-            onDetail={(site) => setDetailId(site.id)}
+            onDetail={openDetail}
             onShuffle={shuffleFeatured}
           />
 
@@ -640,6 +700,7 @@ export default function App() {
                 <label className="board-search">
                   <Search size={16} strokeWidth={2} aria-hidden="true" />
                   <input
+                    ref={searchInputRef}
                     value={boardQuery}
                     onChange={(e) => setBoardQuery(e.target.value)}
                     placeholder="Projelerde ara..."
@@ -750,9 +811,10 @@ export default function App() {
       <SiteDetail
         site={detailSite}
         isAdmin={isAdmin}
-        onClose={() => setDetailId(null)}
+        onClose={closeDetail}
         onOpenSite={openSite}
         onEdit={openEdit}
+        onShare={shareProject}
       />
 
       <Terminal
@@ -762,7 +824,7 @@ export default function App() {
         isAdmin={isAdmin}
         onDetail={(site) => {
           setTermOpen(false)
-          setDetailId(site.id)
+          openDetail(site)
         }}
       />
 

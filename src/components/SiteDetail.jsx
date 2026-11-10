@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
-import { X, ArrowUpRight, GitBranch, Lock, Pencil } from 'lucide-react'
+import { X, ArrowUpRight, GitBranch, Lock, Pencil, Share2 } from 'lucide-react'
 import { gradientById } from '../lib/gradients'
 import { iconById } from '../lib/icons'
 import { categoryName, prettyUrl } from '../lib/projects'
 import Shot from './Shot.jsx'
 
 // Proje detay paneli: büyük önizleme, teknolojiler, hikâye, bağlantılar.
-export default function SiteDetail({ site, isAdmin, onClose, onOpenSite, onEdit }) {
+export default function SiteDetail({ site, isAdmin, onClose, onOpenSite, onEdit, onShare }) {
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose()
     window.addEventListener('keydown', onKey)
@@ -98,6 +98,13 @@ export default function SiteDetail({ site, isAdmin, onClose, onOpenSite, onEdit 
                   <GitBranch size={15} strokeWidth={2.1} />
                   GitHub
                 </a>
+              )}
+
+              {site.public && (
+                <button className="btn btn-ghost" onClick={() => onShare(site)}>
+                  <Share2 size={14} strokeWidth={2.1} />
+                  Paylaş
+                </button>
               )}
 
               {isAdmin && (

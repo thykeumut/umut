@@ -24,7 +24,7 @@ export default function Hero({
             {isAdmin ? (
               <>Projelerini buradan ekleyip düzenleyebilirsin.</>
             ) : (
-              <>Projelerime göz atabilirsin.</>
+              <>Projelerime göz atabilir, <kbd>/</kbd> ile arama yapabilirsin.</>
             )}
           </p>
         </div>
