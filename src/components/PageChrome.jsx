@@ -1,11 +1,15 @@
 import { ArrowUp } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // Sayfanın etrafındaki küçük, işlevsel arayüz detayları.
 export default function PageChrome() {
   const [pointer, setPointer] = useState({ x: -100, y: -100, visible: false })
   const [scroll, setScroll] = useState(0)
   const [canUseCursor, setCanUseCursor] = useState(false)
+  const [dust, setDust] = useState([])
+  const lastDustAt = useRef(0)
+  const dustId = useRef(0)
+  const dustTimers = useRef(new Set())
 
   useEffect(() => {
     const media = window.matchMedia('(hover: hover) and (pointer: fine)')
@@ -37,13 +41,37 @@ export default function PageChrome() {
 
   useEffect(() => {
     if (!canUseCursor) return undefined
-    const move = (event) => setPointer({ x: event.clientX, y: event.clientY, visible: true })
+    const move = (event) => {
+      setPointer({ x: event.clientX, y: event.clientY, visible: true })
+
+      const now = performance.now()
+      if (now - lastDustAt.current < 42) return
+      lastDustAt.current = now
+
+      const particle = {
+        id: ++dustId.current,
+        x: event.clientX,
+        y: event.clientY,
+        size: 2 + Math.random() * 4,
+        driftX: (Math.random() - 0.5) * 38,
+        driftY: -12 - Math.random() * 34,
+        delay: Math.random() * 90,
+      }
+      setDust((current) => [...current.slice(-22), particle])
+      const timer = window.setTimeout(() => {
+        setDust((current) => current.filter((item) => item.id !== particle.id))
+        dustTimers.current.delete(timer)
+      }, 760)
+      dustTimers.current.add(timer)
+    }
     const leave = () => setPointer((current) => ({ ...current, visible: false }))
     window.addEventListener('pointermove', move, { passive: true })
     document.addEventListener('mouseleave', leave)
     return () => {
       window.removeEventListener('pointermove', move)
       document.removeEventListener('mouseleave', leave)
+      dustTimers.current.forEach((timer) => window.clearTimeout(timer))
+      dustTimers.current.clear()
     }
   }, [canUseCursor])
 
@@ -57,8 +85,25 @@ export default function PageChrome() {
 
       {canUseCursor && (
         <>
+          <span className={'cursor-halo' + (pointer.visible ? ' is-visible' : '')} style={cursorStyle} aria-hidden="true" />
           <span className={'cursor-dot' + (pointer.visible ? ' is-visible' : '')} style={cursorStyle} aria-hidden="true" />
           <span className={'cursor-ring' + (pointer.visible ? ' is-visible' : '')} style={cursorStyle} aria-hidden="true" />
+          <span className="cursor-dust" aria-hidden="true">
+            {dust.map((particle) => (
+              <i
+                key={particle.id}
+                style={{
+                  left: `${particle.x}px`,
+                  top: `${particle.y}px`,
+                  width: `${particle.size}px`,
+                  height: `${particle.size}px`,
+                  '--dust-x': `${particle.driftX}px`,
+                  '--dust-y': `${particle.driftY}px`,
+                  '--dust-delay': `${particle.delay}ms`,
+                }}
+              />
+            ))}
+          </span>
         </>
       )}
 
