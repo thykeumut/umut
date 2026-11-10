@@ -479,7 +479,9 @@ button:focus:not(:focus-visible) {
 .cursor-ring,
 .cursor-dust {
   position: fixed;
-  z-index: 100;
+  /* Modal, terminal ve diğer katmanların da üstünde kalmalı. Aksi hâlde
+     imleç gizlenmişken özel imleç perde arkasında kalıyordu. */
+  z-index: 1000;
   left: 0;
   top: 0;
   pointer-events: none;
@@ -531,7 +533,7 @@ button:focus:not(:focus-visible) {
 }
 
 .cursor-dust {
-  z-index: 97;
+  z-index: 997;
   inset: 0;
 }
 
