@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Filter, Heart, Move, Search, X } from 'lucide-react'
 import Background from './components/Background.jsx'
 import PageChrome from './components/PageChrome.jsx'
-import SiteNav from './components/SiteNav.jsx'
 import Hero from './components/Hero.jsx'
 import Featured from './components/Featured.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
@@ -724,7 +723,6 @@ export default function App() {
     <div className="app">
       <Background />
       <PageChrome />
-      <SiteNav />
 
       <Hero
         count={sites.length}
