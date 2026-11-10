@@ -45,23 +45,23 @@ export default function PageChrome() {
       setPointer({ x: event.clientX, y: event.clientY, visible: true })
 
       const now = performance.now()
-      if (now - lastDustAt.current < 42) return
+      if (now - lastDustAt.current < 20) return
       lastDustAt.current = now
 
       const particle = {
         id: ++dustId.current,
         x: event.clientX,
         y: event.clientY,
-        size: 2 + Math.random() * 4,
-        driftX: (Math.random() - 0.5) * 38,
-        driftY: -12 - Math.random() * 34,
-        delay: Math.random() * 90,
+        size: 1.5 + Math.random() * 2.5,
+        driftX: (Math.random() - 0.5) * 22,
+        driftY: -4 - Math.random() * 22,
+        delay: Math.random() * 35,
       }
       setDust((current) => [...current.slice(-22), particle])
       const timer = window.setTimeout(() => {
         setDust((current) => current.filter((item) => item.id !== particle.id))
         dustTimers.current.delete(timer)
-      }, 760)
+      }, 590)
       dustTimers.current.add(timer)
     }
     const leave = () => setPointer((current) => ({ ...current, visible: false }))
@@ -85,7 +85,6 @@ export default function PageChrome() {
 
       {canUseCursor && (
         <>
-          <span className={'cursor-halo' + (pointer.visible ? ' is-visible' : '')} style={cursorStyle} aria-hidden="true" />
           <span className={'cursor-dot' + (pointer.visible ? ' is-visible' : '')} style={cursorStyle} aria-hidden="true" />
           <span className={'cursor-ring' + (pointer.visible ? ' is-visible' : '')} style={cursorStyle} aria-hidden="true" />
           <span className="cursor-dust" aria-hidden="true">

@@ -471,7 +471,6 @@ button:focus:not(:focus-visible) {
   transform: translateY(-2px);
 }
 
-.cursor-halo,
 .cursor-dot,
 .cursor-ring,
 .cursor-dust {
@@ -482,21 +481,6 @@ button:focus:not(:focus-visible) {
   pointer-events: none;
 }
 
-.cursor-halo {
-  z-index: 96;
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  opacity: 0;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 68%);
-  transition: opacity 0.28s ease;
-}
-
-.cursor-halo.is-visible {
-  opacity: 0.72;
-}
-
 .cursor-dot,
 .cursor-ring {
   opacity: 0;
@@ -505,19 +489,20 @@ button:focus:not(:focus-visible) {
 }
 
 .cursor-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 80%, transparent);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.28);
 }
 
 .cursor-ring {
-  width: 30px;
-  height: 30px;
-  border: 1px solid color-mix(in srgb, var(--accent) 80%, #fff);
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
   border-radius: 50%;
-  box-shadow: inset 0 0 10px color-mix(in srgb, var(--accent) 20%, transparent), 0 0 16px color-mix(in srgb, var(--accent) 24%, transparent);
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
 }
 
 .cursor-dot.is-visible,
@@ -534,15 +519,15 @@ button:focus:not(:focus-visible) {
   position: fixed;
   display: block;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--accent) 82%, #fff);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 78%, transparent);
+  background: color-mix(in srgb, var(--accent) 38%, #fff);
+  box-shadow: 0 0 5px color-mix(in srgb, var(--accent) 34%, transparent);
   transform: translate(-50%, -50%);
   animation: cursorDust 0.72s cubic-bezier(0.16, 0.78, 0.38, 1) var(--dust-delay) forwards;
 }
 
 @keyframes cursorDust {
   0% {
-    opacity: 0.82;
+    opacity: 0.62;
     transform: translate(-50%, -50%) scale(1);
   }
   100% {
@@ -571,7 +556,6 @@ button:focus:not(:focus-visible) {
 @media (prefers-reduced-motion: reduce) {
   .scroll-progress span,
   .scroll-top,
-  .cursor-halo,
   .cursor-dot,
   .cursor-ring,
   .cursor-dust i {
