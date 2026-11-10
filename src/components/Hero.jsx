@@ -8,7 +8,6 @@ export default function Hero({
   onAdminClick,
   appearance,
   onToggleAppearance,
-  onCommand,
 }) {
   return (
     <header className="hero">
@@ -32,17 +31,6 @@ export default function Hero({
 
         <div className="hero-actions">
           <div className="hero-buttons">
-            <button
-              type="button"
-              className="command-trigger"
-              onClick={onCommand}
-              title="Hızlı komutlar (Ctrl + K)"
-              aria-label="Hızlı komutları aç"
-            >
-              <span className="command-trigger-mark">⌘</span>
-              <span>Komutlar</span>
-              <kbd>Ctrl K</kbd>
-            </button>
             <button
               type="button"
               className="appearance-toggle"
