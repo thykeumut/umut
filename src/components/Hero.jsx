@@ -1,4 +1,4 @@
-import { Lock, Moon, Sun } from 'lucide-react'
+import { Command, Lock, Moon, Sun } from 'lucide-react'
 
 export default function Hero({
   onAdd,
@@ -9,6 +9,7 @@ export default function Hero({
   onAdminClick,
   appearance,
   onToggleAppearance,
+  onCommand,
 }) {
   return (
     <header className="hero">
@@ -39,6 +40,11 @@ export default function Hero({
 
         <div className="hero-actions">
           <div className="hero-buttons">
+            {!isAdmin && (
+              <button type="button" className="command-trigger" onClick={onCommand} title="Hızlı proje bulucu (Ctrl + K)">
+                <Command size={15} strokeWidth={2.2} /> Bul <kbd>Ctrl K</kbd>
+              </button>
+            )}
             <button
               type="button"
               className="appearance-toggle"

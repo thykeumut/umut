@@ -3,6 +3,7 @@ import { Filter, Heart, Move, Search, Share2, X } from 'lucide-react'
 import Background from './components/Background.jsx'
 import PageChrome from './components/PageChrome.jsx'
 import Hero from './components/Hero.jsx'
+import QuickCommand from './components/QuickCommand.jsx'
 import WorkPulse from './components/WorkPulse.jsx'
 import Featured from './components/Featured.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
@@ -138,6 +139,7 @@ export default function App() {
   const [appearance, setAppearance] = useState(loadAppearance)
   const [newIds, setNewIds] = useState(() => new Set())
   const [termOpen, setTermOpen] = useState(false)
+  const [commandOpen, setCommandOpen] = useState(false)
   const [detailId, setDetailId] = useState(null)
   const [editSite, setEditSite] = useState(null)
   const [boardQuery, setBoardQuery] = useState('')
@@ -227,6 +229,17 @@ export default function App() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [isAdmin, modalOpen, adminOpen, detailId, termOpen])
+
+  useEffect(() => {
+    const onKey = (event) => {
+      if (!(event.metaKey || event.ctrlKey) || event.key.toLocaleLowerCase('tr') !== 'k') return
+      if (modalOpen || adminOpen || detailId || termOpen) return
+      event.preventDefault()
+      setCommandOpen(true)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [modalOpen, adminOpen, detailId, termOpen])
 
   useEffect(() => {
     let alive = true
@@ -756,6 +769,7 @@ export default function App() {
         onAdminClick={() => (isAdmin ? lockAdmin() : setAdminOpen(true))}
         appearance={appearance}
         onToggleAppearance={() => setAppearance((value) => (value === 'dark' ? 'light' : 'dark'))}
+        onCommand={() => setCommandOpen(true)}
       />
 
       <>
@@ -973,6 +987,14 @@ export default function App() {
         canNavigate={detailPool.length > 1}
         onPrevious={() => navigateDetail(-1)}
         onNext={() => navigateDetail(1)}
+      />
+
+      <QuickCommand
+        open={commandOpen}
+        sites={sites}
+        onClose={() => setCommandOpen(false)}
+        onDetail={openDetail}
+        onTerminal={() => setTermOpen(true)}
       />
 
       <Terminal
