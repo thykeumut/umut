@@ -784,6 +784,7 @@ export default function App() {
               flowMode={isMobile}
               onMove={moveSite}
               onOpen={openSite}
+              onDetail={openDetail}
               onDelete={deleteSite}
               onTogglePublic={togglePublic}
               onFocus={isAdmin ? setActiveId : () => {}}

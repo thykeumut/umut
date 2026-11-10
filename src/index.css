@@ -2000,7 +2000,7 @@ button:focus:not(:focus-visible) {
   overflow: hidden;
   background: linear-gradient(145deg, var(--glass-top), var(--glass-bottom));
   border: 1px solid var(--glass-border);
-  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.72), inset 0 0 38px rgba(148, 197, 255, 0.1);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.72), inset 0 0 38px rgba(156, 175, 136, 0.1);
   cursor: grab;
   touch-action: none;
   user-select: none;
@@ -2022,7 +2022,7 @@ button:focus:not(:focus-visible) {
     radial-gradient(150% 100% at 0% 0%, rgba(255, 255, 255, 0.13) 0%, transparent 48%),
     linear-gradient(112deg, rgba(255, 255, 255, 0.18) 0%, transparent 42%),
     linear-gradient(145deg, var(--glass-top), var(--glass-bottom));
-  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.78), inset 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 0 42px rgba(160, 207, 255, 0.08);
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.78), inset 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 0 42px rgba(156, 175, 136, 0.08);
 }
 
 @supports (backdrop-filter: blur(1px)) {
@@ -2129,7 +2129,7 @@ button:focus:not(:focus-visible) {
 
 /* Önizleme görseli olan kapakta simge okunsun diye karartma daha güçlü */
 .card-cover--shot::after {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(13, 22, 35, 0.1));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(15, 18, 14, 0.12));
 }
 
 /* Sitenin küçük ekran görüntüsü (kapak arka planı) */
@@ -2203,6 +2203,7 @@ button:focus:not(:focus-visible) {
 }
 
 .card-copy,
+.card-detail,
 .card-favorite {
   position: absolute;
   top: 10px;
@@ -2222,7 +2223,9 @@ button:focus:not(:focus-visible) {
 
 .card-favorite { right: 12px; }
 .card-copy { right: 49px; }
+.card-detail { right: 86px; }
 .card-copy:hover,
+.card-detail:hover,
 .card-favorite:hover { background: rgba(10, 12, 14, 0.58); }
 .card-favorite--on { color: var(--accent); background: rgba(10, 12, 14, 0.62); }
 
@@ -3451,8 +3454,27 @@ button:focus:not(:focus-visible) {
 .detail-body {
   display: flex;
   flex-direction: column;
-  gap: 11px;
+  gap: 14px;
   min-width: 0;
+}
+
+.detail-section {
+  display: grid;
+  gap: 6px;
+}
+
+.detail-eyebrow {
+  color: var(--accent-2);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.detail-eyebrow--links {
+  margin-top: 2px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
 }
 
 .detail-desc {

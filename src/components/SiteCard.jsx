@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { ArrowUpRight, Copy, Globe, Lock, Trash2, GripVertical, Heart, Star } from 'lucide-react'
+import { ArrowUpRight, Copy, Globe, Info, Lock, Trash2, GripVertical, Heart, Star } from 'lucide-react'
 import { gradientById } from '../lib/gradients'
 import { iconById, iconNameById } from '../lib/icons'
 import { categoryName, prettyUrl } from '../lib/projects'
@@ -12,6 +12,7 @@ export default function SiteCard({
   boardRef,
   onMove,
   onOpen,
+  onDetail,
   onDelete,
   onTogglePublic,
   onFocus,
@@ -271,6 +272,22 @@ export default function SiteCard({
             }}
           >
             <Copy size={14} strokeWidth={2.2} />
+          </button>
+        )}
+
+        {!isAdmin && (
+          <button
+            type="button"
+            className="card-detail"
+            data-no-drag
+            title="Proje detayları"
+            aria-label={`${site.title} proje detayları`}
+            onClick={(e) => {
+              e.stopPropagation()
+              onDetail(site)
+            }}
+          >
+            <Info size={14} strokeWidth={2.2} />
           </button>
         )}
 

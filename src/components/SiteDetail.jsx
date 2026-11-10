@@ -54,20 +54,34 @@ export default function SiteDetail({ site, isAdmin, onClose, onOpenSite, onEdit,
           </div>
 
           <div className="detail-body">
-            {site.description && <p className="detail-desc">{site.description}</p>}
+            {site.description && (
+              <section className="detail-section">
+                <span className="detail-eyebrow">Özet</span>
+                <p className="detail-desc">{site.description}</p>
+              </section>
+            )}
 
-            {site.story && <p className="detail-story">{site.story}</p>}
+            {site.story && (
+              <section className="detail-section">
+                <span className="detail-eyebrow">Proje notu</span>
+                <p className="detail-story">{site.story}</p>
+              </section>
+            )}
 
             {tags.length > 0 && (
-              <div className="detail-tags">
+              <section className="detail-section">
+                <span className="detail-eyebrow">Kullanılanlar</span>
+                <div className="detail-tags">
                 {tags.map((t) => (
                   <span key={t} className="tag">
                     {t}
                   </span>
                 ))}
-              </div>
+                </div>
+              </section>
             )}
 
+            <span className="detail-eyebrow detail-eyebrow--links">Bağlantılar</span>
             <div className="detail-meta">
               {site.public && site.url && (
                 <span className="detail-url">{prettyUrl(site.url)}</span>
