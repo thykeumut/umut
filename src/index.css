@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 /* ============================================================
-   TEK RENK KİMLİĞİ — sakin antrasit
+   RENK KİMLİĞİ — grafit + adaçayı + sıcak mercan
+   Mavi yok: iki yakın doğal ton ve tek tamamlayıcı vurgu.
    ============================================================ */
 :root {
   --scheme: dark;
@@ -14,33 +15,33 @@
   --r-chip: 980px;
 
   --blur: none;
-  --page-glow: #111827;
+  --page-glow: #121512;
   --glass-top: rgba(255, 255, 255, 0.16);
   --glass-bottom: rgba(255, 255, 255, 0.008);
   --glass-border: rgba(255, 255, 255, 0.52);
 
-  --tone-one: #173d5c;
-  --tone-two: #294e71;
-  --tone-complement: #68a9ff;
+  --tone-one: #294b3b;
+  --tone-two: #9caf88;
+  --tone-complement: #e76f51;
 
-  --bg-plain: #05080d;
+  --bg-plain: #0a0c0a;
   --bg-wash: transparent;
-  --orb-1: #3b485b;
-  --orb-2: #202a38;
+  --orb-1: #294b3b;
+  --orb-2: #5b4935;
 
   --text: #ffffff;
   --muted: #aeaeb2;
   --line: rgba(255, 255, 255, 0.2);
-  --surface: rgba(12, 18, 28, 0.12);
-  --surface-hi: rgba(34, 50, 68, 0.2);
-  --surface-2: rgba(9, 14, 23, 0.28);
+  --surface: rgba(14, 18, 15, 0.14);
+  --surface-hi: rgba(48, 64, 50, 0.22);
+  --surface-2: rgba(10, 14, 11, 0.3);
   --input-bg: rgba(255, 255, 255, 0.1);
 
-  --accent: #0a84ff;
-  --accent-2: #0a84ff;
-  --accent-contrast: #ffffff;
-  --accent-soft: rgba(10, 132, 255, 0.18);
-  --button-grad: #0a84ff;
+  --accent: #e76f51;
+  --accent-2: #9caf88;
+  --accent-contrast: #16100d;
+  --accent-soft: rgba(231, 111, 81, 0.18);
+  --button-grad: #e76f51;
   --danger: #ff453a;
   --ok: #30d158;
   --warn: rgba(235, 235, 245, 0.65);
@@ -57,28 +58,28 @@
 
 [data-appearance='light'] {
   color-scheme: light;
-  --page-glow: #eef4fb;
-  --bg-plain: #e7edf5;
-  --text: #1c1c1e;
-  --muted: rgba(60, 60, 67, 0.7);
-  --line: rgba(60, 60, 67, 0.18);
+  --page-glow: #f1efe7;
+  --bg-plain: #edece4;
+  --text: #20251f;
+  --muted: rgba(46, 53, 46, 0.7);
+  --line: rgba(48, 58, 48, 0.18);
   --surface: rgba(255, 255, 255, 0.48);
   --surface-hi: rgba(255, 255, 255, 0.68);
   --surface-2: rgba(255, 255, 255, 0.74);
   --input-bg: rgba(255, 255, 255, 0.48);
-  --accent: #007aff;
-  --accent-2: #007aff;
-  --accent-soft: rgba(0, 122, 255, 0.14);
-  --button-grad: #007aff;
+  --accent: #bd573e;
+  --accent-2: #58725a;
+  --accent-soft: rgba(189, 87, 62, 0.14);
+  --button-grad: #bd573e;
   --danger: #ff3b30;
   --ok: #34c759;
   --glass-top: rgba(255, 255, 255, 0.72);
   --glass-bottom: rgba(255, 255, 255, 0.28);
   --glass-border: rgba(255, 255, 255, 0.76);
-  --shadow: 0 8px 24px -18px rgba(15, 23, 42, 0.32);
-  --shadow-hi: 0 14px 30px -20px rgba(15, 23, 42, 0.4);
-  --tone-one: #d1d1d6;
-  --tone-two: #ffffff;
+  --shadow: 0 8px 24px -18px rgba(32, 37, 31, 0.32);
+  --shadow-hi: 0 14px 30px -20px rgba(32, 37, 31, 0.4);
+  --tone-one: #9cab8a;
+  --tone-two: #d7c4a6;
 }
 
 [data-theme='indigo'] {
