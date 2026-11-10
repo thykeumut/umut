@@ -33,7 +33,7 @@ export default function Featured({ site, isAdmin, onOpen, onDetail, onShuffle })
 
       <div className="featured-body">
         <div className="featured-topline">
-          <span className="featured-label">Öne çıkan proje</span>
+          <span className="featured-label">Keşif vitrini</span>
           <button
             type="button"
             className="featured-shuffle"

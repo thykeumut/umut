@@ -417,6 +417,13 @@ export default function App() {
     return [...used].filter(Boolean).sort((a, b) => categoryName(a).localeCompare(categoryName(b), 'tr'))
   }, [sites])
 
+  const categoryCounts = useMemo(() => {
+    return sites.filter((site) => site.public).reduce((counts, site) => {
+      counts[site.category] = (counts[site.category] || 0) + 1
+      return counts
+    }, {})
+  }, [sites])
+
   // Vitrin her ziyaretçiye rastgele bir açık proje gösterir.
   const featuredSite = useMemo(() => {
     const pool = sites.filter((site) => site.public)
@@ -686,14 +693,6 @@ export default function App() {
 
       <>
 
-          <Featured
-            site={featuredSite}
-            isAdmin={isAdmin}
-            onOpen={openSite}
-            onDetail={openDetail}
-            onShuffle={shuffleFeatured}
-          />
-
           <section className="board-tools" aria-label="Pano araçları">
             {isAdmin ? (
               <p className="board-arrange-note">
@@ -743,7 +742,7 @@ export default function App() {
                 onClick={() => setSelectedCategory('all')}
                 aria-pressed={selectedCategory === 'all'}
               >
-                Tümü
+                Tümü <span>{sites.filter((site) => site.public).length}</span>
               </button>
               {availableCategories.map((category) => (
                 <button
@@ -753,7 +752,7 @@ export default function App() {
                   onClick={() => setSelectedCategory(category)}
                   aria-pressed={selectedCategory === category}
                 >
-                  {categoryName(category)}
+                  {categoryName(category)} <span>{categoryCounts[category]}</span>
                 </button>
               ))}
             </nav>
@@ -809,6 +808,13 @@ export default function App() {
             </div>
           )}
         </main>
+        <Featured
+          site={featuredSite}
+          isAdmin={isAdmin}
+          onOpen={openSite}
+          onDetail={openDetail}
+          onShuffle={shuffleFeatured}
+        />
         </>
 
       <ActivityRail />

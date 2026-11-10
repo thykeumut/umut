@@ -1690,6 +1690,23 @@ button:focus:not(:focus-visible) {
 
 .board-filter--active:hover { color: var(--bg-plain); }
 
+.board-filter span {
+  display: inline-grid;
+  min-width: 15px;
+  height: 15px;
+  place-items: center;
+  margin-left: 3px;
+  padding: 0 3px;
+  color: inherit;
+  font-size: 9.5px;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.board-filter--active span {
+  background: color-mix(in srgb, var(--bg-plain) 18%, transparent);
+}
+
 .board-favorites {
   display: inline-flex;
   align-items: center;
