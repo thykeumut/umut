@@ -4,6 +4,7 @@ export default function Hero({
   onAdd,
   onReset,
   count,
+  publicCount,
   isAdmin,
   onAdminClick,
   appearance,
@@ -13,13 +14,20 @@ export default function Hero({
     <header className="hero">
       <div className="hero-inner">
         <div className="hero-text">
-          <span className="hero-badge">THYKE · PORTFOLYO</span>
+          <span className="hero-badge">THYKE / DIGITAL WORKS</span>
           <h1 className="hero-title">
-            Merhaba, ben <span className="gradient-text">Umut</span>
+            Merhaba, ben <span className="gradient-text">Umut.</span>
+            <br />
+            İnternette <span className="hero-title-muted">şeyler</span> üretiyorum.
           </h1>
           <p className="hero-sub">
-            Projelerim ve çalışmalarım.
+            Web projeleri, oyunlar ve deneysel fikirler.
           </p>
+          <div className="hero-index" aria-label="Çalışma alanları">
+            <span><b>01</b> Web</span>
+            <span><b>02</b> Oyun</span>
+            <span><b>03</b> Deney</span>
+          </div>
           <p className="hero-hint">
             {isAdmin ? (
               <>Projelerini buradan ekleyip düzenleyebilirsin.</>
@@ -42,7 +50,11 @@ export default function Hero({
             </button>
             <div className="stat">
               <span className="stat-num">{count}</span>
-              <span className="stat-label">Site</span>
+              <span className="stat-label">Proje</span>
+            </div>
+
+            <div className="hero-live-stat" title="Ziyaretçilere açık projeler">
+              <i aria-hidden="true" /> {publicCount} canlı
             </div>
 
             {isAdmin ? (

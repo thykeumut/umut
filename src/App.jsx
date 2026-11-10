@@ -726,6 +726,7 @@ export default function App() {
 
       <Hero
         count={sites.length}
+        publicCount={sites.filter((site) => site.public).length}
         isAdmin={isAdmin}
         onAdd={openAdd}
         onReset={resetLayout}
@@ -735,6 +736,14 @@ export default function App() {
       />
 
       <>
+
+          <section className="projects-intro" aria-labelledby="projects-title">
+            <div className="projects-intro-title">
+              <span className="section-index">01</span>
+              <h2 id="projects-title">Projeler</h2>
+            </div>
+            <p>Web deneyleri, oyunlar ve küçük internet fikirleri.</p>
+          </section>
 
           <section className="board-tools" aria-label="Pano araçları">
             {isAdmin ? (
