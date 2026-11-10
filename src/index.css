@@ -1641,6 +1641,54 @@ button:focus:not(:focus-visible) {
   background: var(--surface-hi);
 }
 
+.board-filters {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  width: min(100% - 40px, 1520px);
+  margin: 0 auto 14px;
+}
+
+.board-filter-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 2px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+}
+
+.board-filter {
+  min-height: 29px;
+  padding: 0 10px;
+  color: var(--muted);
+  font: 600 11.5px var(--font);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: linear-gradient(145deg, var(--glass-top), var(--glass-bottom));
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+
+.board-filter:hover {
+  color: var(--text);
+  border-color: color-mix(in srgb, var(--accent) 42%, var(--glass-border));
+  transform: translateY(-1px);
+}
+
+.board-filter--active {
+  color: var(--bg-plain);
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.board-filter--active:hover { color: var(--bg-plain); }
+
 .board-favorites {
   display: inline-flex;
   align-items: center;

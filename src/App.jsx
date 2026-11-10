@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Heart, Move, Search, X } from 'lucide-react'
+import { Filter, Heart, Move, Search, X } from 'lucide-react'
 import Background from './components/Background.jsx'
 import PageChrome from './components/PageChrome.jsx'
 import Hero from './components/Hero.jsx'
@@ -12,7 +12,7 @@ import SiteDetail from './components/SiteDetail.jsx'
 import Terminal from './components/Terminal.jsx'
 import { GRADIENTS } from './lib/gradients.js'
 import { DEFAULT_ICON, iconFromLegacyEmoji } from './lib/icons.js'
-import { cleanTags, normalizeCategory } from './lib/projects.js'
+import { categoryName, cleanTags, normalizeCategory } from './lib/projects.js'
 import { ADMIN_STORAGE_KEY } from './lib/config.js'
 import { fromBase64 } from './lib/github.js'
 import {
@@ -129,6 +129,7 @@ export default function App() {
   const [boardQuery, setBoardQuery] = useState('')
   const [favoriteIds, setFavoriteIds] = useState(loadFavorites)
   const [onlyFavorites, setOnlyFavorites] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState('all')
   const [featuredId, setFeaturedId] = useState(null)
 
   const boardRef = useRef(null)
@@ -401,6 +402,7 @@ export default function App() {
     return sites.filter((site) => {
       const matchesFavorite = !onlyFavorites || favoriteIds.includes(site.id)
       if (!matchesFavorite) return false
+      if (selectedCategory !== 'all' && site.category !== selectedCategory) return false
       if (!query) return true
       const haystack = [site.title, site.description, site.category, ...(site.tags || [])]
         .filter(Boolean)
@@ -408,7 +410,12 @@ export default function App() {
         .toLocaleLowerCase('tr')
       return haystack.includes(query)
     })
-  }, [sites, isAdmin, boardQuery, onlyFavorites, favoriteIds])
+  }, [sites, isAdmin, boardQuery, onlyFavorites, favoriteIds, selectedCategory])
+
+  const availableCategories = useMemo(() => {
+    const used = new Set(sites.filter((site) => site.public).map((site) => site.category))
+    return [...used].filter(Boolean).sort((a, b) => categoryName(a).localeCompare(categoryName(b), 'tr'))
+  }, [sites])
 
   // Vitrin her ziyaretçiye rastgele bir açık proje gösterir.
   const featuredSite = useMemo(() => {
@@ -727,6 +734,30 @@ export default function App() {
               {shownSites.length} proje
             </span>
           </section>
+          {!isAdmin && availableCategories.length > 1 && (
+            <nav className="board-filters" aria-label="Proje kategorileri">
+              <span className="board-filter-label"><Filter size={13} strokeWidth={2} /> Kategoriler</span>
+              <button
+                type="button"
+                className={'board-filter' + (selectedCategory === 'all' ? ' board-filter--active' : '')}
+                onClick={() => setSelectedCategory('all')}
+                aria-pressed={selectedCategory === 'all'}
+              >
+                Tümü
+              </button>
+              {availableCategories.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  className={'board-filter' + (selectedCategory === category ? ' board-filter--active' : '')}
+                  onClick={() => setSelectedCategory(category)}
+                  aria-pressed={selectedCategory === category}
+                >
+                  {categoryName(category)}
+                </button>
+              ))}
+            </nav>
+          )}
         <main
           id="projects"
           ref={boardRef}
