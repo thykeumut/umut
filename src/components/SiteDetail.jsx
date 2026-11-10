@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { X, ArrowUpRight, ChevronLeft, ChevronRight, GitBranch, Lock, Pencil, Share2 } from 'lucide-react'
 import { gradientById } from '../lib/gradients'
 import { iconById } from '../lib/icons'
-import { categoryName, prettyUrl } from '../lib/projects'
+import { categoryName, prettyUrl, statusName } from '../lib/projects'
 import Shot from './Shot.jsx'
 
 // Proje detay paneli: büyük önizleme, teknolojiler, hikâye, bağlantılar.
@@ -33,6 +33,10 @@ export default function SiteDetail({
   const gradient = gradientById(site.gradient)
   const Icon = iconById(site.icon)
   const tags = Array.isArray(site.tags) ? site.tags : []
+  const projectStatus = site.status || (site.public ? 'live' : 'building')
+  const lastUpdated = site.updatedAt
+    ? new Intl.DateTimeFormat('tr-TR', { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(site.updatedAt))
+    : ''
 
   return (
     <div className="modal-backdrop" onPointerDown={onClose}>
@@ -45,6 +49,7 @@ export default function SiteDetail({
         <div className="modal-head">
           <div className="detail-heading">
             <span className="detail-cat">{categoryName(site.category)}</span>
+            <span className={'detail-status detail-status--' + projectStatus}>{statusName(projectStatus)}</span>
             <h2>{site.title}</h2>
           </div>
           <div className="detail-head-actions">
@@ -113,6 +118,7 @@ export default function SiteDetail({
                 <span className="detail-url">{prettyUrl(site.url)}</span>
               )}
               {!site.public && <span className="detail-url">adres gizli</span>}
+              {lastUpdated && <span className="detail-updated">Son güncelleme: {lastUpdated}</span>}
             </div>
 
             <div className="detail-actions">

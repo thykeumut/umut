@@ -9,12 +9,29 @@ export const CATEGORIES = [
 
 export const PROJECT_CATEGORIES = CATEGORIES.filter((c) => c.id !== 'all')
 
+export const PROJECT_STATUSES = [
+  { id: 'live', name: 'Canlı' },
+  { id: 'building', name: 'Geliştiriliyor' },
+  { id: 'archive', name: 'Arşiv' },
+]
+
 export const categoryName = (id) =>
   (CATEGORIES.find((c) => c.id === id) || CATEGORIES[1]).name
 
 export function normalizeCategory(value) {
   return PROJECT_CATEGORIES.some((c) => c.id === value) ? value : 'web'
 }
+
+export function normalizeStatus(value, isPublic = false) {
+  return PROJECT_STATUSES.some((status) => status.id === value)
+    ? value
+    : isPublic
+      ? 'live'
+      : 'building'
+}
+
+export const statusName = (id) =>
+  (PROJECT_STATUSES.find((status) => status.id === id) || PROJECT_STATUSES[0]).name
 
 // "React, CSS, canvas" → ['React','CSS','canvas']
 export function cleanTags(value) {

@@ -2468,6 +2468,10 @@ button:focus:not(:focus-visible) {
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-2) 24%, transparent);
 }
 
+.card-live--building i { background: var(--accent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 24%, transparent); }
+.card-live--archive { opacity: 0.72; }
+.card-live--archive i { background: var(--muted); box-shadow: none; }
+
 .card-favorite { right: 12px; }
 .card-copy { right: 49px; }
 .card-detail { right: 86px; }
@@ -3709,6 +3713,21 @@ button:focus:not(:focus-visible) {
   gap: 14px;
   min-width: 0;
 }
+
+.detail-status {
+  flex: none;
+  padding: 3px 7px;
+  color: var(--accent-contrast);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  background: var(--accent-2);
+}
+
+.detail-status--building { background: var(--accent); }
+.detail-status--archive { color: var(--text); background: var(--surface-hi); }
 
 .detail-head-actions,
 .detail-nav {
@@ -5323,6 +5342,8 @@ button:focus:not(:focus-visible) {
     break-inside: avoid;
   }
 }
+
+.detail-updated { color: var(--muted); font-size: 11px; }
 
 /* macOS pencere dili: masaüstünde pano tek bir çalışma alanı gibi görünür. */
 

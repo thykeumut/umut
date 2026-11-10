@@ -13,7 +13,7 @@ import SiteDetail from './components/SiteDetail.jsx'
 import Terminal from './components/Terminal.jsx'
 import { GRADIENTS } from './lib/gradients.js'
 import { DEFAULT_ICON, iconFromLegacyEmoji } from './lib/icons.js'
-import { categoryName, cleanTags, normalizeCategory } from './lib/projects.js'
+import { categoryName, cleanTags, normalizeCategory, normalizeStatus } from './lib/projects.js'
 import { ADMIN_STORAGE_KEY } from './lib/config.js'
 import { fromBase64 } from './lib/github.js'
 import {
@@ -52,6 +52,7 @@ function normalizeSite(site, index = 0) {
     y: Number.isFinite(site.y) ? site.y : 28 + Math.floor(index / 3) * 232,
     public: !!site.public,
     category: normalizeCategory(site.category),
+    status: normalizeStatus(site.status, !!site.public),
     tags: cleanTags(site.tags),
     repo: site.repo || '',
     story: site.story || '',
@@ -539,6 +540,9 @@ export default function App() {
       gradient: data.gradient || GRADIENTS[0].id,
       icon: data.icon || DEFAULT_ICON,
       public: !!data.public,
+      status: normalizeStatus(data.status, !!data.public),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       x,
       y,
     }
@@ -560,7 +564,7 @@ export default function App() {
   const updateSite = (id, data) => {
     markDirty()
     setSites((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, ...data, id: s.id } : s))
+      prev.map((s) => (s.id === id ? { ...s, ...data, id: s.id, updatedAt: new Date().toISOString() } : s))
     )
     setEditSite(null)
     setModalOpen(false)

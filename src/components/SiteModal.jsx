@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
 import { GRADIENTS } from '../lib/gradients'
 import { ICONS } from '../lib/icons'
-import { PROJECT_CATEGORIES, cleanTags, normalizeCategory } from '../lib/projects'
+import { PROJECT_CATEGORIES, PROJECT_STATUSES, cleanTags, normalizeCategory, normalizeStatus } from '../lib/projects'
 
 const EMPTY = {
   title: '',
@@ -15,6 +15,7 @@ const EMPTY = {
   tags: '',
   repo: '',
   story: '',
+  status: 'live',
 }
 
 // Kart ekleme / düzenleme paneli.
@@ -36,6 +37,7 @@ export default function SiteModal({ open, site, onClose, onSubmit }) {
         tags: Array.isArray(site.tags) ? site.tags.join(', ') : site.tags || '',
         repo: site.repo || '',
         story: site.story || '',
+        status: normalizeStatus(site.status, !!site.public),
       })
     } else {
       setForm(EMPTY)
@@ -64,6 +66,7 @@ export default function SiteModal({ open, site, onClose, onSubmit }) {
       repo: form.repo.trim(),
       story: form.story.trim(),
       category: normalizeCategory(form.category),
+      status: normalizeStatus(form.status, form.public),
       tags: cleanTags(form.tags),
     })
   }
@@ -165,6 +168,22 @@ export default function SiteModal({ open, site, onClose, onSubmit }) {
                     onClick={() => setForm((f) => ({ ...f, category: c.id }))}
                   >
                     {c.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="field">
+              <span className="field-label">Proje durumu</span>
+              <div className="cat-picker">
+                {PROJECT_STATUSES.map((status) => (
+                  <button
+                    key={status.id}
+                    type="button"
+                    className={'filter-chip filter-chip--sm' + (form.status === status.id ? ' filter-chip--on' : '')}
+                    onClick={() => setForm((f) => ({ ...f, status: status.id }))}
+                  >
+                    {status.name}
                   </button>
                 ))}
               </div>

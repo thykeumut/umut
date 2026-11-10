@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, Copy, Globe, Info, Lock, Trash2, GripVertical, Heart, Star } from 'lucide-react'
 import { gradientById } from '../lib/gradients'
 import { iconById, iconNameById } from '../lib/icons'
-import { categoryName, prettyUrl } from '../lib/projects'
+import { categoryName, prettyUrl, statusName } from '../lib/projects'
 import Shot from './Shot.jsx'
 
 // Tek bir proje kartı. Sürükleme + tıklayınca siteyi açma.
@@ -202,6 +202,7 @@ export default function SiteCard({
 
   const gradient = gradientById(site.gradient)
   const isPublic = !!site.public
+  const projectStatus = site.status || (isPublic ? 'live' : 'building')
   const SiteIcon = iconById(site.icon)
   const cardStyle = flowMode
     ? undefined
@@ -254,8 +255,8 @@ export default function SiteCard({
         <span className="card-cat">{categoryName(site.category)}</span>
 
         {isPublic && (
-          <span className="card-live" title="Canlı demo erişilebilir">
-            <i aria-hidden="true" /> canlı
+          <span className={'card-live card-live--' + projectStatus} title={statusName(projectStatus)}>
+            <i aria-hidden="true" /> {statusName(projectStatus)}
           </span>
         )}
 
