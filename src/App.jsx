@@ -5,6 +5,7 @@ import PageChrome from './components/PageChrome.jsx'
 import Hero from './components/Hero.jsx'
 import Featured from './components/Featured.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
+import RecentProjects from './components/RecentProjects.jsx'
 import SiteCard from './components/SiteCard.jsx'
 import SiteModal from './components/SiteModal.jsx'
 import AdminModal from './components/AdminModal.jsx'
@@ -25,6 +26,7 @@ import {
 } from './lib/appwrite.js'
 
 const FAVORITES_KEY = 'umut-portfolyo:favorites:v1'
+const RECENT_KEY = 'umut-portfolyo:recent-projects:v1'
 const APPEARANCE_KEY = 'umut-portfolyo:appearance:v1'
 // Yayındaki (herkesin gördüğü) kart listesi
 const PUBLISHED_PATH = `${import.meta.env.BASE_URL}sites.json`
@@ -103,6 +105,15 @@ function loadFavorites() {
   }
 }
 
+function loadRecentProjects() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]')
+    return Array.isArray(saved) ? saved.filter((id) => typeof id === 'string').slice(0, 4) : []
+  } catch {
+    return []
+  }
+}
+
 function loadAppearance() {
   try {
     return localStorage.getItem(APPEARANCE_KEY) === 'light' ? 'light' : 'dark'
@@ -128,6 +139,7 @@ export default function App() {
   const [editSite, setEditSite] = useState(null)
   const [boardQuery, setBoardQuery] = useState('')
   const [favoriteIds, setFavoriteIds] = useState(loadFavorites)
+  const [recentIds, setRecentIds] = useState(loadRecentProjects)
   const [onlyFavorites, setOnlyFavorites] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [featuredId, setFeaturedId] = useState(null)
@@ -152,6 +164,14 @@ export default function App() {
   }, [favoriteIds])
 
   // Ekran boyutu değişimi (mobilde serbest sürükleme kapanır)
+  useEffect(() => {
+    try {
+      localStorage.setItem(RECENT_KEY, JSON.stringify(recentIds))
+    } catch {
+      /* depolama kapalı olabilir */
+    }
+  }, [recentIds])
+
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 760)
     window.addEventListener('resize', onResize)
@@ -633,6 +653,12 @@ export default function App() {
     [sites, isAdmin]
   )
 
+  const recentSites = useMemo(() => {
+    return recentIds
+      .map((id) => detailPool.find((site) => site.id === id))
+      .filter(Boolean)
+  }, [recentIds, detailPool])
+
   const navigateDetail = useCallback((direction) => {
     setDetailId((currentId) => {
       const index = detailPool.findIndex((site) => site.id === currentId)
@@ -643,6 +669,7 @@ export default function App() {
 
   const openDetail = useCallback((site) => {
     if (!site) return
+    setRecentIds((current) => [site.id, ...current.filter((id) => id !== site.id)].slice(0, 4))
     setDetailId(site.id)
   }, [])
 
@@ -828,6 +855,7 @@ export default function App() {
           onDetail={openDetail}
           onShuffle={shuffleFeatured}
         />
+        <RecentProjects sites={recentSites} onSelect={openDetail} />
         </>
 
       <ActivityRail />
