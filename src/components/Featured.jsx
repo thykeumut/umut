@@ -16,7 +16,7 @@ export default function Featured({ site, isAdmin, onOpen, onDetail, onShuffle })
   const canOpen = isAdmin || site.public
 
   return (
-    <section className="featured" aria-label="Öne çıkan proje">
+    <section id="showcase" className="featured" aria-label="Öne çıkan proje">
       <div className="featured-media" style={{ background: gradient.css }}>
         {site.public && site.url ? (
           <Shot url={site.url} className="featured-shot" width={1200} height={720} alt="" />

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Filter, Heart, Move, Search, X } from 'lucide-react'
 import Background from './components/Background.jsx'
 import PageChrome from './components/PageChrome.jsx'
+import SiteNav from './components/SiteNav.jsx'
 import Hero from './components/Hero.jsx'
 import Featured from './components/Featured.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
@@ -124,6 +125,7 @@ function loadAppearance() {
 
 export default function App() {
   const [sites, setSites] = useState([])
+  const [sitesLoading, setSitesLoading] = useState(true)
   const [isAdmin, setIsAdmin] = useState(loadAdmin)
   const [activeId, setActiveId] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
@@ -251,7 +253,9 @@ export default function App() {
         }
       }
     }
-    boot()
+    boot().finally(() => {
+      if (alive) setSitesLoading(false)
+    })
     return () => {
       alive = false
     }
@@ -720,6 +724,7 @@ export default function App() {
     <div className="app">
       <Background />
       <PageChrome />
+      <SiteNav />
 
       <Hero
         count={sites.length}
@@ -811,7 +816,16 @@ export default function App() {
             }
           }}
         >
-          {shownSites.map((site) => (
+          {sitesLoading && Array.from({ length: 6 }, (_, index) => (
+            <div
+              key={index}
+              className="card-skeleton"
+              style={{ left: 24 + (index % 5) * 300, top: 24 + Math.floor(index / 5) * 244 }}
+              aria-hidden="true"
+            />
+          ))}
+
+          {!sitesLoading && shownSites.map((site) => (
             <SiteCard
               key={site.id}
               site={site}
@@ -835,7 +849,7 @@ export default function App() {
             />
           ))}
 
-          {shownSites.length === 0 && (
+          {!sitesLoading && shownSites.length === 0 && (
             <div className="empty">
               <p>Henüz kart yok.</p>
               {isAdmin ? (

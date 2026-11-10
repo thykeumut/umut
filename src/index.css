@@ -744,6 +744,67 @@ button:focus:not(:focus-visible) {
 /* ============================================================
    ARKA PLAN — sade, derin, çok hafif ışıma
    ============================================================ */
+/* ÜST GEZİNTİ — küçük, sabit ve sakin */
+.site-nav {
+  position: sticky;
+  top: 12px;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(100% - 40px, 1520px);
+  min-height: 44px;
+  margin: 12px auto -4px;
+  padding: 5px 6px 5px 12px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.site-nav--scrolled {
+  border-color: var(--glass-border);
+  background: linear-gradient(145deg, var(--glass-top), var(--glass-bottom));
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.site-brand,
+.site-nav-links button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.site-brand { color: var(--text); letter-spacing: -0.02em; }
+
+.site-brand-mark {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  place-items: center;
+  color: var(--accent-contrast);
+  font: 800 15px/1 var(--font);
+  border-radius: 8px;
+  background: var(--accent);
+}
+
+.site-nav-links { display: inline-flex; align-items: center; gap: 3px; }
+
+.site-nav-links button {
+  min-height: 32px;
+  padding: 0 10px;
+  border-radius: 9px;
+  transition: color 0.18s ease, background 0.18s ease;
+}
+
+.site-nav-links button:hover { color: var(--text); background: color-mix(in srgb, var(--text) 8%, transparent); }
+
 .background {
   position: fixed;
   inset: 0;
@@ -2089,6 +2150,38 @@ button:focus:not(:focus-visible) {
 }
 
 
+.card-skeleton {
+  position: absolute;
+  width: 276px;
+  height: 220px;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r-card);
+  background: linear-gradient(145deg, var(--glass-top), var(--glass-bottom));
+}
+
+.card-skeleton::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 22%, rgba(255, 255, 255, 0.12) 44%, transparent 66%);
+  transform: translateX(-100%);
+  animation: skeletonSweep 1.5s ease-in-out infinite;
+}
+
+.card-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 100px 16px 16px;
+  background:
+    linear-gradient(var(--line), var(--line)) 0 0 / 48% 12px no-repeat,
+    linear-gradient(var(--line), var(--line)) 0 28px / 82% 8px no-repeat,
+    linear-gradient(var(--line), var(--line)) 0 48px / 56% 8px no-repeat;
+  opacity: 0.64;
+}
+
+@keyframes skeletonSweep { to { transform: translateX(100%); } }
+
 .card {
   position: absolute;
   width: 276px;
@@ -2992,6 +3085,11 @@ button:focus:not(:focus-visible) {
   color: var(--text);
   background: var(--surface-hi);
   box-shadow: none;
+}
+
+.board--flow .card-skeleton {
+  position: static;
+  width: 100%;
 }
 
 .viewtab--on svg {
