@@ -9,6 +9,7 @@ import SiteModal from './components/SiteModal.jsx'
 import AdminModal from './components/AdminModal.jsx'
 import SiteDetail from './components/SiteDetail.jsx'
 import Terminal from './components/Terminal.jsx'
+import QuickCommand from './components/QuickCommand.jsx'
 import { GRADIENTS } from './lib/gradients.js'
 import { DEFAULT_ICON, iconFromLegacyEmoji } from './lib/icons.js'
 import { cleanTags, normalizeCategory } from './lib/projects.js'
@@ -123,6 +124,7 @@ export default function App() {
   const [appearance, setAppearance] = useState(loadAppearance)
   const [newIds, setNewIds] = useState(() => new Set())
   const [termOpen, setTermOpen] = useState(false)
+  const [commandOpen, setCommandOpen] = useState(false)
   const [detailId, setDetailId] = useState(null)
   const [editSite, setEditSite] = useState(null)
   const [boardQuery, setBoardQuery] = useState('')
@@ -171,13 +173,13 @@ export default function App() {
       ) {
         return
       }
-      if (modalOpen || adminOpen || detailId) return
+      if (modalOpen || adminOpen || detailId || commandOpen) return
       e.preventDefault()
       setTermOpen((open) => !open)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [modalOpen, adminOpen, detailId])
+  }, [modalOpen, adminOpen, detailId, commandOpen])
 
   // İlk yükleme: proje kartları Appwrite'tan gelir. Depo erişilemezse
   // statik yayın dosyası yedek olur.
@@ -614,6 +616,7 @@ export default function App() {
         onAdminClick={() => (isAdmin ? lockAdmin() : setAdminOpen(true))}
         appearance={appearance}
         onToggleAppearance={() => setAppearance((value) => (value === 'dark' ? 'light' : 'dark'))}
+        onCommand={() => setCommandOpen(true)}
       />
 
       <>
@@ -760,6 +763,18 @@ export default function App() {
           setTermOpen(false)
           setDetailId(site.id)
         }}
+      />
+
+      <QuickCommand
+        open={commandOpen}
+        onClose={setCommandOpen}
+        sites={sites}
+        isAdmin={isAdmin}
+        onOpenSite={openSite}
+        onShowDetail={(site) => setDetailId(site.id)}
+        onOpenTerminal={() => setTermOpen(true)}
+        onAdmin={() => (isAdmin ? lockAdmin() : setAdminOpen(true))}
+        onAdd={openAdd}
       />
 
       <AdminModal
