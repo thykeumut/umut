@@ -13,7 +13,7 @@
   --r-modal: 24px;
   --r-chip: 980px;
 
-  --blur: blur(26px) saturate(185%);
+  --blur: blur(10px) saturate(175%);
   --page-glow: #111827;
   --glass-top: rgba(255, 255, 255, 0.28);
   --glass-bottom: rgba(255, 255, 255, 0.065);
@@ -1055,14 +1055,14 @@ button:focus:not(:focus-visible) {
     linear-gradient(112deg, rgba(255, 255, 255, 0.11) 0%, transparent 34%),
     linear-gradient(145deg, var(--glass-top), var(--glass-bottom));
   box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.52), inset 0 0 36px rgba(255, 255, 255, 0.035);
-  backdrop-filter: blur(26px) saturate(185%);
-  -webkit-backdrop-filter: blur(26px) saturate(185%);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
 }
 
 @supports (backdrop-filter: blur(1px)) {
   .featured {
-    backdrop-filter: blur(26px) saturate(185%);
-    -webkit-backdrop-filter: blur(26px) saturate(185%);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
   }
 }
 
@@ -1146,8 +1146,8 @@ button:focus:not(:focus-visible) {
     linear-gradient(112deg, rgba(255, 255, 255, 0.17) 0%, transparent 45%),
     color-mix(in srgb, var(--surface) 54%, transparent);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 0 28px rgba(255, 255, 255, 0.025);
-  backdrop-filter: blur(26px) saturate(185%);
-  -webkit-backdrop-filter: blur(26px) saturate(185%);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
 }
 
 .featured-topline {
@@ -1333,8 +1333,8 @@ button:focus:not(:focus-visible) {
   .board-favorites,
   .board-result,
   .card {
-    backdrop-filter: blur(38px) saturate(215%);
-    -webkit-backdrop-filter: blur(38px) saturate(215%);
+    backdrop-filter: blur(8px) saturate(185%);
+    -webkit-backdrop-filter: blur(8px) saturate(185%);
   }
 }
 
@@ -1394,8 +1394,8 @@ button:focus:not(:focus-visible) {
   background:
     linear-gradient(116deg, rgba(255, 255, 255, 0.24), transparent 52%),
     rgba(255, 255, 255, 0.055) !important;
-  backdrop-filter: blur(22px) saturate(190%);
-  -webkit-backdrop-filter: blur(22px) saturate(190%);
+  backdrop-filter: blur(6px) saturate(180%);
+  -webkit-backdrop-filter: blur(6px) saturate(180%);
 }
 
 .card-cover::after {
@@ -1573,8 +1573,8 @@ button:focus:not(:focus-visible) {
   background:
     linear-gradient(110deg, rgba(255, 255, 255, 0.18), transparent 52%),
     rgba(255, 255, 255, 0.055);
-  backdrop-filter: blur(32px) saturate(200%);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  backdrop-filter: blur(8px) saturate(185%);
+  -webkit-backdrop-filter: blur(8px) saturate(185%);
 }
 
 .card-title {
