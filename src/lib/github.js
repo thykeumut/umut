@@ -18,6 +18,14 @@ export const newTokenUrl =
 
 const API = `https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/${GH.path}`
 
+// Kart listesinin ÖNBELLEKSİZ adresi: GitHub API'si commit'ten hemen sonra
+// güncel içeriği verir (Pages CDN'i ise dakikalarca eski hâli verebilir).
+export const sitesApiUrl = `${API}?ref=${GH.branch}`
+
+// Yedek kaynak: ham dosya. İstek sınırı yoktur ve Pages CDN'inden biraz daha
+// çabuk tazelenir (API saatlik sınıra takılırsa buraya düşülür).
+export const sitesRawUrl = `https://raw.githubusercontent.com/${GH.owner}/${GH.repo}/${GH.branch}/${GH.path}`
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
 function headers(token) {
@@ -78,8 +86,12 @@ export function hasToken() {
   return !!getToken()
 }
 
-// Yayına yazılacak kart biçimi. "Gizli" kartların adresi düz metin olarak
-// yayınlanmaz (kart görünür ama adres yayında bulunmaz).
+// Yayına yazılacak kart biçimi.
+//
+// GİZLİ KARTLARIN ADRESİ YAYINA HİÇ YAZILMAZ. (Eskiden base64 ile yazılıyordu;
+// ama base64 şifreleme değildir, herkes çözebilirdi.) Artık gizli kartın adresi
+// yalnızca yöneticinin kendi tarayıcısındaki kayıtta durur; yayındaki dosyada
+// yalnızca kartın görünümü (başlık, açıklama, simge, konum) bulunur.
 export function publishShape(s) {
   const base = {
     id: s.id,
@@ -87,13 +99,16 @@ export function publishShape(s) {
     description: s.description || '',
     icon: s.icon,
     gradient: s.gradient,
+    category: s.category || 'web',
+    tags: Array.isArray(s.tags) ? s.tags : [],
     public: !!s.public,
+    featured: !!s.featured,
     x: s.x,
     y: s.y,
   }
   return s.public
-    ? { ...base, url: s.url }
-    : { ...base, u: toBase64(s.url || '') }
+    ? { ...base, url: s.url, repo: s.repo || '', story: s.story || '' }
+    : base
 }
 
 // Anahtar gerçekten bu depoya yazabiliyor mu?

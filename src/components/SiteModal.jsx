@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
 import { GRADIENTS } from '../lib/gradients'
 import { ICONS } from '../lib/icons'
+import { PROJECT_CATEGORIES, cleanTags, normalizeCategory } from '../lib/projects'
 
 const EMPTY = {
   title: '',
@@ -10,19 +11,37 @@ const EMPTY = {
   icon: 'rocket',
   gradient: 'auto',
   public: false,
+  category: 'web',
+  tags: '',
+  repo: '',
+  story: '',
 }
 
-// Yeni site ekleme paneli (modal)
-export default function AddSiteModal({ open, onClose, onSubmit }) {
+// Kart ekleme / düzenleme paneli.
+export default function SiteModal({ open, site, onClose, onSubmit }) {
   const [form, setForm] = useState(EMPTY)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (open) {
+    if (!open) return
+    if (site) {
+      setForm({
+        title: site.title || '',
+        url: site.url || '',
+        description: site.description || '',
+        icon: site.icon || 'rocket',
+        gradient: site.gradient || 'auto',
+        public: !!site.public,
+        category: normalizeCategory(site.category),
+        tags: Array.isArray(site.tags) ? site.tags.join(', ') : site.tags || '',
+        repo: site.repo || '',
+        story: site.story || '',
+      })
+    } else {
       setForm(EMPTY)
-      setError('')
     }
-  }, [open])
+    setError('')
+  }, [open, site])
 
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose()
@@ -38,14 +57,22 @@ export default function AddSiteModal({ open, onClose, onSubmit }) {
     e.preventDefault()
     if (!form.title.trim()) return setError('Kart için bir başlık gir.')
     if (!form.url.trim()) return setError('Bir site adresi (link) gir.')
-    onSubmit({ ...form, title: form.title.trim(), url: form.url.trim() })
+    onSubmit({
+      ...form,
+      title: form.title.trim(),
+      url: form.url.trim(),
+      repo: form.repo.trim(),
+      story: form.story.trim(),
+      category: normalizeCategory(form.category),
+      tags: cleanTags(form.tags),
+    })
   }
 
   return (
     <div className="modal-backdrop" onPointerDown={onClose}>
       <div className="modal" onPointerDown={(e) => e.stopPropagation()}>
         <div className="modal-head">
-          <h2>Yeni Site Ekle</h2>
+          <h2>{site ? 'Siteyi Düzenle' : 'Yeni Site Ekle'}</h2>
           <button className="icon-btn" onClick={onClose} title="Kapat">
             <X size={15} strokeWidth={2.3} />
           </button>
@@ -119,6 +146,59 @@ export default function AddSiteModal({ open, onClose, onSubmit }) {
             </div>
           </div>
 
+          <div className="form-section">
+            <span className="form-section-title">
+              Vitrin bilgileri <span className="optional">(isteğe bağlı)</span>
+            </span>
+
+            <div className="field">
+              <span className="field-label">Kategori</span>
+              <div className="cat-picker">
+                {PROJECT_CATEGORIES.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    className={
+                      'filter-chip filter-chip--sm' +
+                      (form.category === c.id ? ' filter-chip--on' : '')
+                    }
+                    onClick={() => setForm((f) => ({ ...f, category: c.id }))}
+                  >
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <label>
+              Teknolojiler <span className="optional">(virgülle)</span>
+              <input
+                value={form.tags}
+                onChange={set('tags')}
+                placeholder="React, CSS, canvas"
+              />
+            </label>
+
+            <label>
+              GitHub bağlantısı
+              <input
+                value={form.repo}
+                onChange={set('repo')}
+                placeholder="https://github.com/thykeumut/..."
+              />
+            </label>
+
+            <label>
+              Kısa hikâye
+              <textarea
+                value={form.story}
+                onChange={set('story')}
+                rows={2}
+                placeholder="Bu proje neden çıktı, neyi çözdü?"
+              />
+            </label>
+          </div>
+
           <button
             type="button"
             role="switch"
@@ -144,7 +224,7 @@ export default function AddSiteModal({ open, onClose, onSubmit }) {
               Vazgeç
             </button>
             <button type="submit" className="btn btn-primary">
-              Kartı Ekle
+              {site ? 'Değişiklikleri Kaydet' : 'Kartı Ekle'}
             </button>
           </div>
         </form>

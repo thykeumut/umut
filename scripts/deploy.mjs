@@ -35,10 +35,13 @@ run('npx vite build')
 // 3) GitHub Pages'in Jekyll işlemesini kapat
 writeFileSync(resolve(root, 'dist/.nojekyll'), '')
 
-// 4) gh-pages dalına gönder
+// 4) Alan adı dosyası her yayında yerinde olsun (silinirse domain ayarı düşer)
+writeFileSync(resolve(root, 'dist/CNAME'), 'thyke.me\n')
+
+// 5) gh-pages dalına gönder
 run('npx gh-pages -d dist -b gh-pages')
 
-console.log('\n🚀 Yayınlandı: https://thykeumut.github.io/umut/')
+console.log('\n🚀 Yayınlandı: https://thyke.me/')
 if (preserved) {
   console.log('   (yayındaki kartlar korundu)')
 }

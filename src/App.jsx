@@ -1,22 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Heart, Search, X } from 'lucide-react'
+import { Heart, Move, Search, Sparkles, X } from 'lucide-react'
 import Background from './components/Background.jsx'
 import Hero from './components/Hero.jsx'
+import Featured from './components/Featured.jsx'
 import SiteCard from './components/SiteCard.jsx'
 import SiteModal from './components/SiteModal.jsx'
 import AdminModal from './components/AdminModal.jsx'
-import ViewTabs from './components/ViewTabs.jsx'
 import SiteDetail from './components/SiteDetail.jsx'
-import Lab from './components/Lab.jsx'
-import DeveloperPanel from './components/DeveloperPanel.jsx'
 import Terminal from './components/Terminal.jsx'
 import { GRADIENTS } from './lib/gradients.js'
-import { DEFAULT_THEME, themeById } from './lib/themes.js'
 import { DEFAULT_ICON, iconFromLegacyEmoji } from './lib/icons.js'
 import { cleanTags, normalizeCategory } from './lib/projects.js'
 import { ADMIN_STORAGE_KEY } from './lib/config.js'
 import { fromBase64 } from './lib/github.js'
 import {
+  hasAdminSession,
   loadRemoteSites,
   loginAdmin,
   logoutAdmin,
@@ -24,24 +22,12 @@ import {
   subscribeToSites,
 } from './lib/appwrite.js'
 
-// Yöneticinin kendi tarayıcısındaki çalışma kopyası
-const DRAFT_KEY = 'umut-portfolyo:sites:v1'
-const THEME_KEY = 'umut-portfolyo:theme:v1'
 const FAVORITES_KEY = 'umut-portfolyo:favorites:v1'
+const APPEARANCE_KEY = 'umut-portfolyo:appearance:v1'
 // Yayındaki (herkesin gördüğü) kart listesi
 const PUBLISHED_PATH = `${import.meta.env.BASE_URL}sites.json`
 const CARD_W = 276
 const CARD_H = 220
-const PUBLIC_SYNC_MS = 90 * 1000
-
-// Görünümler: adres çubuğunda #/vitrin gibi tutulur, böylece paylaşılabilir.
-const VIEW_IDS = ['board', 'lab', 'developer']
-
-function viewFromHash() {
-  if (typeof window === 'undefined') return 'board'
-  const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase()
-  return VIEW_IDS.includes(hash) ? hash : 'board'
-}
 
 const uid = () =>
   typeof crypto !== 'undefined' && crypto.randomUUID
@@ -71,28 +57,12 @@ function normalizeSite(site, index = 0) {
 // Yayına yazılacak biçim: gizli kartların adresi düz yazılmaz
 // (bkz. src/lib/github.js → publishShape)
 
-// Yöneticinin kendi tarayıcısındaki çalışma kopyasını oku.
-//
-// ÖNEMLİ: boş liste "taslak yok" sayılır. Aksi hâlde, giriş sırasında boş bir
-// taslak kaydedilirse yayındaki kartlar bir daha yüklenmez ve tahta boş kalır.
-function loadDraft() {
-  try {
-    const raw = localStorage.getItem(DRAFT_KEY)
-    if (!raw) return null
-    const parsed = JSON.parse(raw)
-    if (Array.isArray(parsed) && parsed.length > 0) return parsed.map(normalizeSite)
-  } catch {
-    /* bozuk veri */
-  }
-  return null
-}
-
 // Ziyaretçiler proje listesini sitenin kendi statik dosyasından alır. Böylece
 // her sayfa açılışında GitHub API kotası tüketilmez.
 async function fetchPublished() {
   try {
     const remote = await loadRemoteSites()
-    return remote.map(normalizeSite)
+    if (remote.length) return remote.map(normalizeSite)
   } catch {
     // Yerel geliştirmede veya ilk kurulumda mevcut statik yayın dosyası yedek kalır.
   }
@@ -114,16 +84,6 @@ async function fetchPublished() {
   }
 }
 
-function loadTheme() {
-  try {
-    const saved = localStorage.getItem(THEME_KEY)
-    if (saved && themeById(saved).id === saved) return saved
-  } catch {
-    /* depolama kapalı olabilir */
-  }
-  return DEFAULT_THEME
-}
-
 function loadAdmin() {
   try {
     return localStorage.getItem(ADMIN_STORAGE_KEY) === '1'
@@ -141,10 +101,16 @@ function loadFavorites() {
   }
 }
 
+function loadAppearance() {
+  try {
+    return localStorage.getItem(APPEARANCE_KEY) === 'light' ? 'light' : 'dark'
+  } catch {
+    return 'dark'
+  }
+}
+
 export default function App() {
-  const draft = null
   const [sites, setSites] = useState([])
-  const [theme, setTheme] = useState(loadTheme)
   const [isAdmin, setIsAdmin] = useState(loadAdmin)
   const [activeId, setActiveId] = useState(null)
   const [modalOpen, setModalOpen] = useState(false)
@@ -153,8 +119,8 @@ export default function App() {
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== 'undefined' && window.innerWidth < 760
   )
+  const [appearance, setAppearance] = useState(loadAppearance)
   const [newIds, setNewIds] = useState(() => new Set())
-  const [view, setView] = useState(viewFromHash)
   const [termOpen, setTermOpen] = useState(false)
   const [detailId, setDetailId] = useState(null)
   const [editSite, setEditSite] = useState(null)
@@ -165,7 +131,7 @@ export default function App() {
   const boardRef = useRef(null)
   const toastTimer = useRef(null)
   const dirtyRef = useRef(false)
-  const pendingReset = useRef(false)
+  const remoteMuteUntilRef = useRef(0)
   const sitesRef = useRef(sites)
 
   useEffect(() => {
@@ -180,40 +146,11 @@ export default function App() {
     }
   }, [favoriteIds])
 
-  // Seçilen temayı <html> etiketine uygula ve hatırla
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
-    try {
-      localStorage.setItem(THEME_KEY, theme)
-    } catch {
-      /* depolama kapalı olabilir */
-    }
-  }, [theme])
-
   // Ekran boyutu değişimi (mobilde serbest sürükleme kapanır)
   useEffect(() => {
     const onResize = () => setIsMobile(window.innerWidth < 760)
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
-  }, [])
-
-  // Görünümü adres çubuğuyla eşle (#/vitrin, #/lab, #/developer)
-  const goView = useCallback((id) => {
-    const next = VIEW_IDS.includes(id) ? id : 'board'
-    setView(next)
-    setActiveId(null)
-    const hash = next === 'board' ? '' : `#/${next}`
-    const url = hash || window.location.pathname + window.location.search
-    if (window.location.hash !== hash) {
-      window.history.replaceState(null, '', url)
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [])
-
-  useEffect(() => {
-    const onHash = () => setView(viewFromHash())
-    window.addEventListener('hashchange', onHash)
-    return () => window.removeEventListener('hashchange', onHash)
   }, [])
 
   // ~ (ya da `) tuşu gizli terminali açar/kapatır.
@@ -240,29 +177,40 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [modalOpen, adminOpen, detailId])
 
-  // Yayındaki kart listesini getir. Yerel çalışma kopyası varsa ona dokunma.
+  // İlk yükleme: proje kartları Appwrite'tan gelir. Depo erişilemezse
+  // statik yayın dosyası yedek olur.
   useEffect(() => {
     let alive = true
-    fetchPublished().then((list) => {
-      if (!alive || !list) return
-      setSites(list)
-    })
+    const boot = async () => {
+      try {
+        const remoteSites = await loadRemoteSites()
+        if (!alive) return
+        const nextSites = remoteSites.map(normalizeSite)
+        if (nextSites.length) {
+          setSites(nextSites)
+        } else {
+          const fallback = await fetchPublished()
+          if (alive && fallback) setSites(fallback)
+        }
+      } catch {
+        const list = await fetchPublished()
+        if (alive && list) setSites(list)
+      }
+      if (loadAdmin() && !(await hasAdminSession())) {
+        if (!alive) return
+        setIsAdmin(false)
+        try {
+          localStorage.removeItem(ADMIN_STORAGE_KEY)
+        } catch {
+          /* depolama kapalı olabilir */
+        }
+      }
+    }
+    boot()
     return () => {
       alive = false
     }
   }, [])
-
-  // Değişiklikleri tarayıcıda sakla (yöneticinin çalışma kopyası).
-  // SADECE yönetici gerçekten bir şey değiştirdiğinde yazılır; giriş anında
-  // boş liste yazılırsa yayındaki kartlar bir daha yüklenmez.
-  useEffect(() => {
-    if (!isAdmin || !dirtyRef.current) return
-    try {
-      localStorage.setItem(DRAFT_KEY, JSON.stringify(sites))
-    } catch {
-      /* depolama kapalı olabilir */
-    }
-  }, [sites, isAdmin])
 
   useEffect(() => () => clearTimeout(toastTimer.current), [])
 
@@ -278,13 +226,17 @@ export default function App() {
     let unsubscribe
 
     const sync = async (announce = false) => {
+      if (isAdmin && (dirtyRef.current || Date.now() < remoteMuteUntilRef.current)) return
       try {
-        const remote = await loadRemoteSites()
+        const remoteSites = await loadRemoteSites()
         if (!alive) return
-        const next = remote.map(normalizeSite)
-        if (JSON.stringify(next) === JSON.stringify(sitesRef.current)) return
-        setSites(next)
-        if (announce) showToast('Portfolyo güncellendi')
+        const next = remoteSites.map(normalizeSite)
+        let changed = false
+        if (next.length && JSON.stringify(next) !== JSON.stringify(sitesRef.current)) {
+          setSites(next)
+          changed = true
+        }
+        if (changed && announce) showToast('Portfolyo güncellendi')
       } catch {
         // The published static list is used while the remote store is unreachable.
       }
@@ -303,7 +255,7 @@ export default function App() {
       unsubscribe?.()
       document.removeEventListener('visibilitychange', onVisibility)
     }
-  }, [showToast])
+  }, [showToast, isAdmin])
 
   // A short debounce turns one edit or drag into a single shared write.
   useEffect(() => {
@@ -312,10 +264,22 @@ export default function App() {
     const timer = window.setTimeout(async () => {
       dirtyRef.current = false
       try {
+        remoteMuteUntilRef.current = Date.now() + 3000
         await saveRemoteSites(sites)
+        remoteMuteUntilRef.current = Date.now() + 1200
         showToast('Kaydedildi - tüm ziyaretçiler güncellendi')
       } catch (err) {
         dirtyRef.current = true
+        if (err?.code === 401 || /permission|unauthorized/i.test(err?.message || '')) {
+          setIsAdmin(false)
+          try {
+            localStorage.removeItem(ADMIN_STORAGE_KEY)
+          } catch {
+            /* depolama kapalı olabilir */
+          }
+          showToast('Yönetici oturumu sona ermiş — yeniden giriş yap')
+          return
+        }
         showToast(`Kaydedilemedi: ${err.message || 'bağlantı hatası'}`)
       }
     }, 900)
@@ -323,86 +287,23 @@ export default function App() {
     return () => window.clearTimeout(timer)
   }, [sites, isAdmin, showToast])
 
-  // Açık ziyaretçi sekmeleri GitHub API'ye gitmeden, yalnızca sitenin kendi
-  // küçük yayın dosyasını kontrol eder. Değişiklik görünür olduğunda hard reset
-  // gerekmeksizin kartlar güncellenir; gizli veya arka plandaki sekmeler istek yapmaz.
-  useEffect(() => {
-    return undefined
-
-    let alive = true
-    let checking = false
-    const checkForUpdate = async () => {
-      if (!alive || checking || document.visibilityState === 'hidden') return
-      checking = true
-      const next = await fetchPublished()
-      checking = false
-      if (!alive || !next) return
-      if (JSON.stringify(next) === JSON.stringify(sitesRef.current)) return
-      setPublished(next)
-      setSites(next)
-      showToast('Portföy güncellendi')
-    }
-
-    const onVisibility = () => {
-      if (document.visibilityState === 'visible') checkForUpdate()
-    }
-    const timer = window.setInterval(checkForUpdate, PUBLIC_SYNC_MS)
-    document.addEventListener('visibilitychange', onVisibility)
-    return () => {
-      alive = false
-      window.clearInterval(timer)
-      document.removeEventListener('visibilitychange', onVisibility)
-    }
-  }, [draft, isAdmin, showToast])
-
-  // Yönetici bir kart eklediğinde / taşıdığında / sildiğinde, listeyi
-  // arka planda GitHub'a yaz. Böylece ayrı bir "yayınla" adımı gerekmez.
-  useEffect(() => {
-    if (!isAdmin || !dirtyRef.current) return
-    return undefined
-
-    clearTimeout(publishTimer.current)
-    publishTimer.current = setTimeout(async () => {
-      dirtyRef.current = false
-      const mySeq = ++publishSeq.current
-
-      if (!hasToken()) {
-        setPublishWarn('Kartlar şu an sadece sende görünüyor')
-        showToast('Kart kaydedildi — herkesin görmesi için yayın bağlantısını kur')
-        if (!promptedRef.current) {
-          promptedRef.current = true
-          setPublishSetupOpen(true)
-        }
-        return
-      }
-
-      try {
-        await publishSites(sites.map(publishShape))
-        if (mySeq !== publishSeq.current) return
-        setPublishWarn('')
-        showToast('Yayınlandı — açık ziyaretçiler kısa süre içinde güncellenecek')
-      } catch (err) {
-        if (mySeq !== publishSeq.current) return
-        setPublishWarn(err.message || 'Yayınlanamadı')
-        showToast(`Yayınlanamadı: ${err.message || 'bilinmeyen hata'}`)
-      }
-    }, 1400)
-
-    return () => clearTimeout(publishTimer.current)
-  }, [sites, isAdmin, showToast])
-
   // Kartları tahta sınırları içine çek
   const clampAll = useCallback(() => {
     const board = boardRef.current
     if (!board || isMobile) return
-    const cardEls = board.querySelectorAll('.card')
+    const cardEls = new Map(
+      Array.from(board.querySelectorAll('.card')).map((el) => [
+        el.dataset.siteId,
+        el,
+      ])
+    )
     const boardW = board.clientWidth
     const boardH = board.clientHeight
 
     setSites((prev) => {
       let changed = false
-      const next = prev.map((s, i) => {
-        const el = cardEls[i]
+      const next = prev.map((s) => {
+        const el = cardEls.get(s.id)
         const maxX = Math.max(0, boardW - (el?.offsetWidth || CARD_W))
         const maxY = Math.max(0, boardH - (el?.offsetHeight || CARD_H))
         const x = Math.min(Math.max(0, s.x), maxX)
@@ -424,13 +325,11 @@ export default function App() {
     return () => window.removeEventListener('resize', onResize)
   }, [clampAll])
 
-  // Başka görünümdeyken "Yerleşimi Sıfırla"ya basıldıysa: panoya dönüp uygula
+  // Uzak kartlar yüklendiğinde konumları pano genişliğine sığdır. Aksi hâlde
+  // başka bir ekran için kaydedilmiş x değerleri yatay kaydırma yaratır.
   useEffect(() => {
-    if (view !== 'board' || !pendingReset.current) return
-    pendingReset.current = false
-    const t = setTimeout(() => resetLayout(), 120)
-    return () => clearTimeout(t)
-  }, [view])
+    clampAll()
+  }, [sites.length, clampAll])
 
   const markDirty = () => {
     dirtyRef.current = true
@@ -452,7 +351,7 @@ export default function App() {
       }
       markDirty()
     }
-    setSites((prev) => prev.map((s) => (s.id === id ? { ...s, x, y } : s)))
+    setSites((prev) => prev.map((site) => (site.id === id ? { ...site, x, y } : site)))
   }
 
   const toggleFavorite = useCallback((id) => {
@@ -487,6 +386,25 @@ export default function App() {
     })
   }, [sites, isAdmin, boardQuery, onlyFavorites, favoriteIds])
 
+  // Vitrin: yöneticinin seçtiği kart; seçim yoksa ilk herkese açık proje.
+  const featuredSite = useMemo(() => {
+    const pool = isAdmin ? sites : sites.filter((site) => site.public)
+    return pool.find((site) => site.featured) || pool[0] || null
+  }, [sites, isAdmin])
+
+  const discoverProject = useCallback(() => {
+    const choices = sites.filter((site) => isAdmin || site.public)
+    if (!choices.length) {
+      showToast('Keşfedilecek açık proje yok')
+      return
+    }
+    const currentId = detailId || featuredSite?.id
+    const alternatives = choices.filter((site) => site.id !== currentId)
+    const pool = alternatives.length ? alternatives : choices
+    const next = pool[Math.floor(Math.random() * pool.length)]
+    setDetailId(next.id)
+  }, [sites, isAdmin, detailId, featuredSite, showToast])
+
   // Karta tıklanınca: yönetici her siteye, ziyaretçi ise sadece
   // "ziyaretçilere açık" işaretlenen sitelere gidebilir.
   const openSite = (site) => {
@@ -509,8 +427,7 @@ export default function App() {
   }
 
   // Ziyaretçilere aç / kapat
-  const togglePublic = (id) => {
-    markDirty()
+  const togglePublic = (id) => {    markDirty()
     setSites((prev) =>
       prev.map((s) => (s.id === id ? { ...s, public: !s.public } : s))
     )
@@ -520,6 +437,22 @@ export default function App() {
         site.public
           ? `“${site.title}” ziyaretçilere kapatıldı`
           : `“${site.title}” ziyaretçilere açıldı`
+      )
+    }
+  }
+
+  // Vitrindeki projeyi seç. Aynı karta tekrar basmak seçimi kaldırır.
+  const toggleFeatured = (id) => {
+    markDirty()
+    setSites((prev) =>
+      prev.map((s) => ({ ...s, featured: s.id === id ? !s.featured : false }))
+    )
+    const site = sites.find((s) => s.id === id)
+    if (site) {
+      showToast(
+        site.featured
+          ? 'Vitrin seçimi kaldırıldı'
+          : `“${site.title}” vitrine eklendi`
       )
     }
   }
@@ -553,7 +486,6 @@ export default function App() {
       })
     }, 700)
     setModalOpen(false)
-    if (view !== 'board') goView('board')
   }
 
   // Var olan kartı düzenle (vitrin detayından açılır)
@@ -583,12 +515,7 @@ export default function App() {
   // tahtayı büyütürüz ki kartlar sayfa dışına taşmasın.
   const resetLayout = () => {
     const board = boardRef.current
-    if (!board) {
-      // Kullanıcı başka bir görünümde: önce panoya geç, sonra sıfırla
-      pendingReset.current = true
-      goView('board')
-      return
-    }
+    if (!board) return
     if (isMobile) return
     markDirty()
 
@@ -638,15 +565,6 @@ export default function App() {
       // Storage can be disabled by the visitor.
     }
     showToast('Yönetici modu açıldı')
-    return undefined
-    setIsAdmin(true)
-    setAdminOpen(false)
-    try {
-      localStorage.setItem(ADMIN_STORAGE_KEY, '1')
-    } catch {
-      /* depolama kapalı olabilir */
-    }
-    showToast('Yönetici modu açıldı')
   }
 
   const lockAdmin = () => {
@@ -661,17 +579,18 @@ export default function App() {
     showToast('Yönetici modu kapatıldı — artık ziyaretçi görünümündesin')
   }
 
-  // Yayın anahtarı bağlandığında/çıkarıldığında bekleyen kartları hemen yayınla
-  const handlePublishSetupSaved = () => {
-    setPublishSetupOpen(false)
-    setPublishWarn(hasToken() ? '' : 'Kartlar şu an sadece sende görünüyor')
-    dirtyRef.current = true
-    setSites((prev) => [...prev])
-  }
-
   const detailSite = detailId
     ? sites.find((s) => s.id === detailId) || null
     : null
+
+  useEffect(() => {
+    document.documentElement.dataset.appearance = appearance
+    try {
+      localStorage.setItem(APPEARANCE_KEY, appearance)
+    } catch {
+      // Storage can be disabled by the visitor.
+    }
+  }, [appearance])
 
   return (
     <div className="app">
@@ -679,22 +598,30 @@ export default function App() {
 
       <Hero
         count={sites.length}
-        theme={theme}
-        onThemeChange={setTheme}
         isAdmin={isAdmin}
         onAdd={openAdd}
         onReset={resetLayout}
         onAdminClick={() => (isAdmin ? lockAdmin() : setAdminOpen(true))}
+        appearance={appearance}
+        onToggleAppearance={() => setAppearance((value) => (value === 'dark' ? 'light' : 'dark'))}
       />
 
-      <ViewTabs view={view} onChange={goView} />
+      <>
 
-      {view === 'board' ? (
-        <>
+          <Featured
+            site={featuredSite}
+            isAdmin={isAdmin}
+            onOpen={openSite}
+            onDetail={(site) => setDetailId(site.id)}
+          />
+
           <section className="board-tools" aria-label="Pano araçları">
             {isAdmin ? (
               <p className="board-arrange-note">
-                Serbest yerleşim açık — kartı tutup panonun istediğin yerine bırak. Pano aşağı doğru otomatik uzar.
+                <span className="board-arrange-icon" aria-hidden="true">
+                  <Move size={14} strokeWidth={2.1} />
+                </span>
+                Kartları tutup istediğin yere bırak — pano aşağı doğru otomatik uzar.
               </p>
             ) : (
               <>
@@ -721,15 +648,27 @@ export default function App() {
                   <Heart size={15} strokeWidth={2} fill={onlyFavorites ? 'currentColor' : 'none'} />
                   Favorilerim
                 </button>
-                <span className="board-result">{shownSites.length} proje</span>
+                <button type="button" className="board-discover" onClick={discoverProject}>
+                  <Sparkles size={15} strokeWidth={2} />
+                  Rastgele keşfet
+                </button>
               </>
             )}
+            <span className="board-result" aria-live="polite">
+              {shownSites.length} proje
+            </span>
           </section>
         <main
           ref={boardRef}
           className={'board' + (isMobile ? ' board--flow' : '')}
           onPointerDown={(e) => {
             if (e.target === e.currentTarget) setActiveId(null)
+          }}
+          onDoubleClick={(e) => {
+            if (e.target === e.currentTarget) {
+              e.preventDefault()
+              setActiveId(null)
+            }
           }}
         >
           {shownSites.map((site) => (
@@ -738,7 +677,7 @@ export default function App() {
               site={site}
               boardRef={boardRef}
               isAdmin={isAdmin}
-              draggingEnabled={isAdmin && !isMobile}
+              draggingEnabled={!isMobile}
               isActive={activeId === site.id}
               isNew={newIds.has(site.id)}
               flowMode={isMobile}
@@ -750,6 +689,8 @@ export default function App() {
               isFavorite={favoriteIds.includes(site.id)}
               onToggleFavorite={toggleFavorite}
               onCopyLink={copySiteLink}
+              isFeatured={!!site.featured}
+              onToggleFeatured={toggleFeatured}
             />
           ))}
 
@@ -767,12 +708,6 @@ export default function App() {
           )}
         </main>
         </>
-      ) : (
-        <main className="view-main">
-          {view === 'lab' && <Lab />}
-          {view === 'developer' && <DeveloperPanel />}
-        </main>
-      )}
 
       <footer className="footer">
         <span>© {new Date().getFullYear()} Umut</span>
@@ -814,9 +749,6 @@ export default function App() {
         onClose={() => setTermOpen(false)}
         sites={sites}
         isAdmin={isAdmin}
-        theme={theme}
-        onTheme={setTheme}
-        onView={goView}
         onDetail={(site) => {
           setTermOpen(false)
           setDetailId(site.id)

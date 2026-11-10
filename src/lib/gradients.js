@@ -1,14 +1,14 @@
-// Kart kapağı için renk seçenekleri.
-// 'auto' = seçili temanın ana rengini kullanır.
+// Kart kapakları sade antrasit tonlarını kullanır; görseli olan kartlarda
+// ekran görüntüsü öne çıkar.
 export const GRADIENTS = [
-  { id: 'auto', label: 'Tema rengi', css: 'var(--cover)' },
-  { id: 'gold', label: 'Altın', css: 'linear-gradient(135deg, #e3c46f 0%, #a1721c 100%)' },
-  { id: 'wine', label: 'Vişne', css: 'linear-gradient(135deg, #8a2340 0%, #3c0a1c 100%)' },
-  { id: 'plum', label: 'Erik', css: 'linear-gradient(135deg, #5b2a6e 0%, #25112e 100%)' },
-  { id: 'ocean', label: 'Okyanus', css: 'linear-gradient(135deg, #1e6f9f 0%, #0a2740 100%)' },
-  { id: 'forest', label: 'Orman', css: 'linear-gradient(135deg, #1f7a52 0%, #0a2b1f 100%)' },
-  { id: 'rose', label: 'Gül', css: 'linear-gradient(135deg, #b03a5b 0%, #4d1425 100%)' },
-  { id: 'slate', label: 'Antrasit', css: 'linear-gradient(135deg, #454e63 0%, #161a23 100%)' },
+  { id: 'auto', label: 'Antrasit', css: 'var(--cover)' },
+  { id: 'gold', label: 'Açık antrasit', css: 'linear-gradient(135deg, #636366 0%, #2c2c2e 100%)' },
+  { id: 'wine', label: 'Koyu antrasit', css: 'linear-gradient(135deg, #48484a 0%, #1c1c1e 100%)' },
+  { id: 'plum', label: 'Gece', css: 'linear-gradient(135deg, #3a3a3c 0%, #111113 100%)' },
+  { id: 'ocean', label: 'Çelik', css: 'linear-gradient(135deg, #515154 0%, #2c2c2e 100%)' },
+  { id: 'forest', label: 'Füme', css: 'linear-gradient(135deg, #424245 0%, #1c1c1e 100%)' },
+  { id: 'rose', label: 'Kurşun', css: 'linear-gradient(135deg, #545458 0%, #2c2c2e 100%)' },
+  { id: 'slate', label: 'Koyu gri', css: 'linear-gradient(135deg, #2c2c2e 0%, #000000 100%)' },
 ]
 
 export const gradientById = (id) =>

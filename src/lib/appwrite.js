@@ -24,13 +24,28 @@ function pack(site) {
   return JSON.stringify(data)
 }
 
+// Kartlar ve diğer kayıtlar aynı tabloda tutulur. `kind: 'cv'` işaretli eski
+// bir satır kalmış olsa bile pano bunu kart olarak göstermez.
 export async function loadRemoteSites() {
   const result = await tables.listRows({ databaseId, tableId, ttl: 0 })
-  return result.rows.map(unpack).filter(Boolean)
+  const rows = result.rows.map(unpack).filter(Boolean)
+  return rows.filter((row) => row.kind !== 'cv')
 }
 
 export async function loginAdmin(email, password) {
   return account.createEmailPasswordSession({ email, password })
+}
+
+// Yerel "yönetici" işareti kalmış ama Appwrite oturumu düşmüş olabilir.
+// Yalnızca kesin 401 durumunda false döner; ağ hatalarında oturumu korur.
+export async function hasAdminSession() {
+  try {
+    await account.get()
+    return true
+  } catch (err) {
+    if (err?.code === 401) return false
+    return true
+  }
 }
 
 export async function logoutAdmin() {
@@ -56,7 +71,9 @@ export async function saveRemoteSites(sites) {
     const oldSite = currentById.get(site.id)
     const data = { data: pack(site) }
     if (oldSite?._rowId) {
-      await tables.updateRow({ databaseId, tableId, rowId: oldSite._rowId, data })
+      if (pack(oldSite) !== data.data) {
+        await tables.updateRow({ databaseId, tableId, rowId: oldSite._rowId, data })
+      }
     } else {
       await tables.createRow({ databaseId, tableId, rowId: ID.unique(), data })
     }
