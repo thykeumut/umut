@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Filter, Heart, Move, Search, X } from 'lucide-react'
+import { Filter, Heart, Move, Search, Share2, X } from 'lucide-react'
 import Background from './components/Background.jsx'
 import PageChrome from './components/PageChrome.jsx'
 import Hero from './components/Hero.jsx'
@@ -409,12 +409,27 @@ export default function App() {
     )
   }, [])
 
+  const clearBoardFilters = useCallback(() => {
+    setBoardQuery('')
+    setOnlyFavorites(false)
+    setSelectedCategory('all')
+  }, [])
+
   const copySiteLink = useCallback(async (site) => {
     if (!site?.url) return
     const url = /^https?:\/\//i.test(site.url) ? site.url : `https://${site.url}`
     try {
       await navigator.clipboard.writeText(url)
       showToast('Site bağlantısı kopyalandı')
+    } catch {
+      showToast('Bağlantı kopyalanamadı')
+    }
+  }, [showToast])
+
+  const copyPortfolioLink = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.origin)
+      showToast('Portfolyo bağlantısı kopyalandı')
     } catch {
       showToast('Bağlantı kopyalanamadı')
     }
@@ -782,12 +797,18 @@ export default function App() {
                 >
                   <Heart size={15} strokeWidth={2} fill={onlyFavorites ? 'currentColor' : 'none'} />
                   Favorilerim
+                  {favoriteIds.length > 0 && <span className="board-favorite-count">{favoriteIds.length}</span>}
                 </button>
               </>
             )}
             <span className="board-result" aria-live="polite">
               {shownSites.length} proje
             </span>
+            {!isAdmin && (boardQuery || onlyFavorites || selectedCategory !== 'all') && (
+              <button type="button" className="board-clear" onClick={clearBoardFilters}>
+                Temizle
+              </button>
+            )}
           </section>
           {!isAdmin && availableCategories.length > 1 && (
             <nav className="board-filters" aria-label="Proje kategorileri">
@@ -889,6 +910,15 @@ export default function App() {
         <span>© {new Date().getFullYear()} Umut</span>
         <span className="footer-dot">•</span>
         <span>{isAdmin ? 'Yönetici görünümü' : 'Ziyaretçi görünümü'}</span>
+        <span className="footer-dot">•</span>
+        <button
+          type="button"
+          className="footer-share"
+          onClick={copyPortfolioLink}
+          title="Portfolyo bağlantısını kopyala"
+        >
+          <Share2 size={13} strokeWidth={2.1} /> paylaş
+        </button>
         <span className="footer-dot">•</span>
         <button
           type="button"
