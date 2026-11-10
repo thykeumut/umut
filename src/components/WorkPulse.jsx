@@ -4,8 +4,17 @@ import { categoryName, statusName } from '../lib/projects'
 
 const STATUS_ORDER = ['live', 'building', 'archive']
 
-// Portfolyodaki mevcut kartlardan otomatik beslenen geniş çalışma özeti.
-export default function WorkPulse({ sites, featuredSite, onExplore, onSelect }) {
+// Proje kartlarından otomatik beslenen, üstteki etkileşimli studio panosu.
+export default function WorkPulse({
+  sites,
+  featuredSite,
+  onExplore,
+  onSelect,
+  onFilterStatus,
+  onFilterCategory,
+  selectedStatus,
+  selectedCategory,
+}) {
   const visibleSites = sites.filter((site) => site.public)
   const statusCounts = STATUS_ORDER.map((status) => ({
     status,
@@ -23,14 +32,15 @@ export default function WorkPulse({ sites, featuredSite, onExplore, onSelect }) 
   return (
     <section className="work-pulse" aria-labelledby="work-pulse-title">
       <div className="work-pulse-copy">
-        <span className="work-pulse-kicker"><CircleDot size={13} strokeWidth={2.3} /> ŞU AN</span>
-        <h2 id="work-pulse-title">Üretim akışı <span>canlı.</span></h2>
-        <p>
-          Burada yalnızca bitmiş işler değil, üzerinde çalışılan fikirlerin yönü de görünür.
-        </p>
-        <button type="button" className="work-pulse-link" onClick={onExplore}>
-          Tüm projelere geç <ArrowDown size={15} strokeWidth={2.2} />
-        </button>
+        <span className="work-pulse-kicker"><CircleDot size={13} strokeWidth={2.3} /> THYKE / STUDIO DECK</span>
+        <h2 id="work-pulse-title">Fikirden <span>ekrana.</span></h2>
+        <p>Yayındaki işleri, yapım aşamasındaki fikirleri ve çalışma alanlarını tek bir akışta keşfet.</p>
+        <div className="work-pulse-actions">
+          <button type="button" className="work-pulse-link" onClick={onExplore}>
+            Tüm projelere geç <ArrowDown size={15} strokeWidth={2.2} />
+          </button>
+          <span className="work-pulse-tip">Kartlara dokun, panoyu filtrele.</span>
+        </div>
       </div>
 
       <div className="work-pulse-panel">
@@ -38,7 +48,7 @@ export default function WorkPulse({ sites, featuredSite, onExplore, onSelect }) 
           <button type="button" className="work-focus" onClick={() => onSelect(focusSite)}>
             <span className="work-focus-icon"><FocusIcon size={21} strokeWidth={1.9} /></span>
             <span className="work-focus-copy">
-              <small>ÖNE ÇIKAN AKIŞ</small>
+              <small>ŞİMDİ ÖNE ÇIKAN</small>
               <strong>{focusSite.title}</strong>
               <em>{statusName(focusSite.status)} · {categoryName(focusSite.category)}</em>
             </span>
@@ -48,17 +58,31 @@ export default function WorkPulse({ sites, featuredSite, onExplore, onSelect }) 
 
         <div className="work-metrics" aria-label="Proje durumları">
           {statusCounts.map(({ status, count }) => (
-            <div className={'work-metric work-metric--' + status} key={status}>
+            <button
+              type="button"
+              className={'work-metric work-metric--' + status + (selectedStatus === status ? ' is-selected' : '')}
+              key={status}
+              onClick={() => onFilterStatus(selectedStatus === status ? 'all' : status)}
+              aria-pressed={selectedStatus === status}
+            >
               <strong>{count}</strong>
               <span>{statusName(status)}</span>
-            </div>
+            </button>
           ))}
         </div>
 
         <div className="work-categories" aria-label="Çalışma alanları">
           <span className="work-categories-label"><Layers3 size={13} strokeWidth={2.1} /> ALANLAR</span>
           {categoryCounts.map(({ category, count }) => (
-            <span key={category} className="work-category">{categoryName(category)} <b>{count}</b></span>
+            <button
+              key={category}
+              type="button"
+              className={'work-category' + (selectedCategory === category ? ' is-selected' : '')}
+              onClick={() => onFilterCategory(selectedCategory === category ? 'all' : category)}
+              aria-pressed={selectedCategory === category}
+            >
+              {categoryName(category)} <b>{count}</b>
+            </button>
           ))}
         </div>
       </div>

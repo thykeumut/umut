@@ -145,6 +145,7 @@ export default function App() {
   const [recentIds, setRecentIds] = useState(loadRecentProjects)
   const [onlyFavorites, setOnlyFavorites] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedStatus, setSelectedStatus] = useState('all')
   const [featuredId, setFeaturedId] = useState(null)
 
   const boardRef = useRef(null)
@@ -414,6 +415,7 @@ export default function App() {
     setBoardQuery('')
     setOnlyFavorites(false)
     setSelectedCategory('all')
+    setSelectedStatus('all')
   }, [])
 
   const copySiteLink = useCallback(async (site) => {
@@ -443,6 +445,7 @@ export default function App() {
       const matchesFavorite = !onlyFavorites || favoriteIds.includes(site.id)
       if (!matchesFavorite) return false
       if (selectedCategory !== 'all' && site.category !== selectedCategory) return false
+      if (selectedStatus !== 'all' && site.status !== selectedStatus) return false
       if (!query) return true
       const haystack = [site.title, site.description, site.category, ...(site.tags || [])]
         .filter(Boolean)
@@ -450,7 +453,7 @@ export default function App() {
         .toLocaleLowerCase('tr')
       return haystack.includes(query)
     })
-  }, [sites, isAdmin, boardQuery, onlyFavorites, favoriteIds, selectedCategory])
+  }, [sites, isAdmin, boardQuery, onlyFavorites, favoriteIds, selectedCategory, selectedStatus])
 
   const availableCategories = useMemo(() => {
     const used = new Set(sites.filter((site) => site.public).map((site) => site.category))
@@ -762,6 +765,16 @@ export default function App() {
             featuredSite={featuredSite}
             onSelect={openDetail}
             onExplore={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+            onFilterStatus={(status) => {
+              setSelectedStatus(status)
+              document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }}
+            onFilterCategory={(category) => {
+              setSelectedCategory(category)
+              document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            }}
+            selectedStatus={selectedStatus}
+            selectedCategory={selectedCategory}
           />
 
           <section className="projects-intro" aria-labelledby="projects-title">
@@ -812,7 +825,7 @@ export default function App() {
             <span className="board-result" aria-live="polite">
               {shownSites.length} proje
             </span>
-            {!isAdmin && (boardQuery || onlyFavorites || selectedCategory !== 'all') && (
+            {!isAdmin && (boardQuery || onlyFavorites || selectedCategory !== 'all' || selectedStatus !== 'all') && (
               <button type="button" className="board-clear" onClick={clearBoardFilters}>
                 Temizle
               </button>
