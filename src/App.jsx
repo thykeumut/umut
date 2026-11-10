@@ -3,6 +3,7 @@ import { Filter, Heart, Move, Search, Share2, X } from 'lucide-react'
 import Background from './components/Background.jsx'
 import PageChrome from './components/PageChrome.jsx'
 import Hero from './components/Hero.jsx'
+import WorkPulse from './components/WorkPulse.jsx'
 import Featured from './components/Featured.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
 import RecentProjects from './components/RecentProjects.jsx'
@@ -755,6 +756,13 @@ export default function App() {
       />
 
       <>
+
+          <WorkPulse
+            sites={sites}
+            featuredSite={featuredSite}
+            onSelect={openDetail}
+            onExplore={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+          />
 
           <section className="projects-intro" aria-labelledby="projects-title">
             <div className="projects-intro-title">
