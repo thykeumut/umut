@@ -40,8 +40,8 @@ export default function AdminModal({ open, onClose, onUnlock }) {
     } catch (err) {
       const message = err?.message || 'Giriş yapılamadı. E-posta ve şifreyi kontrol et.'
       if (/rate limit/i.test(message)) {
-        setCooldown(60)
-        setError('Çok fazla deneme yapıldı. 1 dakika bekleyip tekrar dene.')
+        setCooldown(3600)
+        setError('Appwrite giriş denemelerini bir saatliğine sınırlandırdı. Sayaç bitmeden tekrar deneme yapma.')
       } else {
         setError(message)
       }
@@ -97,7 +97,7 @@ export default function AdminModal({ open, onClose, onUnlock }) {
               Vazgeç
             </button>
             <button type="submit" className="btn btn-primary" disabled={busy || cooldown > 0}>
-              {busy ? 'Bağlanıyor...' : cooldown ? `${cooldown} sn bekle` : 'Giriş Yap'}
+              {busy ? 'Bağlanıyor...' : cooldown ? `${Math.ceil(cooldown / 60)} dk bekle` : 'Giriş Yap'}
             </button>
           </div>
         </form>
