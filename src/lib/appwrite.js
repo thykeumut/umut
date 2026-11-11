@@ -117,8 +117,9 @@ export async function saveVerifiedVisitor(user) {
   try {
     return await tables.createRow({ databaseId, tableId: visitorTableId, rowId, data })
   } catch (error) {
-    if (error?.code !== 409) throw error
-    return tables.updateRow({ databaseId, tableId: visitorTableId, rowId, data })
+    // Ziyaretçiler yalnızca yeni doğrulama kaydı oluşturabilir.
+    if (error?.code === 409) return null
+    throw error
   }
 }
 

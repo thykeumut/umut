@@ -11,7 +11,7 @@ function shortDay(key) {
   return new Intl.DateTimeFormat('tr-TR', { weekday: 'short' }).format(new Date(`${key}T12:00:00`))
 }
 
-export default function VisitorStats({ open, visits, onClose }) {
+export default function VisitorStats({ open, visits, visitors = [], onClose }) {
   if (!open) return null
   const days = Array.from({ length: 7 }, (_, index) => dateKey(6 - index))
   const counts = new Map(days.map((day) => [day, 0]))
@@ -27,7 +27,7 @@ export default function VisitorStats({ open, visits, onClose }) {
           <div>
             <span><BarChart3 size={13} strokeWidth={2.2} /> THYKE / ZİYARETÇİLER</span>
             <h2>Ziyaretçi istatistikleri</h2>
-            <p>Kişisel veri olmadan, tarayıcı başına günlük sayım.</p>
+            <p>Günlük ziyaret sayımı ve e-posta ile doğrulanan girişler.</p>
           </div>
           <button type="button" className="icon-btn" onClick={onClose} aria-label="Ziyaretçi istatistiklerini kapat"><X size={16} strokeWidth={2.3} /></button>
         </header>
@@ -35,10 +35,17 @@ export default function VisitorStats({ open, visits, onClose }) {
           <div><Users size={17} /><span><b>{today}</b> bugün</span></div>
           <div><BarChart3 size={17} /><span><b>{weekly}</b> son 7 gün</span></div>
           <div><span><b>{visits.length}</b> toplam kayıt</span></div>
+          <div><Users size={17} /><span><b>{visitors.length}</b> doğrulanan</span></div>
         </div>
         <div className="visitor-chart" aria-label="Son yedi gün ziyaret grafiği">
           {days.map((day) => <div key={day}><i style={{ height: `${Math.max(5, (counts.get(day) / max) * 100)}%` }} title={`${counts.get(day)} ziyaret`} /><span>{shortDay(day)}</span><small>{counts.get(day)}</small></div>)}
         </div>
+        <section className="verified-visitors" aria-label="Doğrulanmış ziyaretçiler">
+          <div><span>DOĞRULANMIŞ GİRİŞLER</span><b>{visitors.length}</b></div>
+          {visitors.length ? (
+            <ul>{visitors.slice(0, 12).map((visitor) => <li key={visitor.id}>{visitor.email}</li>)}</ul>
+          ) : <p>Henüz e-postasını doğrulayan ziyaretçi yok.</p>}
+        </section>
       </section>
     </div>
   )

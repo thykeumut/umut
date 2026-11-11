@@ -341,7 +341,12 @@ export default function App() {
   const refreshVisits = useCallback(async () => {
     if (!isAdmin) return
     try {
-      setVisits(await loadRemoteVisits())
+      const [nextVisits, nextVisitors] = await Promise.all([
+        loadRemoteVisits(),
+        loadVerifiedVisitors(),
+      ])
+      setVisits(nextVisits)
+      setVerifiedVisitors(nextVisitors)
     } catch {
       // İstatistik bağlantısı yoksa pano akışı etkilenmez.
     }
@@ -355,6 +360,7 @@ export default function App() {
       setBriefs([])
       setBriefInboxOpen(false)
       setVisits([])
+      setVerifiedVisitors([])
       setStatsOpen(false)
     }
   }, [isAdmin, refreshBriefs, refreshVisits])
@@ -1165,7 +1171,7 @@ export default function App() {
 
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} onSubmit={submitFeedback} />
 
-      <VisitorStats open={statsOpen} visits={visits} onClose={() => setStatsOpen(false)} />
+      <VisitorStats open={statsOpen} visits={visits} visitors={verifiedVisitors} onClose={() => setStatsOpen(false)} />
 
       <VisitorLogin open={visitorLoginOpen} onClose={() => setVisitorLoginOpen(false)} onSubmit={requestVisitorLogin} />
 
