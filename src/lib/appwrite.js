@@ -9,6 +9,7 @@ const account = new Account(client)
 const realtime = new Realtime(client)
 const databaseId = '6aec5c0100163d1ab125'
 const tableId = '6aec5c36003a2ebf0e50'
+const visitorTableId = '6af44551000fafbb5054'
 const channel = `tablesdb.${databaseId}.tables.${tableId}.rows`
 
 function unpack(row) {
@@ -86,6 +87,44 @@ export async function createRemoteVisit(day) {
 export async function loadRemoteVisits() {
   const result = await tables.listRows({ databaseId, tableId, ttl: 0 })
   return result.rows.map(unpack).filter((row) => row?.kind === 'visit')
+}
+
+export async function requestVisitorEmailLink(email) {
+  const userId = ID.unique()
+  const url = new URL(window.location.href)
+  url.searchParams.delete('userId')
+  url.searchParams.delete('secret')
+  return account.createMagicURLToken({ userId, email: String(email).trim().toLowerCase(), url: url.toString() })
+}
+
+export async function completeVisitorEmailLink() {
+  const params = new URLSearchParams(window.location.search)
+  const userId = params.get('userId')
+  const secret = params.get('secret')
+  if (!userId || !secret) return null
+  await account.createSession({ userId, secret })
+  const user = await account.get()
+  const url = new URL(window.location.href)
+  url.searchParams.delete('userId')
+  url.searchParams.delete('secret')
+  window.history.replaceState({}, '', url)
+  return user
+}
+
+export async function saveVerifiedVisitor(user) {
+  const rowId = String(user.$id)
+  const data = { email: String(user.email || '').toLowerCase() }
+  try {
+    return await tables.createRow({ databaseId, tableId: visitorTableId, rowId, data })
+  } catch (error) {
+    if (error?.code !== 409) throw error
+    return tables.updateRow({ databaseId, tableId: visitorTableId, rowId, data })
+  }
+}
+
+export async function loadVerifiedVisitors() {
+  const result = await tables.listRows({ databaseId, tableId: visitorTableId, ttl: 0 })
+  return result.rows.map((row) => ({ id: row.$id, email: row.email, createdAt: row.$createdAt }))
 }
 
 export async function deleteRemoteBrief(rowId) {

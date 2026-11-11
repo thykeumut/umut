@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Filter, Heart, MessageSquare, Move, Search, Share2, X } from 'lucide-react'
+import { Filter, Heart, Mail, MessageSquare, Move, Search, Share2, X } from 'lucide-react'
 import Background from './components/Background.jsx'
 import PageChrome from './components/PageChrome.jsx'
 import Hero from './components/Hero.jsx'
@@ -8,6 +8,7 @@ import BriefBuilder from './components/BriefBuilder.jsx'
 import BriefInbox from './components/BriefInbox.jsx'
 import FeedbackModal from './components/FeedbackModal.jsx'
 import VisitorStats from './components/VisitorStats.jsx'
+import VisitorLogin from './components/VisitorLogin.jsx'
 import ContactSection from './components/ContactSection.jsx'
 import Featured from './components/Featured.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
@@ -27,9 +28,13 @@ import {
   createRemoteBrief,
   createRemoteFeedback,
   createRemoteVisit,
+  completeVisitorEmailLink,
   deleteRemoteBrief,
   loadRemoteBriefs,
   loadRemoteVisits,
+  loadVerifiedVisitors,
+  requestVisitorEmailLink,
+  saveVerifiedVisitor,
   loadRemoteSites,
   loginAdmin,
   logoutAdmin,
@@ -156,6 +161,8 @@ export default function App() {
   const [feedbackOpen, setFeedbackOpen] = useState(false)
   const [statsOpen, setStatsOpen] = useState(false)
   const [visits, setVisits] = useState([])
+  const [visitorLoginOpen, setVisitorLoginOpen] = useState(false)
+  const [verifiedVisitors, setVerifiedVisitors] = useState([])
   const [detailId, setDetailId] = useState(null)
   const [editSite, setEditSite] = useState(null)
   const [boardQuery, setBoardQuery] = useState('')
@@ -309,6 +316,10 @@ export default function App() {
     }
   }, [isAdmin])
 
+  useEffect(() => {
+    completeVisitorEmailLink().then((user) => user && saveVerifiedVisitor(user)).catch(() => {})
+  }, [])
+
   const refreshVisits = useCallback(async () => {
     if (!isAdmin) return
     try {
@@ -347,6 +358,10 @@ export default function App() {
     await createRemoteFeedback(feedback)
     showToast('Geri bildirimin gönderildi — teşekkürler!')
   }, [showToast])
+
+  const requestVisitorLogin = useCallback(async (email) => {
+    await requestVisitorEmailLink(email)
+  }, [])
 
   const removeBrief = useCallback(async (brief) => {
     try {
@@ -1063,6 +1078,8 @@ export default function App() {
           <MessageSquare size={13} strokeWidth={2.1} /> geri bildirim
         </button>
         <span className="footer-dot">•</span>
+        <button type="button" className="footer-share" onClick={() => setVisitorLoginOpen(true)} title="E-postayla giriş yap"><Mail size={13} strokeWidth={2.1} /> giriş</button>
+        <span className="footer-dot">•</span>
         <button
           type="button"
           className="footer-term"
@@ -1119,6 +1136,8 @@ export default function App() {
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} onSubmit={submitFeedback} />
 
       <VisitorStats open={statsOpen} visits={visits} onClose={() => setStatsOpen(false)} />
+
+      <VisitorLogin open={visitorLoginOpen} onClose={() => setVisitorLoginOpen(false)} onSubmit={requestVisitorLogin} />
 
       <Terminal
         open={termOpen}
