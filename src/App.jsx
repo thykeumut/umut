@@ -10,6 +10,7 @@ import FeedbackModal from './components/FeedbackModal.jsx'
 import VisitorStats from './components/VisitorStats.jsx'
 import VisitorLogin from './components/VisitorLogin.jsx'
 import VisitorGate from './components/VisitorGate.jsx'
+import AdminConsole from './components/AdminConsole.jsx'
 import ContactSection from './components/ContactSection.jsx'
 import Featured from './components/Featured.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
@@ -161,6 +162,7 @@ export default function App() {
   const [briefs, setBriefs] = useState([])
   const [feedbackOpen, setFeedbackOpen] = useState(false)
   const [statsOpen, setStatsOpen] = useState(false)
+  const [managerOpen, setManagerOpen] = useState(false)
   const [visits, setVisits] = useState([])
   const [visitorLoginOpen, setVisitorLoginOpen] = useState(false)
   const [verifiedVisitors, setVerifiedVisitors] = useState([])
@@ -956,6 +958,7 @@ export default function App() {
         onInbox={() => setBriefInboxOpen(true)}
         inboxCount={briefs.length}
         onStats={() => setStatsOpen(true)}
+        onControl={() => setManagerOpen(true)}
         visitCount={visits.length}
       />
 
@@ -1204,6 +1207,21 @@ export default function App() {
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} onSubmit={submitFeedback} />
 
       <VisitorStats open={statsOpen} visits={visits} visitors={verifiedVisitors} onClose={() => setStatsOpen(false)} />
+
+      <AdminConsole
+        open={managerOpen}
+        sites={sites}
+        briefs={briefs}
+        verifiedVisitors={verifiedVisitors}
+        onClose={() => setManagerOpen(false)}
+        onAdd={() => { setManagerOpen(false); openAdd() }}
+        onEdit={(site) => { setManagerOpen(false); openEdit(site) }}
+        onTogglePublic={togglePublic}
+        onToggleFeatured={toggleFeatured}
+        onInbox={() => { setManagerOpen(false); setBriefInboxOpen(true) }}
+        onStats={() => { setManagerOpen(false); setStatsOpen(true) }}
+        onReset={resetLayout}
+      />
 
       <VisitorLogin open={visitorLoginOpen} onClose={() => setVisitorLoginOpen(false)} onSubmit={requestVisitorLogin} />
 
