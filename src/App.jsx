@@ -471,7 +471,9 @@ export default function App() {
   // Kartları tahta sınırları içine çek
   const clampAll = useCallback(() => {
     const board = boardRef.current
-    if (!board || isMobile) return
+    // Serbest konumlar sadece yönetici panosunda kullanılır. Ziyaretçi
+    // görünümü responsive akışta olduğundan ekran daralınca kartlar çakışmaz.
+    if (!board || isMobile || !isAdmin) return
     const cardEls = new Map(
       Array.from(board.querySelectorAll('.card')).map((el) => [
         el.dataset.siteId,
@@ -497,7 +499,7 @@ export default function App() {
       })
       return changed ? next : prev
     })
-  }, [isMobile])
+  }, [isMobile, isAdmin])
 
   useEffect(() => {
     clampAll()
@@ -912,7 +914,7 @@ export default function App() {
       )}
 
       <Hero
-        count={sites.length}
+        count={isAdmin ? sites.length : sites.filter((site) => site.public).length}
         publicCount={sites.filter((site) => site.public).length}
         isAdmin={isAdmin}
         onAdd={openAdd}
@@ -1021,7 +1023,7 @@ export default function App() {
         <main
           id="projects"
           ref={boardRef}
-          className={'board' + (isMobile ? ' board--flow' : '')}
+          className={'board' + (!isAdmin || isMobile ? ' board--flow' : '')}
           onPointerDown={(e) => {
             if (e.target === e.currentTarget) setActiveId(null)
           }}
@@ -1047,10 +1049,10 @@ export default function App() {
               site={site}
               boardRef={boardRef}
               isAdmin={isAdmin}
-              draggingEnabled={!isMobile}
+              draggingEnabled={isAdmin && !isMobile}
               isActive={activeId === site.id}
               isNew={newIds.has(site.id)}
-              flowMode={isMobile}
+              flowMode={!isAdmin || isMobile}
               onMove={moveSite}
               onOpen={openSite}
               onDetail={openDetail}

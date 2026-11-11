@@ -28,11 +28,9 @@ export default function Hero({
             <span><b>03</b> Deney</span>
           </div>
           <p className="hero-hint">
-            {isAdmin ? (
-              <>Kartları sürükleyerek düzenleyebilir, yeni projeni anında yayınlayabilirsin.</>
-            ) : (
-              <>Projeleri incele, <kbd>/</kbd> ile ara veya <kbd>Ctrl K</kbd> ile hızlıca bul.</>
-            )}
+            {isAdmin
+              ? 'Kartları sürükleyerek düzenleyebilir, yeni projeni anında yayınlayabilirsin.'
+              : <>Projeleri incele, <kbd>/</kbd> ile ara veya <kbd>Ctrl K</kbd> ile hızlıca bul.</>}
           </p>
         </div>
 
@@ -56,9 +54,11 @@ export default function Hero({
               <span className="stat-num">{count}</span>
               <span className="stat-label">Proje</span>
             </div>
-            <div className="hero-live-stat" title="Ziyaretçilere açık projeler">
-              <i aria-hidden="true" /> {publicCount} canlı
-            </div>
+            {isAdmin && (
+              <div className="hero-live-stat" title="Ziyaretçilere açık projeler">
+                <i aria-hidden="true" /> {publicCount} canlı
+              </div>
+            )}
 
             {isAdmin ? (
               <>
