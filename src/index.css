@@ -6178,12 +6178,28 @@ button:focus:not(:focus-visible) {
 .brief-inbox-empty { display: grid; min-height: 180px; place-items: center; align-content: center; gap: 8px; color: var(--muted); font-size: 12px; }
 .brief-inbox-empty p { margin: 0; }
 
+.feedback-panel { width: min(100%, 560px); }
+.feedback-form { display: grid; gap: 14px; padding: 22px 24px 24px; }
+.feedback-form label { display: grid; gap: 7px; color: var(--muted); font-size: 11px; font-weight: 680; }
+.feedback-form label em { color: var(--muted); font-style: normal; font-weight: 500; }
+.feedback-form input,
+.feedback-form textarea,
+.feedback-form select { width: 100%; color: var(--text); font: 13px var(--font); background: color-mix(in srgb, var(--bg-plain) 18%, transparent); border: 1px solid var(--glass-border); border-radius: 10px; outline: 0; }
+.feedback-form input,
+.feedback-form select { height: 40px; padding: 0 11px; }
+.feedback-form textarea { min-height: 132px; padding: 11px; resize: vertical; }
+.feedback-form input:focus,
+.feedback-form textarea:focus,
+.feedback-form select:focus { border-color: color-mix(in srgb, var(--accent) 58%, var(--glass-border)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent); }
+.feedback-send { justify-self: start; height: 40px; padding: 0 15px; font-size: 12px; }
+
 @media (max-width: 700px) {
   .brief-grid { grid-template-columns: 1fr; gap: 18px; padding: 18px; }
   .brief-head { padding: 20px 18px 17px; }
   .brief-preview pre { min-height: 150px; }
   .brief-foot { padding: 11px 18px; }
   .brief-inbox-list { padding: 16px 18px; }
+  .feedback-form { padding: 18px; }
   .brief-inbox-meta { align-items: start; flex-direction: column; gap: 4px; }
 }
 

@@ -36,7 +36,7 @@ export async function loadRemoteBriefs() {
   const result = await tables.listRows({ databaseId, tableId, ttl: 0 })
   return result.rows
     .map(unpack)
-    .filter((row) => row?.kind === 'brief')
+    .filter((row) => row?.kind === 'brief' || row?.kind === 'feedback')
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 }
 
@@ -60,6 +60,19 @@ export async function createRemoteBrief(brief) {
     audience: String(brief.audience || '').trim().slice(0, 120),
     style: String(brief.style || '').slice(0, 100),
     contact: String(brief.contact || '').trim().slice(0, 140),
+  }
+  return tables.createRow({ databaseId, tableId, rowId: ID.unique(), data: { data: JSON.stringify(payload) } })
+}
+
+export async function createRemoteFeedback(feedback) {
+  await ensureVisitorSession()
+  const payload = {
+    kind: 'feedback',
+    id: ID.unique(),
+    createdAt: new Date().toISOString(),
+    subject: String(feedback.subject || 'Genel geri bildirim').slice(0, 80),
+    message: String(feedback.message || '').trim().slice(0, 600),
+    contact: String(feedback.contact || '').trim().slice(0, 140),
   }
   return tables.createRow({ databaseId, tableId, rowId: ID.unique(), data: { data: JSON.stringify(payload) } })
 }

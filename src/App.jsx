@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Filter, Heart, Move, Search, Share2, X } from 'lucide-react'
+import { Filter, Heart, MessageSquare, Move, Search, Share2, X } from 'lucide-react'
 import Background from './components/Background.jsx'
 import PageChrome from './components/PageChrome.jsx'
 import Hero from './components/Hero.jsx'
 import QuickCommand from './components/QuickCommand.jsx'
 import BriefBuilder from './components/BriefBuilder.jsx'
 import BriefInbox from './components/BriefInbox.jsx'
+import FeedbackModal from './components/FeedbackModal.jsx'
 import ContactSection from './components/ContactSection.jsx'
 import Featured from './components/Featured.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
@@ -23,6 +24,7 @@ import { fromBase64 } from './lib/github.js'
 import {
   hasAdminSession,
   createRemoteBrief,
+  createRemoteFeedback,
   deleteRemoteBrief,
   loadRemoteBriefs,
   loadRemoteSites,
@@ -148,6 +150,7 @@ export default function App() {
   const [briefOpen, setBriefOpen] = useState(false)
   const [briefInboxOpen, setBriefInboxOpen] = useState(false)
   const [briefs, setBriefs] = useState([])
+  const [feedbackOpen, setFeedbackOpen] = useState(false)
   const [detailId, setDetailId] = useState(null)
   const [editSite, setEditSite] = useState(null)
   const [boardQuery, setBoardQuery] = useState('')
@@ -313,6 +316,11 @@ export default function App() {
   const submitBrief = useCallback(async (brief) => {
     await createRemoteBrief(brief)
     showToast('Brief gönderildi — teşekkürler!')
+  }, [showToast])
+
+  const submitFeedback = useCallback(async (feedback) => {
+    await createRemoteFeedback(feedback)
+    showToast('Geri bildirimin gönderildi — teşekkürler!')
   }, [showToast])
 
   const removeBrief = useCallback(async (brief) => {
@@ -1020,6 +1028,15 @@ export default function App() {
         <span className="footer-dot">•</span>
         <button
           type="button"
+          className="footer-share"
+          onClick={() => setFeedbackOpen(true)}
+          title="Geri bildirim gönder"
+        >
+          <MessageSquare size={13} strokeWidth={2.1} /> geri bildirim
+        </button>
+        <span className="footer-dot">•</span>
+        <button
+          type="button"
           className="footer-term"
           onClick={() => setTermOpen(true)}
           title="Gizli terminal (~)"
@@ -1070,6 +1087,8 @@ export default function App() {
         onClose={() => setBriefInboxOpen(false)}
         onDelete={removeBrief}
       />
+
+      <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} onSubmit={submitFeedback} />
 
       <Terminal
         open={termOpen}

@@ -26,8 +26,8 @@ export default function BriefInbox({ open, briefs, onClose, onDelete }) {
         <div className="brief-inbox-list">
           {briefs.length ? briefs.map((brief) => (
             <article className="brief-inbox-item" key={brief._rowId}>
-              <div className="brief-inbox-meta"><span>{brief.projectType || 'Proje fikri'}</span><time>{formatDate(brief.createdAt)}</time></div>
-              <p>{brief.goal}</p>
+              <div className="brief-inbox-meta"><span>{brief.kind === 'feedback' ? `Geri bildirim · ${brief.subject || 'Genel'}` : (brief.projectType || 'Proje fikri')}</span><time>{formatDate(brief.createdAt)}</time></div>
+              <p>{brief.kind === 'feedback' ? brief.message : brief.goal}</p>
               <dl>
                 {brief.audience && <><dt>Hedef kitle</dt><dd>{brief.audience}</dd></>}
                 {brief.style && <><dt>Yön</dt><dd>{brief.style}</dd></>}
