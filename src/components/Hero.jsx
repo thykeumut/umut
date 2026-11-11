@@ -15,25 +15,23 @@ export default function Hero({
     <header className="hero">
       <div className="hero-inner">
         <div className="hero-text">
-          <span className="hero-badge">THYKE / DIGITAL WORKS</span>
+          <span className="hero-badge">THYKE / SELECTED WORK</span>
           <h1 className="hero-title">
             Merhaba, ben <span className="gradient-text">Umut.</span>
             <br />
-            İnternette <span className="hero-title-muted">şeyler</span> üretiyorum.
+            Dijital fikirleri <span className="hero-title-muted">inşa ediyorum.</span>
           </h1>
-          <p className="hero-sub">
-            Web projeleri, oyunlar ve deneysel fikirler.
-          </p>
+          <p className="hero-sub">Web araçları, oyunlar ve karakteri olan küçük deneyler.</p>
           <div className="hero-index" aria-label="Çalışma alanları">
-            <span><b>01</b> Web</span>
-            <span><b>02</b> Oyun</span>
-            <span><b>03</b> Deney</span>
+            <span><b>01</b> Web ürünleri</span>
+            <span><b>02</b> Oyunlar</span>
+            <span><b>03</b> Deneyler</span>
           </div>
           <p className="hero-hint">
             {isAdmin ? (
               <>Projelerini buradan ekleyip düzenleyebilirsin.</>
             ) : (
-              <>Projelerime göz atabilir, <kbd>/</kbd> ile arama yapabilirsin.</>
+              <>Projeleri incele, <kbd>/</kbd> ile ara veya <kbd>Ctrl K</kbd> ile hızlıca bul.</>
             )}
           </p>
         </div>

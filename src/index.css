@@ -5615,3 +5615,95 @@ button:focus:not(:focus-visible) {
     width: 100%;
   }
 }
+
+/* Portfolyo odağı: üst alanı panel yığınından çıkaran editoryal düzen. */
+.hero {
+  padding: 78px clamp(20px, 5vw, 64px) 56px;
+}
+
+.hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 48px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero-badge {
+  padding: 0;
+  margin-bottom: 20px;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0.13em;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.hero-badge::before { width: 18px; height: 1px; border-radius: 0; }
+
+.hero-title {
+  max-width: 850px;
+  font-size: clamp(2.75rem, 6.7vw, 5.8rem);
+  font-weight: 730;
+  letter-spacing: -0.07em;
+  line-height: 0.93;
+}
+
+.hero-sub {
+  margin-top: 22px;
+  font-size: clamp(0.98rem, 1.55vw, 1.1rem);
+  font-weight: 520;
+}
+
+.hero-index {
+  gap: 16px 24px;
+  margin-top: 30px;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.hero-index span { font-size: 10px; font-weight: 700; letter-spacing: 0.075em; }
+
+.hero-actions {
+  gap: 14px;
+  min-width: min(100%, 360px);
+  padding: 0 0 4px 28px;
+  border-left: 1px solid var(--line);
+}
+
+.hero-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  justify-content: end;
+}
+
+.stat {
+  height: 34px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.stat-num { font-size: 1.55rem; font-weight: 720; }
+.stat-label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+
+.hero-live-stat {
+  min-height: 34px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+@media (max-width: 760px) {
+  .hero { padding-top: 52px; padding-bottom: 34px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 26px; padding-bottom: 24px; }
+  .hero-actions { align-items: flex-start; min-width: 0; padding: 18px 0 0; border-top: 1px solid var(--line); border-left: 0; }
+  .hero-buttons { justify-content: start; }
+}

@@ -4,7 +4,6 @@ import Background from './components/Background.jsx'
 import PageChrome from './components/PageChrome.jsx'
 import Hero from './components/Hero.jsx'
 import QuickCommand from './components/QuickCommand.jsx'
-import WorkPulse from './components/WorkPulse.jsx'
 import Featured from './components/Featured.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
 import RecentProjects from './components/RecentProjects.jsx'
@@ -773,23 +772,6 @@ export default function App() {
       />
 
       <>
-
-          <WorkPulse
-            sites={sites}
-            featuredSite={featuredSite}
-            onSelect={openDetail}
-            onExplore={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-            onFilterStatus={(status) => {
-              setSelectedStatus(status)
-              document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }}
-            onFilterCategory={(category) => {
-              setSelectedCategory(category)
-              document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }}
-            selectedStatus={selectedStatus}
-            selectedCategory={selectedCategory}
-          />
 
           <section className="projects-intro" aria-labelledby="projects-title">
             <div className="projects-intro-title">
