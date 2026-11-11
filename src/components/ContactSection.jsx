@@ -10,19 +10,19 @@ export default function ContactSection({ onBrief }) {
       </div>
 
       <div className="contact-card">
-        <p className="contact-lead">Web deneyimi, küçük araç veya oyun fikri… Kısa bir brief hazırla; ihtiyacı birlikte netleştirelim.</p>
+        <p className="contact-lead">Web deneyimi, küçük araç veya oyun fikri… Kısa bir brief hazırla; doğrudan portföyün gelen kutusuna düşsün.</p>
         <div className="contact-topics" aria-label="Çalışma alanları">
           <span>Web ürünleri</span>
           <span>Oyunlar</span>
           <span>Deneysel işler</span>
         </div>
         <div className="contact-actions">
-          <a className="btn btn-primary" href="https://github.com/thykeumut" target="_blank" rel="noreferrer noopener">
-            <Code2 size={15} strokeWidth={2.1} /> GitHub <ArrowUpRight size={14} strokeWidth={2.2} />
-          </a>
-          <button className="btn btn-ghost" type="button" onClick={onBrief}>
+          <button className="btn btn-primary" type="button" onClick={onBrief}>
             <FilePenLine size={15} strokeWidth={2.1} /> Brief oluştur
           </button>
+          <a className="btn btn-ghost" href="https://github.com/thykeumut" target="_blank" rel="noreferrer noopener">
+            <Code2 size={15} strokeWidth={2.1} /> GitHub <ArrowUpRight size={14} strokeWidth={2.2} />
+          </a>
         </div>
       </div>
     </section>

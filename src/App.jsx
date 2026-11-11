@@ -5,6 +5,7 @@ import PageChrome from './components/PageChrome.jsx'
 import Hero from './components/Hero.jsx'
 import QuickCommand from './components/QuickCommand.jsx'
 import BriefBuilder from './components/BriefBuilder.jsx'
+import BriefInbox from './components/BriefInbox.jsx'
 import ContactSection from './components/ContactSection.jsx'
 import Featured from './components/Featured.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
@@ -21,6 +22,9 @@ import { ADMIN_STORAGE_KEY } from './lib/config.js'
 import { fromBase64 } from './lib/github.js'
 import {
   hasAdminSession,
+  createRemoteBrief,
+  deleteRemoteBrief,
+  loadRemoteBriefs,
   loadRemoteSites,
   loginAdmin,
   logoutAdmin,
@@ -142,6 +146,8 @@ export default function App() {
   const [termOpen, setTermOpen] = useState(false)
   const [commandOpen, setCommandOpen] = useState(false)
   const [briefOpen, setBriefOpen] = useState(false)
+  const [briefInboxOpen, setBriefInboxOpen] = useState(false)
+  const [briefs, setBriefs] = useState([])
   const [detailId, setDetailId] = useState(null)
   const [editSite, setEditSite] = useState(null)
   const [boardQuery, setBoardQuery] = useState('')
@@ -286,6 +292,39 @@ export default function App() {
     toastTimer.current = setTimeout(() => setToast(''), 2600)
   }, [])
 
+  const refreshBriefs = useCallback(async () => {
+    if (!isAdmin) return
+    try {
+      setBriefs(await loadRemoteBriefs())
+    } catch {
+      // The inbox is only an admin convenience; project board stays available.
+    }
+  }, [isAdmin])
+
+  useEffect(() => {
+    if (isAdmin) {
+      void refreshBriefs()
+    } else {
+      setBriefs([])
+      setBriefInboxOpen(false)
+    }
+  }, [isAdmin, refreshBriefs])
+
+  const submitBrief = useCallback(async (brief) => {
+    await createRemoteBrief(brief)
+    showToast('Brief gönderildi — teşekkürler!')
+  }, [showToast])
+
+  const removeBrief = useCallback(async (brief) => {
+    try {
+      await deleteRemoteBrief(brief._rowId)
+      setBriefs((current) => current.filter((item) => item._rowId !== brief._rowId))
+      showToast('Brief silindi')
+    } catch (error) {
+      showToast(error?.message || 'Brief silinemedi')
+    }
+  }, [showToast])
+
   // Realtime keeps already-open visitor tabs in sync without a refresh.
   useEffect(() => {
     let alive = true
@@ -308,7 +347,10 @@ export default function App() {
       }
     }
 
-    Promise.resolve(subscribeToSites(() => sync(true))).then((subscription) => {
+    Promise.resolve(subscribeToSites(() => {
+      sync(true)
+      if (isAdmin) void refreshBriefs()
+    })).then((subscription) => {
       if (alive) unsubscribe = subscription?.unsubscribe
       else subscription?.unsubscribe?.()
     })
@@ -321,7 +363,7 @@ export default function App() {
       unsubscribe?.()
       document.removeEventListener('visibilitychange', onVisibility)
     }
-  }, [showToast, isAdmin])
+  }, [showToast, isAdmin, refreshBriefs])
 
   // A short debounce turns one edit or drag into a single shared write.
   useEffect(() => {
@@ -794,6 +836,8 @@ export default function App() {
         appearance={appearance}
         onToggleAppearance={() => setAppearance((value) => (value === 'dark' ? 'light' : 'dark'))}
         onCommand={() => setCommandOpen(true)}
+        onInbox={() => setBriefInboxOpen(true)}
+        inboxCount={briefs.length}
       />
 
       <>
@@ -1018,7 +1062,14 @@ export default function App() {
         onTerminal={() => setTermOpen(true)}
       />
 
-      <BriefBuilder open={briefOpen} onClose={() => setBriefOpen(false)} />
+      <BriefBuilder open={briefOpen} onClose={() => setBriefOpen(false)} onSubmit={submitBrief} />
+
+      <BriefInbox
+        open={briefInboxOpen}
+        briefs={briefs}
+        onClose={() => setBriefInboxOpen(false)}
+        onDelete={removeBrief}
+      />
 
       <Terminal
         open={termOpen}

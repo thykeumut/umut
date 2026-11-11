@@ -29,7 +29,43 @@ function pack(site) {
 export async function loadRemoteSites() {
   const result = await tables.listRows({ databaseId, tableId, ttl: 0 })
   const rows = result.rows.map(unpack).filter(Boolean)
-  return rows.filter((row) => row.kind !== 'cv')
+  return rows.filter((row) => !row.kind || row.kind === 'site')
+}
+
+export async function loadRemoteBriefs() {
+  const result = await tables.listRows({ databaseId, tableId, ttl: 0 })
+  return result.rows
+    .map(unpack)
+    .filter((row) => row?.kind === 'brief')
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+}
+
+async function ensureVisitorSession() {
+  try {
+    await account.get()
+  } catch (error) {
+    if (error?.code !== 401) throw error
+    await account.createAnonymousSession()
+  }
+}
+
+export async function createRemoteBrief(brief) {
+  await ensureVisitorSession()
+  const payload = {
+    kind: 'brief',
+    id: ID.unique(),
+    createdAt: new Date().toISOString(),
+    projectType: String(brief.projectType || '').slice(0, 80),
+    goal: String(brief.goal || '').trim().slice(0, 420),
+    audience: String(brief.audience || '').trim().slice(0, 120),
+    style: String(brief.style || '').slice(0, 100),
+    contact: String(brief.contact || '').trim().slice(0, 140),
+  }
+  return tables.createRow({ databaseId, tableId, rowId: ID.unique(), data: { data: JSON.stringify(payload) } })
+}
+
+export async function deleteRemoteBrief(rowId) {
+  return tables.deleteRow({ databaseId, tableId, rowId })
 }
 
 export async function loginAdmin(email, password) {
