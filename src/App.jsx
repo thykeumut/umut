@@ -164,9 +164,11 @@ export default function App() {
   const [visits, setVisits] = useState([])
   const [visitorLoginOpen, setVisitorLoginOpen] = useState(false)
   const [verifiedVisitors, setVerifiedVisitors] = useState([])
+  // Giriş tercihi yalnızca açık sekme boyunca geçerli. Böylece eski
+  // localStorage kayıtları giriş perdesini asla atlayamaz.
   const [visitorMode, setVisitorMode] = useState(() => {
     try {
-      return localStorage.getItem('thyke:visitor-mode') || ''
+      return sessionStorage.getItem('thyke:visitor-mode') || ''
     } catch {
       return ''
     }
@@ -329,7 +331,7 @@ export default function App() {
       .then((user) => {
         if (!user) return null
         return saveVerifiedVisitor(user).then(() => {
-          localStorage.setItem('thyke:visitor-mode', 'verified')
+          sessionStorage.setItem('thyke:visitor-mode', 'verified')
           setVisitorMode('verified')
         })
       })
@@ -895,7 +897,7 @@ export default function App() {
         <VisitorGate
           onEmail={() => setVisitorLoginOpen(true)}
           onGuest={() => {
-            localStorage.setItem('thyke:visitor-mode', 'guest')
+            sessionStorage.setItem('thyke:visitor-mode', 'guest')
             setVisitorMode('guest')
           }}
         />
