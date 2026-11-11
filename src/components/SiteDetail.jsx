@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
-import { X, ArrowUpRight, ChevronLeft, ChevronRight, GitBranch, Lock, Pencil, Share2 } from 'lucide-react'
+import { X, ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, GitBranch, Lock, Pencil, Share2 } from 'lucide-react'
 import { gradientById } from '../lib/gradients'
 import { iconById } from '../lib/icons'
 import { categoryName, prettyUrl, statusName } from '../lib/projects'
 import Shot from './Shot.jsx'
 
-// Proje detay paneli: büyük önizleme, teknolojiler, hikâye, bağlantılar.
+// Proje detay paneli: önizleme, teknoloji, hikâye, bağlantılar ve ilgili işler.
 export default function SiteDetail({
   site,
   isAdmin,
@@ -13,15 +13,17 @@ export default function SiteDetail({
   onOpenSite,
   onEdit,
   onShare,
+  relatedSites = [],
+  onSelectRelated,
   canNavigate,
   onPrevious,
   onNext,
 }) {
   useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === 'Escape') onClose()
-      if (canNavigate && e.key === 'ArrowLeft') onPrevious()
-      if (canNavigate && e.key === 'ArrowRight') onNext()
+    const onKey = (event) => {
+      if (event.key === 'Escape') onClose()
+      if (canNavigate && event.key === 'ArrowLeft') onPrevious()
+      if (canNavigate && event.key === 'ArrowRight') onNext()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -40,12 +42,7 @@ export default function SiteDetail({
 
   return (
     <div className="modal-backdrop" onPointerDown={onClose}>
-      <div
-        className="modal modal--wide"
-        role="dialog"
-        aria-label={site.title}
-        onPointerDown={(e) => e.stopPropagation()}
-      >
+      <div className="modal modal--wide" role="dialog" aria-label={site.title} onPointerDown={(event) => event.stopPropagation()}>
         <div className="modal-head">
           <div className="detail-heading">
             <span className="detail-cat">{categoryName(site.category)}</span>
@@ -55,17 +52,11 @@ export default function SiteDetail({
           <div className="detail-head-actions">
             {canNavigate && (
               <div className="detail-nav" aria-label="Projeler arasında gez">
-                <button className="icon-btn" onClick={onPrevious} title="Önceki proje">
-                  <ChevronLeft size={16} strokeWidth={2.3} />
-                </button>
-                <button className="icon-btn" onClick={onNext} title="Sonraki proje">
-                  <ChevronRight size={16} strokeWidth={2.3} />
-                </button>
+                <button className="icon-btn" onClick={onPrevious} title="Önceki proje"><ChevronLeft size={16} strokeWidth={2.3} /></button>
+                <button className="icon-btn" onClick={onNext} title="Sonraki proje"><ChevronRight size={16} strokeWidth={2.3} /></button>
               </div>
             )}
-            <button className="icon-btn" onClick={onClose} title="Kapat">
-              <X size={15} strokeWidth={2.3} />
-            </button>
+            <button className="icon-btn" onClick={onClose} title="Kapat"><X size={15} strokeWidth={2.3} /></button>
           </div>
         </div>
 
@@ -74,91 +65,59 @@ export default function SiteDetail({
             {canSee && site.url ? (
               <Shot url={site.url} className="detail-shot" width={1000} height={620} alt="" />
             ) : (
-              <div className="detail-locked">
-                <Lock size={22} strokeWidth={1.8} />
-                <span>Bu proje yalnızca sahibine açık</span>
-              </div>
+              <div className="detail-locked"><Lock size={22} strokeWidth={1.8} /><span>Bu proje yalnızca sahibine açık</span></div>
             )}
-            <span className="detail-icon">
-              <Icon size={22} strokeWidth={1.9} />
-            </span>
+            <span className="detail-icon"><Icon size={22} strokeWidth={1.9} /></span>
           </div>
 
           <div className="detail-body">
             {site.description && (
-              <section className="detail-section">
-                <span className="detail-eyebrow">Özet</span>
-                <p className="detail-desc">{site.description}</p>
-              </section>
+              <section className="detail-section"><span className="detail-eyebrow">Özet</span><p className="detail-desc">{site.description}</p></section>
             )}
-
             {site.story && (
-              <section className="detail-section">
-                <span className="detail-eyebrow">Proje notu</span>
-                <p className="detail-story">{site.story}</p>
-              </section>
+              <section className="detail-section"><span className="detail-eyebrow">Proje notu</span><p className="detail-story">{site.story}</p></section>
             )}
-
             {tags.length > 0 && (
               <section className="detail-section">
                 <span className="detail-eyebrow">Kullanılanlar</span>
-                <div className="detail-tags">
-                {tags.map((t) => (
-                  <span key={t} className="tag">
-                    {t}
-                  </span>
-                ))}
+                <div className="detail-tags">{tags.map((tag) => <span key={tag} className="tag">{tag}</span>)}</div>
+              </section>
+            )}
+
+            {relatedSites.length > 0 && (
+              <section className="detail-section detail-related-section">
+                <span className="detail-eyebrow">Benzer işler</span>
+                <div className="detail-related">
+                  {relatedSites.map((related) => {
+                    const RelatedIcon = iconById(related.icon)
+                    return (
+                      <button type="button" key={related.id} onClick={() => onSelectRelated?.(related)}>
+                        <RelatedIcon size={14} strokeWidth={2} />
+                        <span>{related.title}</span>
+                        <ArrowRight size={13} strokeWidth={2.1} />
+                      </button>
+                    )
+                  })}
                 </div>
               </section>
             )}
 
             <span className="detail-eyebrow detail-eyebrow--links">Bağlantılar</span>
             <div className="detail-meta">
-              {site.public && site.url && (
-                <span className="detail-url">{prettyUrl(site.url)}</span>
-              )}
+              {site.public && site.url && <span className="detail-url">{prettyUrl(site.url)}</span>}
               {!site.public && <span className="detail-url">adres gizli</span>}
               {lastUpdated && <span className="detail-updated">Son güncelleme: {lastUpdated}</span>}
             </div>
 
             <div className="detail-actions">
               {canSee && site.url ? (
-                <button className="btn btn-primary" onClick={() => onOpenSite(site)}>
-                  <ArrowUpRight size={15} strokeWidth={2.2} />
-                  Siteyi Aç
-                </button>
+                <button className="btn btn-primary" onClick={() => onOpenSite(site)}><ArrowUpRight size={15} strokeWidth={2.2} />Siteyi Aç</button>
               ) : (
-                <button className="btn btn-ghost" disabled>
-                  <Lock size={14} strokeWidth={2.2} />
-                  Ziyaretçilere kapalı
-                </button>
+                <button className="btn btn-ghost" disabled><Lock size={14} strokeWidth={2.2} />Ziyaretçilere kapalı</button>
               )}
-
-              {site.repo && (
-                <a
-                  className="btn btn-ghost"
-                  href={site.repo}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  <GitBranch size={15} strokeWidth={2.1} />
-                  GitHub
-                </a>
-              )}
-
-              {site.public && (
-                <button className="btn btn-ghost" onClick={() => onShare(site)}>
-                  <Share2 size={14} strokeWidth={2.1} />
-                  Paylaş
-                </button>
-              )}
-
-              {isAdmin && (
-                <button className="btn btn-ghost" onClick={() => onEdit(site)}>
-                  <Pencil size={14} strokeWidth={2.1} />
-                  Düzenle
-                </button>
-              )}
+              {site.repo && <a className="btn btn-ghost" href={site.repo} target="_blank" rel="noreferrer noopener"><GitBranch size={15} strokeWidth={2.1} />GitHub</a>}
+              {site.public && <button className="btn btn-ghost" onClick={() => onShare(site)}><Share2 size={14} strokeWidth={2.1} />Paylaş</button>}
+              {isAdmin && <button className="btn btn-ghost" onClick={() => onEdit(site)}><Pencil size={14} strokeWidth={2.1} />Düzenle</button>}
             </div>
           </div>
         </div>

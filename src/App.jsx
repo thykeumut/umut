@@ -14,7 +14,7 @@ import SiteDetail from './components/SiteDetail.jsx'
 import Terminal from './components/Terminal.jsx'
 import { GRADIENTS } from './lib/gradients.js'
 import { DEFAULT_ICON, iconFromLegacyEmoji } from './lib/icons.js'
-import { categoryName, cleanTags, normalizeCategory, normalizeStatus } from './lib/projects.js'
+import { categoryName, cleanTags, normalizeCategory, normalizeStatus, statusName } from './lib/projects.js'
 import { ADMIN_STORAGE_KEY } from './lib/config.js'
 import { fromBase64 } from './lib/github.js'
 import {
@@ -479,6 +479,13 @@ export default function App() {
     }, {})
   }, [sites])
 
+  const statusCounts = useMemo(() => {
+    return sites.filter((site) => site.public).reduce((counts, site) => {
+      counts[site.status] = (counts[site.status] || 0) + 1
+      return counts
+    }, {})
+  }, [sites])
+
   // Vitrin her ziyaretçiye rastgele bir açık proje gösterir.
   const featuredSite = useMemo(() => {
     const pool = sites.filter((site) => site.public)
@@ -697,6 +704,21 @@ export default function App() {
       .filter(Boolean)
   }, [recentIds, detailPool])
 
+  const relatedSites = useMemo(() => {
+    if (!detailSite) return []
+    const detailTags = new Set(detailSite.tags || [])
+    return detailPool
+      .filter((site) => site.id !== detailSite.id)
+      .map((site) => ({
+        site,
+        score: (site.category === detailSite.category ? 3 : 0) + (site.tags || []).filter((tag) => detailTags.has(tag)).length,
+      }))
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score || a.site.title.localeCompare(b.site.title, 'tr'))
+      .slice(0, 3)
+      .map(({ site }) => site)
+  }, [detailSite, detailPool])
+
   const navigateDetail = useCallback((direction) => {
     setDetailId((currentId) => {
       const index = detailPool.findIndex((site) => site.id === currentId)
@@ -849,6 +871,17 @@ export default function App() {
                   {categoryName(category)} <span>{categoryCounts[category]}</span>
                 </button>
               ))}
+              {Object.entries(statusCounts).map(([status, count]) => (
+                <button
+                  key={status}
+                  type="button"
+                  className={'board-filter board-filter--status' + (selectedStatus === status ? ' board-filter--active' : '')}
+                  onClick={() => setSelectedStatus(selectedStatus === status ? 'all' : status)}
+                  aria-pressed={selectedStatus === status}
+                >
+                  {statusName(status)} <span>{count}</span>
+                </button>
+              ))}
             </nav>
           )}
         <main
@@ -966,6 +999,8 @@ export default function App() {
         onOpenSite={openSite}
         onEdit={openEdit}
         onShare={shareProject}
+        relatedSites={relatedSites}
+        onSelectRelated={openDetail}
         canNavigate={detailPool.length > 1}
         onPrevious={() => navigateDetail(-1)}
         onNext={() => navigateDetail(1)}
