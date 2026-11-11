@@ -4857,8 +4857,7 @@ button:focus:not(:focus-visible) {
    ============================================================ */
 .footer-term,
 .footer-share,
-.footer-focus,
-.footer-paste {
+.footer-focus {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -4875,8 +4874,7 @@ button:focus:not(:focus-visible) {
 
 .footer-term:hover,
 .footer-share:hover,
-.footer-focus:hover,
-.footer-paste:hover {
+.footer-focus:hover {
   color: var(--accent);
   opacity: 1;
 }
@@ -6016,6 +6014,58 @@ button:focus:not(:focus-visible) {
 }
 
 /* THYKE Brief — ziyaretçinin fikrini düzenli bir proje notuna dönüştürür. */
+/* Birlikte çalışma — portföyün sonunda sade bir iletişim alanı. */
+.contact-section {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 0.84fr) minmax(360px, 1.16fr);
+  align-items: end;
+  gap: clamp(28px, 6vw, 110px);
+  width: min(calc(100% - 40px), 1520px);
+  margin: 34px auto 0;
+  padding: clamp(34px, 5vw, 62px) 0;
+  border-top: 1px solid var(--line);
+}
+
+.contact-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 780;
+  letter-spacing: 0.14em;
+}
+
+.contact-kicker::before { width: 20px; height: 1px; content: ''; background: currentColor; }
+.contact-copy h2 { margin: 12px 0 10px; color: var(--text); font-size: clamp(30px, 4.1vw, 56px); line-height: 0.96; letter-spacing: -0.07em; }
+.contact-copy h2 span { color: var(--accent); }
+.contact-copy > p { max-width: 340px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+.contact-card {
+  padding: clamp(20px, 2.4vw, 30px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  background:
+    linear-gradient(112deg, color-mix(in srgb, var(--accent) 9%, transparent), transparent 42%),
+    linear-gradient(145deg, var(--glass-top), var(--glass-bottom));
+  box-shadow: var(--shadow), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.contact-lead { max-width: 530px; margin: 0; color: var(--text); font-size: clamp(15px, 1.35vw, 18px); font-weight: 540; line-height: 1.55; letter-spacing: -0.02em; }
+.contact-topics { display: flex; flex-wrap: wrap; gap: 7px; margin: 20px 0; }
+.contact-topics span { padding: 7px 10px; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 0.025em; background: color-mix(in srgb, var(--bg-plain) 16%, transparent); border: 1px solid var(--glass-border); border-radius: 999px; }
+.contact-actions { display: flex; flex-wrap: wrap; gap: 9px; }
+.contact-actions .btn { height: 42px; padding: 0 14px; font-size: 12px; }
+.contact-actions .btn-primary svg:last-child { margin-left: 1px; }
+
+@media (max-width: 760px) {
+  .contact-section { grid-template-columns: 1fr; gap: 23px; width: min(calc(100% - 28px), 1520px); margin-top: 26px; padding: 34px 0; }
+  .contact-copy h2 { font-size: 38px; }
+  .contact-card { padding: 19px; }
+}
+
 .brief-trigger {
   display: inline-flex;
   align-items: center;

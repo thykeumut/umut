@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Clipboard, Filter, Heart, Move, Search, Share2, X } from 'lucide-react'
+import { Filter, Heart, Move, Search, Share2, X } from 'lucide-react'
 import Background from './components/Background.jsx'
 import PageChrome from './components/PageChrome.jsx'
 import Hero from './components/Hero.jsx'
 import QuickCommand from './components/QuickCommand.jsx'
 import BriefBuilder from './components/BriefBuilder.jsx'
-import PastePanel from './components/PastePanel.jsx'
+import ContactSection from './components/ContactSection.jsx'
 import Featured from './components/Featured.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
 import RecentProjects from './components/RecentProjects.jsx'
@@ -142,7 +142,6 @@ export default function App() {
   const [termOpen, setTermOpen] = useState(false)
   const [commandOpen, setCommandOpen] = useState(false)
   const [briefOpen, setBriefOpen] = useState(false)
-  const [pasteOpen, setPasteOpen] = useState(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('paste'))
   const [detailId, setDetailId] = useState(null)
   const [editSite, setEditSite] = useState(null)
   const [boardQuery, setBoardQuery] = useState('')
@@ -795,7 +794,6 @@ export default function App() {
         appearance={appearance}
         onToggleAppearance={() => setAppearance((value) => (value === 'dark' ? 'light' : 'dark'))}
         onCommand={() => setCommandOpen(true)}
-        onBrief={() => setBriefOpen(true)}
       />
 
       <>
@@ -956,6 +954,7 @@ export default function App() {
           onDetail={openDetail}
           onShuffle={shuffleFeatured}
         />
+        <ContactSection onBrief={() => setBriefOpen(true)} />
         <RecentProjects sites={recentSites} onSelect={openDetail} />
         </>
 
@@ -973,10 +972,6 @@ export default function App() {
           title="Portfolyo bağlantısını kopyala"
         >
           <Share2 size={13} strokeWidth={2.1} /> paylaş
-        </button>
-        <span className="footer-dot">•</span>
-        <button type="button" className="footer-paste" onClick={() => setPasteOpen(true)} title="THYKE Paste">
-          <Clipboard size={13} strokeWidth={2.1} /> paste
         </button>
         <span className="footer-dot">•</span>
         <button
@@ -1024,18 +1019,6 @@ export default function App() {
       />
 
       <BriefBuilder open={briefOpen} onClose={() => setBriefOpen(false)} />
-
-      <PastePanel
-        open={pasteOpen}
-        onClose={() => {
-          setPasteOpen(false)
-          const url = new URL(window.location.href)
-          if (url.searchParams.has('paste')) {
-            url.searchParams.delete('paste')
-            window.history.replaceState({}, '', url)
-          }
-        }}
-      />
 
       <Terminal
         open={termOpen}
