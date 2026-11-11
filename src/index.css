@@ -4856,7 +4856,8 @@ button:focus:not(:focus-visible) {
    ALT BİLGİ — terminal düğmesi
    ============================================================ */
 .footer-term,
-.footer-share {
+.footer-share,
+.footer-focus {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -4872,7 +4873,8 @@ button:focus:not(:focus-visible) {
 }
 
 .footer-term:hover,
-.footer-share:hover {
+.footer-share:hover,
+.footer-focus:hover {
   color: var(--accent);
   opacity: 1;
 }
@@ -5852,4 +5854,161 @@ button:focus:not(:focus-visible) {
   .hero-inner { grid-template-columns: 1fr; gap: 22px; }
   .hero-actions { padding-top: 0; border-top: 0; }
   .hero-buttons { justify-content: flex-start; }
+}
+
+/* THYKE Focus — ana portföyden bağımsız, kişisel çalışma alanı. */
+.focus-backdrop {
+  position: fixed;
+  z-index: 1300;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(5, 8, 6, 0.66);
+  animation: fade 0.18s ease both;
+}
+
+.focus-panel {
+  width: min(100%, 760px);
+  overflow: hidden;
+  color: var(--text);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  background:
+    radial-gradient(70% 110% at 0% 0%, color-mix(in srgb, var(--accent-2) 14%, transparent), transparent 66%),
+    linear-gradient(145deg, var(--glass-top), var(--glass-bottom));
+  box-shadow: 0 34px 100px -28px rgba(0, 0, 0, 0.84), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: focusIn 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes focusIn { from { opacity: 0; transform: translateY(12px) scale(0.985); } to { opacity: 1; transform: none; } }
+
+.focus-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 22px 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.focus-head span { color: var(--accent); font-size: 10px; font-weight: 760; letter-spacing: 0.12em; }
+.focus-head h2 { margin: 5px 0 0; font-size: 23px; letter-spacing: -0.045em; }
+
+.focus-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 18px;
+  padding: 20px 22px 22px;
+}
+
+.focus-timer-card {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 14px;
+  min-height: 310px;
+  padding: 20px;
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--bg-plain) 18%, transparent);
+}
+
+.focus-timer-ring {
+  position: relative;
+  display: grid;
+  width: 164px;
+  height: 164px;
+  place-items: center;
+  align-content: center;
+  gap: 3px;
+  color: var(--accent);
+  background: conic-gradient(var(--accent) var(--focus-progress), color-mix(in srgb, var(--glass-border) 85%, transparent) 0);
+  border-radius: 50%;
+  box-shadow: 0 12px 30px -22px var(--accent);
+}
+
+.focus-timer-ring::before {
+  content: '';
+  position: absolute;
+  width: 146px;
+  height: 146px;
+  border-radius: 50%;
+  background: var(--bg-plain);
+}
+
+.focus-timer-ring > * { position: relative; z-index: 1; }
+.focus-timer-ring strong { color: var(--text); font-size: 31px; letter-spacing: -0.07em; line-height: 1; }
+.focus-timer-ring small { color: var(--muted); font-size: 10px; }
+
+.focus-presets { display: flex; gap: 6px; }
+.focus-presets button {
+  min-width: 54px;
+  height: 28px;
+  color: var(--muted);
+  font: 650 10px var(--font);
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.focus-presets button.is-active { color: var(--accent-contrast); background: var(--accent); border-color: var(--accent); }
+
+.focus-actions { display: flex; align-items: center; gap: 8px; }
+.focus-actions .btn { height: 38px; padding: 0 14px; font-size: 12px; }
+.focus-reset {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  border-radius: 11px;
+  cursor: pointer;
+}
+.focus-reset:hover { color: var(--text); border-color: color-mix(in srgb, var(--accent) 48%, var(--glass-border)); }
+
+.focus-todos { min-width: 0; display: flex; flex-direction: column; }
+.focus-todos-head { display: flex; align-items: baseline; justify-content: space-between; margin: 3px 0 12px; }
+.focus-todos-head span { color: var(--accent-2); font-size: 10px; font-weight: 760; letter-spacing: 0.1em; }
+.focus-todos-head small { color: var(--muted); font-size: 10px; }
+
+.focus-add { display: flex; gap: 7px; }
+.focus-add input {
+  min-width: 0;
+  flex: 1;
+  height: 40px;
+  padding: 0 12px;
+  color: var(--text);
+  font: 13px var(--font);
+  background: color-mix(in srgb, var(--bg-plain) 18%, transparent);
+  border: 1px solid var(--glass-border);
+  border-radius: 11px;
+  outline: 0;
+}
+.focus-add input:focus { border-color: color-mix(in srgb, var(--accent) 58%, var(--glass-border)); }
+.focus-add button { display: grid; width: 40px; height: 40px; place-items: center; color: var(--accent-contrast); background: var(--accent); border: 0; border-radius: 11px; cursor: pointer; }
+
+.focus-todo-list { display: grid; gap: 6px; min-height: 0; margin-top: 12px; overflow: auto; }
+.focus-todo { display: flex; align-items: center; min-height: 38px; gap: 8px; padding: 0 8px; border: 1px solid var(--glass-border); border-radius: 10px; background: color-mix(in srgb, var(--bg-plain) 12%, transparent); }
+.focus-todo > span { min-width: 0; flex: 1; overflow: hidden; color: var(--text); font-size: 12px; white-space: nowrap; text-overflow: ellipsis; }
+.focus-check { display: grid; flex: none; width: 20px; height: 20px; place-items: center; color: transparent; background: transparent; border: 1px solid var(--glass-border); border-radius: 6px; cursor: pointer; }
+.focus-todo.is-done .focus-check { color: var(--accent-contrast); background: var(--accent-2); border-color: var(--accent-2); }
+.focus-todo.is-done > span { color: var(--muted); text-decoration: line-through; }
+.focus-delete { display: grid; width: 24px; height: 24px; place-items: center; color: var(--muted); background: transparent; border: 0; border-radius: 6px; cursor: pointer; opacity: 0; }
+.focus-todo:hover .focus-delete { opacity: 1; }
+.focus-delete:hover { color: var(--danger); background: var(--danger-bg); }
+.focus-empty { margin: 18px 4px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+.focus-foot { padding: 12px 22px; color: var(--muted); font-size: 10.5px; border-top: 1px solid var(--line); }
+
+@media (max-width: 620px) {
+  .focus-backdrop { align-items: end; padding: 10px; }
+  .focus-panel { border-radius: 20px; }
+  .focus-head { padding: 18px 18px 15px; }
+  .focus-grid { grid-template-columns: 1fr; gap: 18px; padding: 16px 18px 18px; }
+  .focus-timer-card { min-height: 0; padding: 18px; }
+  .focus-timer-ring { width: 142px; height: 142px; }
+  .focus-timer-ring::before { width: 126px; height: 126px; }
+  .focus-foot { padding: 11px 18px; }
 }

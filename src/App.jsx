@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Filter, Heart, Move, Search, Share2, X } from 'lucide-react'
+import { Filter, Heart, Move, Search, Share2, Timer, X } from 'lucide-react'
 import Background from './components/Background.jsx'
 import PageChrome from './components/PageChrome.jsx'
 import Hero from './components/Hero.jsx'
 import QuickCommand from './components/QuickCommand.jsx'
+import FocusPanel from './components/FocusPanel.jsx'
 import Featured from './components/Featured.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
 import RecentProjects from './components/RecentProjects.jsx'
@@ -139,6 +140,7 @@ export default function App() {
   const [newIds, setNewIds] = useState(() => new Set())
   const [termOpen, setTermOpen] = useState(false)
   const [commandOpen, setCommandOpen] = useState(false)
+  const [focusOpen, setFocusOpen] = useState(false)
   const [detailId, setDetailId] = useState(null)
   const [editSite, setEditSite] = useState(null)
   const [boardQuery, setBoardQuery] = useState('')
@@ -961,6 +963,10 @@ export default function App() {
         <span className="footer-dot">•</span>
         <span>{isAdmin ? 'Yönetici görünümü' : 'Ziyaretçi görünümü'}</span>
         <span className="footer-dot">•</span>
+        <button type="button" className="footer-focus" onClick={() => setFocusOpen(true)} title="THYKE Focus">
+          <Timer size={13} strokeWidth={2.1} /> focus
+        </button>
+        <span className="footer-dot">•</span>
         <button
           type="button"
           className="footer-share"
@@ -1013,6 +1019,8 @@ export default function App() {
         onDetail={openDetail}
         onTerminal={() => setTermOpen(true)}
       />
+
+      <FocusPanel open={focusOpen} onClose={() => setFocusOpen(false)} />
 
       <Terminal
         open={termOpen}
