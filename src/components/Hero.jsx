@@ -1,4 +1,4 @@
-import { Command, Inbox, Lock, Moon, Sun } from 'lucide-react'
+import { BarChart3, Command, Inbox, Lock, Moon, Sun } from 'lucide-react'
 
 export default function Hero({
   onAdd,
@@ -12,6 +12,8 @@ export default function Hero({
   onCommand,
   onInbox,
   inboxCount,
+  onStats,
+  visitCount,
 }) {
   return (
     <header className="hero">
@@ -62,6 +64,7 @@ export default function Hero({
               <>
                 <button className="btn btn-primary" onClick={onAdd}><span className="btn-plus">+</span> Site Ekle</button>
                 <button className="btn btn-ghost hero-inbox-btn" onClick={onInbox}><Inbox size={14} strokeWidth={2.1} /> Briefler{inboxCount ? ` · ${inboxCount}` : ''}</button>
+                <button className="btn btn-ghost hero-inbox-btn" onClick={onStats}><BarChart3 size={14} strokeWidth={2.1} /> Ziyaretler{visitCount ? ` · ${visitCount}` : ''}</button>
                 <button className="btn btn-ghost" onClick={onReset}>Yerleşimi Sıfırla</button>
                 <button className="btn btn-ghost btn-admin" onClick={onAdminClick} title="Yönetici modundan çık"><span className="dot-online" /> Yönetici</button>
               </>

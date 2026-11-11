@@ -6225,6 +6225,17 @@ button:focus:not(:focus-visible) {
 .feedback-form select:focus { border-color: color-mix(in srgb, var(--accent) 58%, var(--glass-border)); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent); }
 .feedback-send { justify-self: start; height: 40px; padding: 0 15px; font-size: 12px; }
 
+.visitor-stats { width: min(100%, 670px); }
+.visitor-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 20px 24px 0; }
+.visitor-summary > div { display: flex; align-items: center; gap: 9px; min-height: 64px; padding: 12px; color: var(--accent); background: color-mix(in srgb, var(--bg-plain) 15%, transparent); border: 1px solid var(--glass-border); border-radius: 13px; }
+.visitor-summary span { display: grid; color: var(--muted); font-size: 10px; }
+.visitor-summary b { color: var(--text); font-size: 20px; letter-spacing: -.04em; }
+.visitor-chart { display: flex; align-items: end; height: 210px; gap: 10px; padding: 24px; }
+.visitor-chart > div { position: relative; display: grid; flex: 1; height: 100%; align-items: end; justify-items: center; gap: 7px; }
+.visitor-chart i { width: min(100%, 38px); min-height: 4px; background: linear-gradient(180deg, var(--accent), var(--accent-2)); border-radius: 8px 8px 3px 3px; box-shadow: 0 4px 13px color-mix(in srgb, var(--accent) 20%, transparent); }
+.visitor-chart span { color: var(--muted); font-size: 10px; text-transform: capitalize; }
+.visitor-chart small { position: absolute; bottom: 32px; color: var(--text); font-size: 10px; transform: translateY(-2px); }
+
 @media (max-width: 700px) {
   .brief-grid { grid-template-columns: 1fr; gap: 18px; padding: 18px; }
   .brief-head { padding: 20px 18px 17px; }

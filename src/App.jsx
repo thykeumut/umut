@@ -7,6 +7,7 @@ import QuickCommand from './components/QuickCommand.jsx'
 import BriefBuilder from './components/BriefBuilder.jsx'
 import BriefInbox from './components/BriefInbox.jsx'
 import FeedbackModal from './components/FeedbackModal.jsx'
+import VisitorStats from './components/VisitorStats.jsx'
 import ContactSection from './components/ContactSection.jsx'
 import Featured from './components/Featured.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
@@ -25,8 +26,10 @@ import {
   hasAdminSession,
   createRemoteBrief,
   createRemoteFeedback,
+  createRemoteVisit,
   deleteRemoteBrief,
   loadRemoteBriefs,
+  loadRemoteVisits,
   loadRemoteSites,
   loginAdmin,
   logoutAdmin,
@@ -151,6 +154,8 @@ export default function App() {
   const [briefInboxOpen, setBriefInboxOpen] = useState(false)
   const [briefs, setBriefs] = useState([])
   const [feedbackOpen, setFeedbackOpen] = useState(false)
+  const [statsOpen, setStatsOpen] = useState(false)
+  const [visits, setVisits] = useState([])
   const [detailId, setDetailId] = useState(null)
   const [editSite, setEditSite] = useState(null)
   const [boardQuery, setBoardQuery] = useState('')
@@ -304,14 +309,34 @@ export default function App() {
     }
   }, [isAdmin])
 
+  const refreshVisits = useCallback(async () => {
+    if (!isAdmin) return
+    try {
+      setVisits(await loadRemoteVisits())
+    } catch {
+      // İstatistik bağlantısı yoksa pano akışı etkilenmez.
+    }
+  }, [isAdmin])
+
   useEffect(() => {
     if (isAdmin) {
       void refreshBriefs()
+      void refreshVisits()
     } else {
       setBriefs([])
       setBriefInboxOpen(false)
+      setVisits([])
+      setStatsOpen(false)
     }
-  }, [isAdmin, refreshBriefs])
+  }, [isAdmin, refreshBriefs, refreshVisits])
+
+  useEffect(() => {
+    if (isAdmin) return
+    const day = new Date().toISOString().slice(0, 10)
+    const key = `thyke:visit:${day}`
+    if (localStorage.getItem(key)) return
+    createRemoteVisit(day).then(() => localStorage.setItem(key, '1')).catch(() => {})
+  }, [isAdmin])
 
   const submitBrief = useCallback(async (brief) => {
     await createRemoteBrief(brief)
@@ -358,6 +383,7 @@ export default function App() {
     Promise.resolve(subscribeToSites(() => {
       sync(true)
       if (isAdmin) void refreshBriefs()
+      if (isAdmin) void refreshVisits()
     })).then((subscription) => {
       if (alive) unsubscribe = subscription?.unsubscribe
       else subscription?.unsubscribe?.()
@@ -371,7 +397,7 @@ export default function App() {
       unsubscribe?.()
       document.removeEventListener('visibilitychange', onVisibility)
     }
-  }, [showToast, isAdmin, refreshBriefs])
+  }, [showToast, isAdmin, refreshBriefs, refreshVisits])
 
   // A short debounce turns one edit or drag into a single shared write.
   useEffect(() => {
@@ -846,6 +872,8 @@ export default function App() {
         onCommand={() => setCommandOpen(true)}
         onInbox={() => setBriefInboxOpen(true)}
         inboxCount={briefs.length}
+        onStats={() => setStatsOpen(true)}
+        visitCount={visits.length}
       />
 
       <>
@@ -1089,6 +1117,8 @@ export default function App() {
       />
 
       <FeedbackModal open={feedbackOpen} onClose={() => setFeedbackOpen(false)} onSubmit={submitFeedback} />
+
+      <VisitorStats open={statsOpen} visits={visits} onClose={() => setStatsOpen(false)} />
 
       <Terminal
         open={termOpen}

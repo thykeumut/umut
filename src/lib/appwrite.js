@@ -77,6 +77,17 @@ export async function createRemoteFeedback(feedback) {
   return tables.createRow({ databaseId, tableId, rowId: ID.unique(), data: { data: JSON.stringify(payload) } })
 }
 
+export async function createRemoteVisit(day) {
+  await ensureVisitorSession()
+  const payload = { kind: 'visit', id: ID.unique(), day, createdAt: new Date().toISOString() }
+  return tables.createRow({ databaseId, tableId, rowId: ID.unique(), data: { data: JSON.stringify(payload) } })
+}
+
+export async function loadRemoteVisits() {
+  const result = await tables.listRows({ databaseId, tableId, ttl: 0 })
+  return result.rows.map(unpack).filter((row) => row?.kind === 'visit')
+}
+
 export async function deleteRemoteBrief(rowId) {
   return tables.deleteRow({ databaseId, tableId, rowId })
 }
