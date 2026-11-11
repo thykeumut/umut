@@ -47,7 +47,7 @@ export default function AdminConsole({
           <div><b>{sites.length}</b><span>toplam proje</span></div>
           <div><b>{publicCount}</b><span>ziyaretçiye açık</span></div>
           <div><b>{privateCount}</b><span>taslak / kapalı</span></div>
-          <div><b>{briefs.length + verifiedVisitors.length}</b><span>yeni hareket</span></div>
+          <div><b>{briefs.length + verifiedVisitors.length}</b><span>toplam gelen kayıt</span></div>
         </div>
 
         <div className="admin-console-actions">
