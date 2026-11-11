@@ -1,4 +1,4 @@
-import { ArrowUp } from 'lucide-react'
+import { ArrowUp, Settings2, Type, ZapOff } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 // Sayfanın etrafındaki küçük, işlevsel arayüz detayları.
@@ -7,6 +7,9 @@ export default function PageChrome() {
   const [scroll, setScroll] = useState(0)
   const [canUseCursor, setCanUseCursor] = useState(false)
   const [dust, setDust] = useState([])
+  const [toolsOpen, setToolsOpen] = useState(false)
+  const [largeText, setLargeText] = useState(() => localStorage.getItem('thyke:large-text') === '1')
+  const [reducedMotion, setReducedMotion] = useState(() => localStorage.getItem('thyke:reduced-motion') === '1')
   const lastDustAt = useRef(0)
   const dustId = useRef(0)
   const dustTimers = useRef(new Set())
@@ -24,6 +27,16 @@ export default function PageChrome() {
     document.documentElement.classList.toggle('has-custom-cursor', canUseCursor)
     return () => document.documentElement.classList.remove('has-custom-cursor')
   }, [canUseCursor])
+
+  useEffect(() => {
+    document.documentElement.dataset.textSize = largeText ? 'large' : 'default'
+    localStorage.setItem('thyke:large-text', largeText ? '1' : '0')
+  }, [largeText])
+
+  useEffect(() => {
+    document.documentElement.dataset.motion = reducedMotion ? 'reduced' : 'full'
+    localStorage.setItem('thyke:reduced-motion', reducedMotion ? '1' : '0')
+  }, [reducedMotion])
 
   useEffect(() => {
     const updateScroll = () => {
@@ -118,6 +131,15 @@ export default function PageChrome() {
       >
         <ArrowUp size={18} strokeWidth={2.2} />
       </button>
+
+      <div className={'site-tools' + (toolsOpen ? ' is-open' : '')}>
+        {toolsOpen && <div className="site-tools-panel" role="dialog" aria-label="Site ayarları">
+          <span>GÖRÜNÜM AYARLARI</span>
+          <button type="button" onClick={() => setLargeText((value) => !value)} aria-pressed={largeText}><Type size={15} /> Büyük yazı <i>{largeText ? 'Açık' : 'Kapalı'}</i></button>
+          <button type="button" onClick={() => setReducedMotion((value) => !value)} aria-pressed={reducedMotion}><ZapOff size={15} /> Animasyonları azalt <i>{reducedMotion ? 'Açık' : 'Kapalı'}</i></button>
+        </div>}
+        <button className="site-tools-toggle" type="button" onClick={() => setToolsOpen((value) => !value)} aria-expanded={toolsOpen} aria-label="Site ayarları" title="Site ayarları"><Settings2 size={17} strokeWidth={2.1} /></button>
+      </div>
     </>
   )
 }
