@@ -566,6 +566,8 @@ export default function App() {
     if (isAdmin) return sites
     const query = boardQuery.trim().toLocaleLowerCase('tr')
     return sites.filter((site) => {
+      // Ziyaretçiler yalnızca yönetici tarafından açık işaretlenen kartları görür.
+      if (!site.public) return false
       const matchesFavorite = !onlyFavorites || favoriteIds.includes(site.id)
       if (!matchesFavorite) return false
       if (selectedCategory !== 'all' && site.category !== selectedCategory) return false
