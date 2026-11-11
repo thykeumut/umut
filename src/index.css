@@ -82,6 +82,23 @@
   --tone-two: #d7c4a6;
 }
 
+/* Açık görünümde beyaz özel imleç arka plana karışmasın. */
+[data-appearance='light'] .cursor-dot {
+  background: #20251f;
+  box-shadow: 0 1px 7px rgba(255, 255, 255, 0.92), 0 1px 5px rgba(32, 37, 31, 0.42);
+}
+
+[data-appearance='light'] .cursor-ring {
+  border-color: rgba(32, 37, 31, 0.58);
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.74), 0 1px 7px rgba(32, 37, 31, 0.14);
+}
+
+[data-appearance='light'] .cursor-dust i {
+  background: color-mix(in srgb, var(--accent) 68%, #20251f);
+  box-shadow: 0 0 5px color-mix(in srgb, var(--accent) 44%, transparent);
+}
+
 [data-theme='indigo'] {
   --bg-plain: linear-gradient(180deg, #0d0d1a 0%, #05050b 100%);
   --bg-wash: rgba(88, 94, 181, 0.09);
