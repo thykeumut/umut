@@ -1,4 +1,4 @@
-import { Command, Lock, Moon, Sun } from 'lucide-react'
+import { Command, FilePenLine, Lock, Moon, Sun } from 'lucide-react'
 
 export default function Hero({
   onAdd,
@@ -10,6 +10,7 @@ export default function Hero({
   appearance,
   onToggleAppearance,
   onCommand,
+  onBrief,
 }) {
   return (
     <header className="hero">
@@ -37,6 +38,11 @@ export default function Hero({
             {!isAdmin && (
               <button type="button" className="command-trigger" onClick={onCommand} title="Hızlı proje bulucu (Ctrl + K)">
                 <Command size={15} strokeWidth={2.2} /> Bul <kbd>Ctrl K</kbd>
+              </button>
+            )}
+            {!isAdmin && (
+              <button type="button" className="brief-trigger" onClick={onBrief} title="Proje fikrini brief haline getir">
+                <FilePenLine size={15} strokeWidth={2.1} /> Brief oluştur
               </button>
             )}
             <button
