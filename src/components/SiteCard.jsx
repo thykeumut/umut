@@ -204,6 +204,7 @@ export default function SiteCard({
   const isPublic = !!site.public
   const projectStatus = site.status || (isPublic ? 'live' : 'building')
   const SiteIcon = iconById(site.icon)
+  const cardTags = Array.isArray(site.tags) ? site.tags.slice(0, 2) : []
   const cardStyle = flowMode
     ? undefined
     : {
@@ -379,6 +380,11 @@ export default function SiteCard({
       <div className="card-body">
         <h3 className="card-title">{site.title}</h3>
         {site.description && <p className="card-desc">{site.description}</p>}
+        {cardTags.length > 0 && (
+          <div className="card-tech" aria-label="Kullanılan teknolojiler">
+            {cardTags.map((tag) => <span key={tag}>{tag}</span>)}
+          </div>
+        )}
         {/* Gizli kartlarda adres hiç yazılmaz (kopyalanıp gidilmesin). */}
         {isPublic && site.url && (
           <span className="card-url">

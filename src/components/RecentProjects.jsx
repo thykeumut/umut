@@ -1,6 +1,6 @@
 import { ArrowUpRight, Clock3 } from 'lucide-react'
 import { iconById } from '../lib/icons'
-import { categoryName } from '../lib/projects'
+import { categoryName, statusName } from '../lib/projects'
 
 // Ziyaretçinin kendi tarayıcısında tutulan kısa dönüş şeridi.
 export default function RecentProjects({ sites, onSelect }) {
@@ -20,7 +20,7 @@ export default function RecentProjects({ sites, onSelect }) {
               <span className="recent-icon"><Icon size={15} strokeWidth={2} /></span>
               <span className="recent-copy">
                 <strong>{site.title}</strong>
-                <small>{categoryName(site.category)}</small>
+                <small>{categoryName(site.category)} · {statusName(site.status)}</small>
               </span>
               <ArrowUpRight size={14} strokeWidth={2.1} aria-hidden="true" />
             </button>
