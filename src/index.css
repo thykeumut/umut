@@ -6312,3 +6312,54 @@ button:focus:not(:focus-visible) {
   .paste-list { max-height: 130px; }
   .paste-foot { padding: 11px 18px; }
 }
+
+/* İlk girişte ziyaretçi kimliği seçimi. */
+.visitor-gate {
+  position: fixed;
+  z-index: 1500;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(5, 8, 6, 0.76);
+  animation: fade 0.2s ease both;
+}
+
+.visitor-gate-card {
+  width: min(100%, 480px);
+  padding: clamp(26px, 5vw, 42px);
+  color: var(--text);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  background:
+    radial-gradient(80% 90% at 0% 0%, color-mix(in srgb, var(--accent) 19%, transparent), transparent 69%),
+    linear-gradient(145deg, var(--glass-top), var(--glass-bottom));
+  box-shadow: 0 34px 100px -28px rgba(0, 0, 0, 0.88), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  animation: focusIn 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.visitor-gate-card > span {
+  color: var(--accent-2);
+  font-size: 10px;
+  font-weight: 780;
+  letter-spacing: 0.14em;
+}
+
+.visitor-gate-card h1 {
+  margin: 14px 0 12px;
+  font-size: clamp(31px, 6vw, 47px);
+  line-height: 0.98;
+  letter-spacing: -0.065em;
+}
+
+.visitor-gate-card h1 em { color: var(--accent); font-style: normal; }
+.visitor-gate-card p { max-width: 360px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.visitor-gate-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 27px; }
+.visitor-gate-actions .btn { display: inline-flex; justify-content: center; min-height: 44px; padding: 0 12px; font-size: 12px; }
+.visitor-gate-card small { display: block; margin-top: 17px; color: var(--muted); font-size: 10px; line-height: 1.45; }
+
+@media (max-width: 500px) {
+  .visitor-gate { padding: 14px; }
+  .visitor-gate-card { border-radius: 20px; }
+  .visitor-gate-actions { grid-template-columns: 1fr; }
+}

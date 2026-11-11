@@ -9,6 +9,7 @@ import BriefInbox from './components/BriefInbox.jsx'
 import FeedbackModal from './components/FeedbackModal.jsx'
 import VisitorStats from './components/VisitorStats.jsx'
 import VisitorLogin from './components/VisitorLogin.jsx'
+import VisitorGate from './components/VisitorGate.jsx'
 import ContactSection from './components/ContactSection.jsx'
 import Featured from './components/Featured.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
@@ -163,6 +164,13 @@ export default function App() {
   const [visits, setVisits] = useState([])
   const [visitorLoginOpen, setVisitorLoginOpen] = useState(false)
   const [verifiedVisitors, setVerifiedVisitors] = useState([])
+  const [visitorMode, setVisitorMode] = useState(() => {
+    try {
+      return localStorage.getItem('thyke:visitor-mode') || ''
+    } catch {
+      return ''
+    }
+  })
   const [detailId, setDetailId] = useState(null)
   const [editSite, setEditSite] = useState(null)
   const [boardQuery, setBoardQuery] = useState('')
@@ -317,7 +325,15 @@ export default function App() {
   }, [isAdmin])
 
   useEffect(() => {
-    completeVisitorEmailLink().then((user) => user && saveVerifiedVisitor(user)).catch(() => {})
+    completeVisitorEmailLink()
+      .then((user) => {
+        if (!user) return null
+        return saveVerifiedVisitor(user).then(() => {
+          localStorage.setItem('thyke:visitor-mode', 'verified')
+          setVisitorMode('verified')
+        })
+      })
+      .catch(() => {})
   }, [])
 
   const refreshVisits = useCallback(async () => {
@@ -874,6 +890,16 @@ export default function App() {
     <div className="app">
       <Background />
       <PageChrome />
+
+      {!isAdmin && !visitorMode && !visitorLoginOpen && (
+        <VisitorGate
+          onEmail={() => setVisitorLoginOpen(true)}
+          onGuest={() => {
+            localStorage.setItem('thyke:visitor-mode', 'guest')
+            setVisitorMode('guest')
+          }}
+        />
+      )}
 
       <Hero
         count={sites.length}
