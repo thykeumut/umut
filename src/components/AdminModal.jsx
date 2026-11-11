@@ -6,6 +6,7 @@ export default function AdminModal({ open, onClose, onUnlock }) {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [cooldown, setCooldown] = useState(0)
 
   useEffect(() => {
     if (open) {
@@ -21,16 +22,29 @@ export default function AdminModal({ open, onClose, onUnlock }) {
     return () => window.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
+  useEffect(() => {
+    if (!cooldown) return undefined
+    const timer = window.setInterval(() => setCooldown((seconds) => Math.max(0, seconds - 1)), 1000)
+    return () => window.clearInterval(timer)
+  }, [cooldown])
+
   if (!open) return null
 
   const submit = async (event) => {
     event.preventDefault()
+    if (busy || cooldown) return
     setBusy(true)
     setError('')
     try {
       await onUnlock({ email, password })
     } catch (err) {
-      setError(err?.message || 'Giriş yapılamadı. E-posta ve şifreyi kontrol et.')
+      const message = err?.message || 'Giriş yapılamadı. E-posta ve şifreyi kontrol et.'
+      if (/rate limit/i.test(message)) {
+        setCooldown(60)
+        setError('Çok fazla deneme yapıldı. 1 dakika bekleyip tekrar dene.')
+      } else {
+        setError(message)
+      }
     } finally {
       setBusy(false)
     }
@@ -82,8 +96,8 @@ export default function AdminModal({ open, onClose, onUnlock }) {
             <button type="button" className="btn btn-ghost" onClick={onClose}>
               Vazgeç
             </button>
-            <button type="submit" className="btn btn-primary" disabled={busy}>
-              {busy ? 'Bağlanıyor...' : 'Giriş Yap'}
+            <button type="submit" className="btn btn-primary" disabled={busy || cooldown > 0}>
+              {busy ? 'Bağlanıyor...' : cooldown ? `${cooldown} sn bekle` : 'Giriş Yap'}
             </button>
           </div>
         </form>
