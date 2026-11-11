@@ -217,6 +217,36 @@ export default function App() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
+  // Açık ziyaretçi sekmeleri yeni yayını algılar; manuel hard refresh gerekmez.
+  useEffect(() => {
+    if (isAdmin) return undefined
+    const release = document.querySelector('meta[name="thyke-release"]')?.getAttribute('content')
+    if (!release || release === '__THYKE_RELEASE__') return undefined
+    let checking = false
+    const checkRelease = async () => {
+      if (checking) return
+      checking = true
+      try {
+        const response = await fetch(`${import.meta.env.BASE_URL}release.json?t=${Date.now()}`, { cache: 'no-store' })
+        const data = await response.json()
+        if (data?.release && data.release !== release) window.location.reload()
+      } catch {
+        // Bağlantı yokken mevcut sürüm kullanılmaya devam eder.
+      } finally {
+        checking = false
+      }
+    }
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') void checkRelease()
+    }
+    document.addEventListener('visibilitychange', onVisibility)
+    const interval = window.setInterval(checkRelease, 60_000)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility)
+      window.clearInterval(interval)
+    }
+  }, [isAdmin])
+
   // ~ (ya da `) tuşu gizli terminali açar/kapatır.
   // Türkçe klavyede ~ için AltGr gerekir; bu yüzden Ctrl/Alt'a bakılmaz.
   useEffect(() => {

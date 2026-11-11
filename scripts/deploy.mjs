@@ -4,12 +4,13 @@
 // sites.json dosyasına yazar. Bu betik yeni sürüm yayınlarken önce yayındaki
 // sites.json'u indirip korur; böylece yayınlanmış kartlar kaybolmaz.
 import { execSync } from 'node:child_process'
-import { writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const run = (cmd) => execSync(cmd, { cwd: root, stdio: 'inherit' })
+const release = `${Date.now()}`
 
 // 1) Yayındaki kart listesini koru
 let preserved = false
@@ -34,6 +35,9 @@ run('npx vite build')
 
 // 3) GitHub Pages'in Jekyll işlemesini kapat
 writeFileSync(resolve(root, 'dist/.nojekyll'), '')
+writeFileSync(resolve(root, 'dist/release.json'), JSON.stringify({ release }))
+const indexPath = resolve(root, 'dist/index.html')
+writeFileSync(indexPath, readFileSync(indexPath, 'utf8').replace('__THYKE_RELEASE__', release))
 
 // 4) Alan adı dosyası her yayında yerinde olsun (silinirse domain ayarı düşer)
 writeFileSync(resolve(root, 'dist/CNAME'), 'thyke.me\n')
