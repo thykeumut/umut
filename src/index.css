@@ -3337,8 +3337,12 @@ button:focus:not(:focus-visible) {
 }
 
 .board--flow .card {
-  position: static;
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  z-index: auto !important;
   width: 100%;
+  min-width: 0;
   cursor: default;
   /* Akış modunda sürükleme yok; parmakla sayfa kaydırmayı engellemesin */
   touch-action: auto;
