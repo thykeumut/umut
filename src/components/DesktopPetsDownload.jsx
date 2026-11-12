@@ -1,6 +1,7 @@
 import { Download, MonitorDown, PawPrint, ShieldCheck } from 'lucide-react'
 
 const DOWNLOAD_URL = `${import.meta.env.BASE_URL}downloads/Thyke-Son.exe`
+const PET_ART_URL = `${import.meta.env.BASE_URL}images/thyke-son-pet.png`
 
 export default function DesktopPetsDownload() {
   return (
@@ -20,10 +21,8 @@ export default function DesktopPetsDownload() {
       </div>
 
       <div className="desktop-pets-card">
-        <div className="desktop-pets-art" aria-hidden="true">
-          <div className="desktop-pets-window"><i /><i /><i /></div>
-          <div className="desktop-pets-pet"><span>•</span><span>•</span><b>⌣</b></div>
-          <div className="desktop-pets-shadow" />
+        <div className="desktop-pets-art">
+          <img src={PET_ART_URL} alt="Thyke Son piksel masaüstü hayvanı" />
         </div>
         <div className="desktop-pets-card-copy">
           <strong>Thyke Son.exe</strong>
