@@ -13,6 +13,7 @@ import VisitorGate from './components/VisitorGate.jsx'
 import AdminConsole from './components/AdminConsole.jsx'
 import ContactSection from './components/ContactSection.jsx'
 import Featured from './components/Featured.jsx'
+import DesktopPetsDownload from './components/DesktopPetsDownload.jsx'
 import ActivityRail from './components/ActivityRail.jsx'
 import RecentProjects from './components/RecentProjects.jsx'
 import SiteCard from './components/SiteCard.jsx'
@@ -1120,6 +1121,7 @@ export default function App() {
           onDetail={openDetail}
           onShuffle={shuffleFeatured}
         />
+        <DesktopPetsDownload />
         <ContactSection onBrief={() => setBriefOpen(true)} />
         <RecentProjects sites={recentSites} onSelect={openDetail} />
         </>
